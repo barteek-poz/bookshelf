@@ -1,0 +1,30 @@
+.dashboard {
+    min-width: 30rem;
+    max-width: 130rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 2rem;
+    margin: 5rem 0 0 0;
+}
+.booksGrid {
+    min-width: 30rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 2rem;
+}
+.addBtn {
+    background: #11243a;
+    color: #fff;
+}
+.addBtn:hover {
+    color: #11243a !important;
+    border-color: #11243a !important;
+    background: transparent !important;
+}

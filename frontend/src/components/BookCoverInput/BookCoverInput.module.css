@@ -1,0 +1,27 @@
+.coverInput {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: fit-content;
+    padding: 0 15px;
+    height: 3.2rem;
+    background: #11243a;
+    color: #fff;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    transition: .3s;
+    cursor: pointer;
+}
+.coverInput:hover {
+    color: #11243a;
+    border-color: #11243a;
+    background: transparent;
+}
+.inputFile {
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}

@@ -1,0 +1,10 @@
+.mainLayout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mainHeader {
+    margin: 2rem 0 5rem 0;
+}

@@ -1,0 +1,94 @@
+.bookPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6rem;
+}
+.bookContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6rem;
+    max-width: 120rem;
+}
+.bookCoverCont {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.bookCover {
+    width: 38rem;
+    height: 62rem;
+}
+.coverBtns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.uploadBtn {
+    background: #11243a;
+    color: #fff;
+    border: 1px solid transparent;
+}
+.uploadBtn:hover {
+    background: transparent !important;
+    border-color: #11243a !important;
+    color: #11243a !important;
+}
+.inputFile {
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+.bookData {
+    max-width: 60rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.bookData p {
+    font-size: 1.6rem;
+}
+.defaultText {
+   color: #808080;
+   font-style: italic;
+}
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    align-self: flex-start;
+    cursor: pointer;
+    transition: .3s;
+}
+.backBtn svg {
+    font-size: 264x;
+}
+.backBtn:hover{
+    gap: 4px;
+}
+.btns {
+    display: flex;
+    gap: 1rem;
+    align-self: flex-end;
+}
+.editBtn {
+    background: #11243a;
+    color: #fff;
+    border: 1px solid transparent;
+}
+.editBtn:hover {
+    background: transparent !important;
+    border-color: #11243a !important;
+    color: #11243a !important;
+}
+.deleteBtn:hover {
+    background: #fff !important;
+    color: #ff0000 !important;
+    border-color: #ff0000 !important;
+}
+.errorMsg {
+    text-align: center;
+}
