@@ -12,7 +12,7 @@ const AddBook = () => {
 	const [cover, setCover] = useState(null);
 	const [coverPreview, setCoverPreview] = useState(null);
 	const [bookGenre, setBookGenre] = useState('');
-	const { accessToken, user } = useContext(AuthContext);
+	const { accessToken, user, setUserWasUpdated } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	const addBookHandler = async (e) => {

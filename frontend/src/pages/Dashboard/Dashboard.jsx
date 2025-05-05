@@ -1,79 +1,73 @@
-import styles from "./Dashboard.module.css"
+import styles from "./Dashboard.module.css";
 import Book from '../../components/Book/Book';
-import useFetch from '../../hooks/useFetch';
 import Loader from "../../components/Loader/Loader";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
-import { useContext, useState, useEffect} from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 const Dashboard = () => {
-  const [books, setBooks] = useState(null)
-  const [error, setError] = useState(false)
-  const [isPending, setIsPending] = useState(false)
-  const navigate = useNavigate()
-  const {setIsAuthenticated, user, accessToken} = useContext(AuthContext)
-  
- 
+  const [books, setBooks] = useState(null);
+  const [error, setError] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const { setIsAuthenticated, user, accessToken} = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const userBooksLoader = async () => {
-    setIsPending(true)
+    setIsPending(true);
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/books`, {
+      const response = await fetch(`http://localhost:3000/api/v1/users/${user._id}/books`, {
         method: "POST",
         credentials: 'include',
-        body: JSON.stringify({books: user.books}),
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-      const jsonData = await response.json();
-      console.log(jsonData)
-      setIsPending(false);
-      setBooks(jsonData.data);
-      setError(null);
-    } catch(error) {
-      console.log(error)
-    }
-  }
-  useEffect(()=>{
-    userBooksLoader()
-  },[])
 
-  const logoutHandler = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/v1/users/logout`, {
-        method: "POST",
-        credentials: 'include'
-      });
-      if (response.ok) {    
-        sessionStorage.removeItem('accessToken')   
-        setIsAuthenticated(false)
-        navigate('/login')
-      } else {
-        throw error
-      }
-    } catch(error) {
-      alert('Could not logout')
-      console.log(error)
+      if (!response.ok) throw new Error(response.statusText);
+      const jsonData = await response.json();
+      setBooks(jsonData.data);
+      setError(false);
+    } catch (error) {
+      console.log("Error loading books:", error);
+      setError(true);
+    } finally {
+      setIsPending(false);
     }
-  }
+  };
+
+  useEffect(() => {
+        userBooksLoader();      
+  }, []);
+
+  
   return (
     <section id='dashboard' className={styles.dashboard}>
-        {isPending && <Loader/>}
-        {!isPending && <Button className={styles.addBtn} onClick={logoutHandler}>Logout</Button>}
-        {!isPending && <Link to='/books/add'><Button className={styles.addBtn}>Add book</Button></Link>}
-        <div className={styles.booksGrid}>
-          {books ? books.map(book => {
-              return <Book key={book._id} id={book._id} title={book.title} author={book.author} cover={book.coverUrl}/>
-          }): <h2>No books found</h2>}
-        </div>
-        {error && <h2>No books found</h2>}
+      {isPending && <Loader />}
+      {!isPending && (
+        <>
+          <Link to='/books/add'><Button className={styles.addBtn}>Add book</Button></Link>
+          <div className={styles.booksGrid}>
+            {books && books.length > 0 ? (
+              books.map(book => (
+                <Book
+                  key={book._id}
+                  id={book._id}
+                  title={book.title}
+                  author={book.author}
+                  cover={book.coverUrl}
+                />
+              ))
+            ) : (
+              <h2>No books found</h2>
+            )}
+          </div>
+          {error && <h2>Failed to load books</h2>}
+        </>
+      )}
     </section>
-      )
-    }
+  );
+};
 
-export default Dashboard
+export default Dashboard;

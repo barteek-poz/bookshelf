@@ -17,42 +17,11 @@ const router = createBrowserRouter([
     path: "/",
     element: <MainLayout />,
     children: [
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/",
-        element: (
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/books/:id",
-        element: (
-          <ProtectedRoute>
-            <BookPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/books/:id/edit",
-        element: (
-          <ProtectedRoute>
-            <EditBook />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/books/add",
-        element: (
-          <ProtectedRoute>
-            <AddBook/>
-          </ProtectedRoute>
-        ),
-      },
+      { path: "login", element: <Login /> },
+      { path: '/', element: <ProtectedRoute><Dashboard/></ProtectedRoute> },
+      { path: "books/:id", element: <ProtectedRoute><BookPage /></ProtectedRoute> },
+      { path: "books/:id/edit", element: <ProtectedRoute><EditBook /></ProtectedRoute> },
+      { path: "books/add", element: <ProtectedRoute><AddBook /></ProtectedRoute> },
     ],
   },
 ]);
@@ -60,7 +29,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthContextProvider>
-      <RouterProvider router={router}></RouterProvider>
+      <RouterProvider router={router} />
     </AuthContextProvider>
   </StrictMode>
 );

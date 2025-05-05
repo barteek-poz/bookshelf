@@ -1,18 +1,20 @@
 import { LeftSquareOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import BookCoverInput from '../../components/BookCoverInput/BookCoverInput';
 import GenreSelect from '../../components/GenreSelect/GenreSelect';
 import Loader from '../../components/Loader/Loader';
 import useFetch from '../../hooks/useFetch';
 import styles from './EditBook.module.css';
+import { AuthContext } from '../../context/AuthContext';
 
 
 const EditBook = () => {
     const [cover, setCover] = useState(null)
     const [coverPreview, setCoverPreview] = useState(null)
     const [bookGenre, setBookGenre] = useState("")
+    const {accessToken} = useContext(AuthContext)
     const navigate = useNavigate()
     const bookId = useParams().id
     const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
@@ -32,6 +34,10 @@ const EditBook = () => {
         try {
             const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}`, {
               method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+              credentials: 'include',
               body: formData,
             });
             const data = await response.json();

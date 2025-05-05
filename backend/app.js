@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import booksRouter from './routes/booksRoutes.js'
 import genresRouter from './routes/genresRoutes.js'
 import usersRouter from './routes/userRoutes.js'
+import authRouter from './routes/authRoutes.js'
 
 const corsOptions = {
     origin: 'http://localhost:5173',  
@@ -21,5 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/books', booksRouter)
 app.use('/api/v1/genres', genresRouter)
 app.use('/api/v1/users', usersRouter)
+app.use('/api/v1/auth', authRouter)
 
 export default app

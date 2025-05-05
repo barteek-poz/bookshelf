@@ -94,6 +94,7 @@ export const refreshAccessToken = async (req, res) => {
 		res.status(200).json({
 			accessToken,
 			user: {
+			  _id: currentUser._id,	
 			  name: currentUser.name,
 			  books: currentUser.books, 
 			},

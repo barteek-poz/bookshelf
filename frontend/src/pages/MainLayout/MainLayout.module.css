@@ -8,3 +8,15 @@
 .mainHeader {
     margin: 2rem 0 5rem 0;
 }
+
+.logoutBtn {
+    align-self: flex-end;
+    margin-right: 2rem;
+    background: #11243a;
+    color: #fff;
+}
+.logoutBtn:hover {
+    color: #11243a !important;
+    border-color: #11243a !important;
+    background: transparent !important;
+}

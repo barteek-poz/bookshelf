@@ -20,21 +20,6 @@ export const getAllBooks = async (req, res) => {
   }
 }
 
-export const getUserBooks = async(req,res) => {
-    try {
-        const booksArr = req.body.books
-        const books = await Book.find({ '_id': { $in: booksArr } });
-        res.status(200).json({
-            status:'Success',
-            data: books
-        })
-    } catch(err) {
-        res.status(400).json({
-            status: 'Fail',
-            message: err
-        })
-    }
-}
 
 export const createBook = async (req,res) => {
     try {
@@ -50,6 +35,7 @@ export const createBook = async (req,res) => {
         })
         if(newBook) {
             const user = await User.findById(req.user._id)
+            console.log(user)
             user.books.push(req.body.id)
             await user.save({ validateBeforeSave: false });
         }

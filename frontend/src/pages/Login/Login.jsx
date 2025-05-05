@@ -10,7 +10,7 @@ const Login = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/users/login", {
+      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
         method: "POST",
         credentials: "include", 
         headers: {
@@ -25,7 +25,6 @@ const Login = () => {
       if (!response.ok) throw new Error("Invalid credentials");
 
       const data = await response.json();
-      sessionStorage.setItem("accessToken", data.accessToken);
       setAccessToken(data.accessToken);
       setIsAuthenticated(true);
       setUser(data.user)

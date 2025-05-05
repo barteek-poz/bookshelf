@@ -7,11 +7,11 @@
     justify-content: center;
     flex-wrap: wrap;
     flex-grow: 1;
+    align-self: flex-start;
     gap: 2rem;
     margin: 5rem 0 0 0;
 }
 .booksGrid {
-    min-width: 30rem;
     display: flex;
     align-items: flex-start;
     justify-content: center;

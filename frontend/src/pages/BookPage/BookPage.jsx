@@ -24,7 +24,6 @@ const BookPage = () => {
           Authorization: `Bearer ${accessToken}`,
         }
       });
-      console.log(response)
       if (response.ok) {       
         navigate('/')
       } else {

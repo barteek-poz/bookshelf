@@ -1,17 +1,13 @@
 import express from 'express'
-import { getAllUsers, deleteUser, getUserById, updateUser } from '../controllers/userController.js'
-import { isAuth, login, logout, refreshAccessToken, signup } from '../controllers/authController.js'
-
+import { getAllUsers, deleteUser, getUserById, updateUser, getUserBooks } from '../controllers/userController.js'
+import { updateUserBooks } from '../middlewares/updateUserBooks.js'
 
 const usersRouter = express.Router()
 
-
 usersRouter.route('/').get(getAllUsers)
-usersRouter.route('/signup').post(signup)
-usersRouter.route('/login').post(login)
 usersRouter.route('/:id').get(getUserById).delete(deleteUser).patch(updateUser)
-usersRouter.route('/logout').post(logout)
-usersRouter.post('/refresh-token', refreshAccessToken);
+usersRouter.route('/:id/books').post(updateUserBooks, getUserBooks)
+
 
 
 export default usersRouter

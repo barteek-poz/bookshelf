@@ -1,6 +1,6 @@
-import User from "../models/userModel.js"
 import mongoose from 'mongoose';
-
+import User from "../models/userModel.js"
+import Book from "../models/bookModel.js"
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -35,6 +35,22 @@ export const getUserById = async (req, res) => {
         res.status(500).json({ status: "Fail", message: "Internal server error" });
     }
 };
+
+
+export const getUserBooks = async(req,res) => {
+try {
+    const user = await User.findById(req.params.id).populate("books");
+    res.status(200).json({
+        stauts: 'success',
+        data: user.books });
+    
+} catch(err) {
+    res.status(400).json({
+        status: 'Fail',
+        message: err
+    })
+}
+}
 
 export const updateUser = async (req, res) => {
     res.status(500).json({
