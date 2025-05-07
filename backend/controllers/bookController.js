@@ -20,6 +20,25 @@ export const getAllBooks = async (req, res) => {
   }
 }
 
+export const searchBookByTitle = async (req,res) => {
+    const {bookTitle} = req.body
+    if(!bookTitle) {
+        return res.status(400).json({ status: "Fail", message: "Invalid book title" });
+    }
+    try {
+        const booksByTitle = await Book.find({
+            title: {$regex: bookTitle, $options: 'i'}
+        })
+        res.status(200).json({
+            status: 'success', 
+            books: booksByTitle
+        })
+    } catch(error) {
+        console.error("Error searching books:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 
 export const createBook = async (req,res) => {
     try {

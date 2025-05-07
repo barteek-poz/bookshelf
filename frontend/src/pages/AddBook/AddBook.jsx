@@ -9,6 +9,7 @@ import GenreSelect from '../../components/GenreSelect/GenreSelect';
 import { AuthContext } from '../../context/AuthContext';
 
 const AddBook = () => {
+	const [title, setTitle] = useState('')
 	const [cover, setCover] = useState(null);
 	const [coverPreview, setCoverPreview] = useState(null);
 	const [bookGenre, setBookGenre] = useState('');
@@ -54,7 +55,29 @@ const AddBook = () => {
 			reader.readAsDataURL(coverFile);
 		}
 	};
-
+	const searchTitleHandler = async (bookTitle) => {
+		if(bookTitle.length >= 3) {
+			try {
+				const response = await fetch(`http://localhost:3000/api/v1/books/searchByTitle`, {
+					method: 'POST',
+					headers: {
+						'Content-Type':'application/json',
+						Authorization: `Bearer ${accessToken}`,
+					},
+					credentials: 'include',
+					body: JSON.stringify({bookTitle:bookTitle}),
+				});
+				const data = await response.json();
+				if (response.ok) {
+					console.log(data)
+				} else {
+					alert(`Could not get books: ${data.message}`);
+				}
+			} catch (error) {
+				alert(error);
+			}
+		}
+	}
 	return (
 		<section id='addBook' className={styles.addBookSection}>
 			<Link to='/' className={styles.backBtn}>
@@ -84,6 +107,7 @@ const AddBook = () => {
 						name='title'
 						id='title'
 						className={styles.bookInput}
+						onChange={(e)=>{searchTitleHandler(e.target.value)}}
 					/>
 					<Input
 						placeholder='Author'
