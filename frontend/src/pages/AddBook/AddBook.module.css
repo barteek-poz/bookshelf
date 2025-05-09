@@ -38,6 +38,7 @@
     height: 62rem;
 }
 .bookForm {
+    position: relative;
     width: 50rem;
     max-width: 50rem;
     min-width: 35rem;
@@ -66,3 +67,8 @@
     border-color: #11243a !important;
     background: transparent !important;
 }
+.bookTitleBar {
+    position: relative;
+}
+
+

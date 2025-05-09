@@ -1,27 +1,39 @@
+import styles from './AddBook.module.css';
 import { Button, Input } from 'antd';
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LeftSquareOutlined } from '@ant-design/icons';
 import mongoObjectIdGenerator from '../../helpers/mongoObjectIdGenerator';
-import styles from './AddBook.module.css';
 import BookCoverInput from '../../components/BookCoverInput/BookCoverInput';
 import GenreSelect from '../../components/GenreSelect/GenreSelect';
 import { AuthContext } from '../../context/AuthContext';
+import BookPropositions from '../../components/BookPropositions/BookPropositions';
 
 const AddBook = () => {
-	const [title, setTitle] = useState('')
+	const [inputData, setInputData] = useState({
+		title: '', 
+		author: '', 
+		publishYear: '',
+		genre: '',
+		coverUrl: ''
+	})
+	const [existingBooks, setExistingBooks] = useState([])
+	const [searchedTitle, setSearchedTitle] = useState(null)
 	const [cover, setCover] = useState(null);
 	const [coverPreview, setCoverPreview] = useState(null);
-	const [bookGenre, setBookGenre] = useState('');
 	const { accessToken, user, setUserWasUpdated } = useContext(AuthContext);
 	const navigate = useNavigate();
 
+	const addExistingBookHandler = async (e) => {
+		e.preventDefault();
+		console.log(user)
+	}
 	const addBookHandler = async (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 		const newBookId = mongoObjectIdGenerator();
 		formData.append('id', newBookId);
-		formData.append('genre', bookGenre);
+		formData.append('genre', inputData.genre);
 		if (cover) {
 			formData.append('bookCover', cover);
 		}
@@ -69,7 +81,8 @@ const AddBook = () => {
 				});
 				const data = await response.json();
 				if (response.ok) {
-					console.log(data)
+					setExistingBooks(data.books)
+					console.log(data.books)
 				} else {
 					alert(`Could not get books: ${data.message}`);
 				}
@@ -77,7 +90,22 @@ const AddBook = () => {
 				alert(error);
 			}
 		}
+		else if(bookTitle.length < 3){
+			setExistingBooks([])
+		}
 	}
+	const previewExistingBookHandler = (book) => {
+        setSearchedTitle(book)
+		setInputData({
+			title: book.title,
+			author: book.author,
+			publishYear: book.publishYear, 
+			genre: book.genre,
+			coverUrl: book.coverUrl
+		})
+		setCoverPreview(book.coverUrl)
+		setExistingBooks([])
+    }
 	return (
 		<section id='addBook' className={styles.addBookSection}>
 			<Link to='/' className={styles.backBtn}>
@@ -99,22 +127,37 @@ const AddBook = () => {
 				</div>
 				<form
 					className={styles.bookForm}
-					onSubmit={addBookHandler}
+					onSubmit={(e) => {
+						if(searchedTitle) {
+							addExistingBookHandler(e)
+						} else {
+							addBookHandler(e)
+						}
+					}}
 					encType='multipart/form-data'>
+					<div className={styles.bookTitleBar}>
 					<Input
 						placeholder='Book title'
 						type='text'
 						name='title'
 						id='title'
 						className={styles.bookInput}
-						onChange={(e)=>{searchTitleHandler(e.target.value)}}
+						value={inputData.title}
+						onChange={(e)=>{
+							setInputData(prev => ({...prev, title:e.target.value}))
+							searchTitleHandler(e.target.value)
+						}}
 					/>
+					{existingBooks.length >=1 && <BookPropositions existingBooks={existingBooks} previewExistingBookHandler={previewExistingBookHandler}/>}
+					</div>
 					<Input
 						placeholder='Author'
 						type='text'
 						name='author'
 						id='author'
 						className={styles.bookInput}
+						value={inputData.author}
+						onChange={(e)=>{setInputData(prev => ({...prev,author:e.target.value}))}}
 					/>
 					<Input
 						placeholder='Publish year'
@@ -122,8 +165,10 @@ const AddBook = () => {
 						name='publishYear'
 						id='publishYear'
 						className={styles.bookInput}
+						value={inputData.publishYear}
+						onChange={(e)=>{setInputData(prev => ({...prev, publishYear:e.target.value}))}}
 					/>
-					<GenreSelect setBookGenre={setBookGenre} />
+					<GenreSelect setInputData={setInputData} value={inputData.genre} />
 					<div className={styles.formButtons}>
 						<Button className={styles.formBtn} htmlType='submit'>
 							Save

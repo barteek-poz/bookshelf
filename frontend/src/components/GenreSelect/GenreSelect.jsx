@@ -2,7 +2,7 @@ import { ConfigProvider, Select } from 'antd';
 import useFetch from '../../hooks/useFetch';
 import upperFirstLetter from '../../helpers/upperFirstLetter';
 
-const GenreSelect = ({defaultValue, setBookGenre}) => {
+const GenreSelect = ({value, defaultValue, setInputData}) => {
     const {data: genresData, error, isPending} = useFetch('http://localhost:3000/api/v1/genres')
     const genresCapitalized = genresData?.map(genre => {
         return {...genre, label:upperFirstLetter(genre.label)}
@@ -16,7 +16,7 @@ const GenreSelect = ({defaultValue, setBookGenre}) => {
                 }
             }
         }}>
-        {genresData && <Select defaultValue={defaultValue || null} onChange={e => setBookGenre(e)} showSearch placeholder={defaultValue ? "" : 'Select genre'} options={genresCapitalized} name='genre' id='genre'/>}
+        {genresData && <Select defaultValue={defaultValue || null} value={value} onChange={(e)=>{setInputData(prev => ({...prev, genre: e}))}} showSearch placeholder={value.length > 0 ? value : 'Select genre'} options={genresCapitalized} name='genre' id='genre'/>}
         </ConfigProvider>
     )
 }
