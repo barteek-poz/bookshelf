@@ -28,7 +28,6 @@ export const getUserById = async (req, res) => {
         if (!user) {
             return res.status(404).json({ status: "Fail", message: "User not found" });
         }
-
         res.status(200).json({ status: "Success", data: user });
     } catch (err) {
         console.error("Failed to search user:", err);
@@ -36,6 +35,31 @@ export const getUserById = async (req, res) => {
     }
 };
 
+export const addUserBook = async(req,res) => {
+    try {
+        const {bookId} = req.body
+        const {id:userId} = req.params
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ status: "Fail", message: "Invalid user ID" });
+        }
+        else if (!mongoose.Types.ObjectId.isValid(bookId)) {
+            return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
+        }
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ status: "Fail", message: "User not found" });
+        }
+        if(user.books.includes(bookId)) {
+            return res.status(400).json({ status: "Fail", message: "You already have this book in your Bookshelf." });
+        }
+        user.books.push(bookId)
+        await user.save({ validateBeforeSave: false })
+        res.status(200).json({ status: "success"});
+    } catch (error) {
+        console.error("Failed to add book:", error);
+        res.status(400).json({ status: "Fail", message: "Failed to add book" });
+    }
+}
 
 export const getUserBooks = async(req,res) => {
 try {

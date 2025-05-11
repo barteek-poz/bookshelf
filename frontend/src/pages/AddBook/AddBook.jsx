@@ -11,14 +11,14 @@ import BookPropositions from '../../components/BookPropositions/BookPropositions
 
 const AddBook = () => {
 	const [inputData, setInputData] = useState({
-		title: '', 
-		author: '', 
+		title: '',
+		author: '',
 		publishYear: '',
 		genre: '',
-		coverUrl: ''
-	})
-	const [existingBooks, setExistingBooks] = useState([])
-	const [searchedTitle, setSearchedTitle] = useState(null)
+		coverUrl: '',
+	});
+	const [existingBooks, setExistingBooks] = useState([]);
+	const [searchedTitle, setSearchedTitle] = useState(null);
 	const [cover, setCover] = useState(null);
 	const [coverPreview, setCoverPreview] = useState(null);
 	const { accessToken, user, setUserWasUpdated } = useContext(AuthContext);
@@ -26,8 +26,29 @@ const AddBook = () => {
 
 	const addExistingBookHandler = async (e) => {
 		e.preventDefault();
-		console.log(user)
-	}
+		try {
+			const response = await fetch(
+				`http://localhost:3000/api/v1/users/${user._id}/add-book`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${accessToken}`,
+					},
+					credentials: 'include',
+					body: JSON.stringify({bookId:searchedTitle._id}),
+				}
+			);
+			const data = await response.json();
+			if (response.ok) {
+				navigate(`/`);
+			} else {
+				alert(`Could not add book: ${data.message}`);
+			}
+		} catch (error) {
+			alert(error);
+		}
+	};
 	const addBookHandler = async (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
@@ -68,44 +89,46 @@ const AddBook = () => {
 		}
 	};
 	const searchTitleHandler = async (bookTitle) => {
-		if(bookTitle.length >= 3) {
+		if (bookTitle.length >= 3) {
 			try {
-				const response = await fetch(`http://localhost:3000/api/v1/books/searchByTitle`, {
-					method: 'POST',
-					headers: {
-						'Content-Type':'application/json',
-						Authorization: `Bearer ${accessToken}`,
-					},
-					credentials: 'include',
-					body: JSON.stringify({bookTitle:bookTitle}),
-				});
+				const response = await fetch(
+					`http://localhost:3000/api/v1/books/search-by-title`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: `Bearer ${accessToken}`,
+						},
+						credentials: 'include',
+						body: JSON.stringify({ bookTitle: bookTitle }),
+					}
+				);
 				const data = await response.json();
 				if (response.ok) {
-					setExistingBooks(data.books)
-					console.log(data.books)
+					setExistingBooks(data.books);
+					console.log(data.books);
 				} else {
 					alert(`Could not get books: ${data.message}`);
 				}
 			} catch (error) {
 				alert(error);
 			}
+		} else if (bookTitle.length < 3) {
+			setExistingBooks([]);
 		}
-		else if(bookTitle.length < 3){
-			setExistingBooks([])
-		}
-	}
+	};
 	const previewExistingBookHandler = (book) => {
-        setSearchedTitle(book)
+		setSearchedTitle(book);
 		setInputData({
 			title: book.title,
 			author: book.author,
-			publishYear: book.publishYear, 
+			publishYear: book.publishYear,
 			genre: book.genre,
-			coverUrl: book.coverUrl
-		})
-		setCoverPreview(book.coverUrl)
-		setExistingBooks([])
-    }
+			coverUrl: book.coverUrl,
+		});
+		setCoverPreview(book.coverUrl);
+		setExistingBooks([]);
+	};
 	return (
 		<section id='addBook' className={styles.addBookSection}>
 			<Link to='/' className={styles.backBtn}>
@@ -128,27 +151,32 @@ const AddBook = () => {
 				<form
 					className={styles.bookForm}
 					onSubmit={(e) => {
-						if(searchedTitle) {
-							addExistingBookHandler(e)
+						if (searchedTitle) {
+							addExistingBookHandler(e);
 						} else {
-							addBookHandler(e)
+							addBookHandler(e);
 						}
 					}}
 					encType='multipart/form-data'>
 					<div className={styles.bookTitleBar}>
-					<Input
-						placeholder='Book title'
-						type='text'
-						name='title'
-						id='title'
-						className={styles.bookInput}
-						value={inputData.title}
-						onChange={(e)=>{
-							setInputData(prev => ({...prev, title:e.target.value}))
-							searchTitleHandler(e.target.value)
-						}}
-					/>
-					{existingBooks.length >=1 && <BookPropositions existingBooks={existingBooks} previewExistingBookHandler={previewExistingBookHandler}/>}
+						<Input
+							placeholder='Book title'
+							type='text'
+							name='title'
+							id='title'
+							className={styles.bookInput}
+							value={inputData.title}
+							onChange={(e) => {
+								setInputData((prev) => ({ ...prev, title: e.target.value }));
+								searchTitleHandler(e.target.value);
+							}}
+						/>
+						{existingBooks.length >= 1 && (
+							<BookPropositions
+								existingBooks={existingBooks}
+								previewExistingBookHandler={previewExistingBookHandler}
+							/>
+						)}
 					</div>
 					<Input
 						placeholder='Author'
@@ -157,7 +185,9 @@ const AddBook = () => {
 						id='author'
 						className={styles.bookInput}
 						value={inputData.author}
-						onChange={(e)=>{setInputData(prev => ({...prev,author:e.target.value}))}}
+						onChange={(e) => {
+							setInputData((prev) => ({ ...prev, author: e.target.value }));
+						}}
 					/>
 					<Input
 						placeholder='Publish year'
@@ -166,7 +196,12 @@ const AddBook = () => {
 						id='publishYear'
 						className={styles.bookInput}
 						value={inputData.publishYear}
-						onChange={(e)=>{setInputData(prev => ({...prev, publishYear:e.target.value}))}}
+						onChange={(e) => {
+							setInputData((prev) => ({
+								...prev,
+								publishYear: e.target.value,
+							}));
+						}}
 					/>
 					<GenreSelect setInputData={setInputData} value={inputData.genre} />
 					<div className={styles.formButtons}>
