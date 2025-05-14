@@ -17,7 +17,7 @@ const BookPage = () => {
 
   const deleteBookHandler = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}`, {
+      const response = await fetch(`http://localhost:3000/api/v1/users/books/${bookId}`, {
         method: "DELETE",
         credentials: 'include',
         headers: {

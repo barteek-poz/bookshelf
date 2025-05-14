@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "antd";
 import { useContext, useState, useEffect, useMemo } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import shelfImg from '../../assets/shelf.png'
 
 const Dashboard = () => {
   const [books, setBooks] = useState(null);
@@ -17,7 +18,7 @@ const Dashboard = () => {
     setIsPending(true);
     try {
       const response = await fetch(`http://localhost:3000/api/v1/users/${user._id}/books`, {
-        method: "POST",
+        method: "GET",
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -63,6 +64,7 @@ const Dashboard = () => {
               <h2>No books found</h2>
             )}
           </div>
+          <img class={styles.shelf} src={shelfImg}/>
           {error && <h2>Failed to load books</h2>}
         </>
       )}

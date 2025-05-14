@@ -61,6 +61,24 @@ export const addUserBook = async(req,res) => {
     }
 }
 
+export const deleteUserBook = async (req,res) => {
+    try{
+        const user = req.user
+        const {bookId} = req.params
+        if (!mongoose.Types.ObjectId.isValid(bookId)) {
+            return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
+        }
+        const updatedBooksArr = user.books.filter(arrBookId => arrBookId.toString() !== bookId )
+        user.books = updatedBooksArr
+        await user.save({validateBeforeSave: false})
+        res.status(200).json({status:'sucess'})
+    }catch(error) {
+        console.error("Failed to delete book:", error);
+        res.status(400).json({ status: "Fail", message: "Failed to delete book" });
+    }
+  
+}
+
 export const getUserBooks = async(req,res) => {
 try {
     const user = await User.findById(req.params.id).populate("books");
