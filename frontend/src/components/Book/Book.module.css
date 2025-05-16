@@ -12,6 +12,7 @@
     background-position: center;
     transition: .3s;
     color: #000;
+    z-index: 2;
 }
 .book:hover {
     transform: scale(1.02);

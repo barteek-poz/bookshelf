@@ -1,0 +1,12 @@
+.shelfRow {
+    position: relative;
+	display: flex;
+    gap: 1rem;
+    margin-bottom: 120px;
+}
+
+.shelfImg {
+    position: absolute;
+    width: 100%;
+    bottom: -100px;
+}
