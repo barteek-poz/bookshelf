@@ -9,8 +9,8 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f9f9f6;
+  font-family: "Inter", sans-serif;
+  background: #e2ceb1;
   color: #11243a;
 }
 
@@ -31,7 +31,7 @@ h4 {
 }
 
 a {
-  color: #12355B;;
+  color: #12355b;
   text-decoration: none;
   cursor: pointer;
 }
