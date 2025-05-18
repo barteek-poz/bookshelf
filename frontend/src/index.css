@@ -9,13 +9,13 @@ html {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Fira Sans", sans-serif;
   background: #e2ceb1;
-  color: #11243a;
+  color: #391e10;
 }
 
 h1 {
-  font-size: 3.2rem;
+  font-size: 3.6rem;
 }
 
 h2 {

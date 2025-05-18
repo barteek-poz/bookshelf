@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
 import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import Menu from "./components/Menu/Menu";
 
 const router = createBrowserRouter([
   {

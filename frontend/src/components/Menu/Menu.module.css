@@ -1,0 +1,26 @@
+.navWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4rem;
+    width: 25%;
+    background-color: #eee1d0;
+    padding: 4rem;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 4rem;
+    font-size: 2.4rem;
+}
+
+.navigation a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
