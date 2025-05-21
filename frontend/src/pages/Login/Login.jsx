@@ -1,3 +1,4 @@
+import styles from "./Login.module.css"
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -36,8 +37,8 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", paddingTop: "4rem" }}>
-     
+    <div className={styles.loginWrapper}>
+     <h1 className={styles.loginHeader}>Bookshelf</h1>
       {error && <Alert message={error} type="error" showIcon closable />}
       <Form
         layout="vertical"
@@ -61,9 +62,9 @@ const Login = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
+          <button type="primary" htmlType="submit" block className={styles.loginBtn}>
             Login
-          </Button>
+          </button>
         </Form.Item>
       </Form>
     </div>

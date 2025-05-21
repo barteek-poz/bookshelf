@@ -10,20 +10,23 @@ const Dashboard = () => {
   const [books, setBooks] = useState(null);
   const [error, setError] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const { setIsAuthenticated, user, accessToken} = useContext(AuthContext);
+  const { setIsAuthenticated, user, accessToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const userBooksLoader = async () => {
     setIsPending(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/users/${user._id}/books`, {
-        method: "GET",
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/v1/users/${user._id}/books`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) throw new Error(response.statusText);
       const jsonData = await response.json();
@@ -38,19 +41,14 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-        userBooksLoader();      
+    userBooksLoader();
   }, []);
 
-  
   return (
-    <section id='dashboard' className={styles.dashboard}>
+    <section id="dashboard" className={styles.dashboard}>
       {isPending && <Loader />}
-      {!isPending && <Link to='/books/add'><Button className={styles.addBtn}>Add book</Button></Link>}
-      
-          {books?.length > 0 && <BookRow books={books}/>}
-          {error && <h2>Failed to load books</h2>}
-
-
+      {books?.length > 0 && <BookRow books={books} />}
+      {error && <h2>Failed to load books</h2>}
     </section>
   );
 };

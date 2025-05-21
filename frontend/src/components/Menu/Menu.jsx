@@ -5,6 +5,8 @@ import { Button } from "antd";
 import { AuthContext } from "../../context/AuthContext";
 import bookIcon from '../../../public/book-icon.svg'
 import searchIcon from '../../../public/search-icon.svg'
+import addBookIcon from '../../../public/add-book-icon.svg'
+import logoutIcon from '../../../public/logout-icon.svg'
 
 const Menu = () => {
   const { setIsAuthenticated, user, setUser } = useContext(AuthContext);
@@ -34,9 +36,9 @@ const Menu = () => {
       <nav className={styles.navigation}>
         <Link to="/"><img src={bookIcon}/>Library</Link>
         <Link to="/"><img src={searchIcon}/>Search</Link>
-        <Link to="/books/add">Add book</Link>
+        <Link to="/books/add"><img src={addBookIcon}/>Add book</Link>
         <Link onClick={logoutHandler}>
-          Logout
+        <img src={logoutIcon}/>Logout
         </Link>
       </nav>
     </div>
