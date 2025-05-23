@@ -12,30 +12,16 @@
 .loginBtn {
     width: 200px;
     height: 32px;
-    background: none;
+    background: #391e10;
     box-shadow: none;
-    border: 1px solid #391e10;
+    border: none;
     border-radius: 6px;
     color: #fff;
     font-size: 1.6rem;
-    z-index: 0;
+    transition: .3s;
 }
-.loginBtn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #391e10;
-    width: 200px;
-    height: 32px;
-    border-radius: 6px;
-    z-index: -1;
-    transition: .4s;
-}
-.loginBtn:hover {
-    color: #391e10;
 
-}
-.loginBtn:hover::after {
-    width: 0px;
+.loginBtn:hover {
+    background: #eee1d0;
+    color: #391e10;
 }

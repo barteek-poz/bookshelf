@@ -13,7 +13,7 @@ const AddBook = () => {
 	const [inputData, setInputData] = useState({
 		title: '',
 		author: '',
-		publishYear: '',
+		publishYear: null,
 		genre: '',
 		coverUrl: '',
 	});
@@ -194,6 +194,8 @@ const AddBook = () => {
 						type='number'
 						name='publishYear'
 						id='publishYear'
+						min={1}
+						max={new Date().getFullYear()}
 						className={styles.bookInput}
 						value={inputData.publishYear}
 						onChange={(e) => {
@@ -203,7 +205,7 @@ const AddBook = () => {
 							}));
 						}}
 					/>
-					<GenreSelect setInputData={setInputData} value={inputData.genre} />
+					<GenreSelect setInputData={setInputData} value={inputData.genre} defaultValue="Select genre" />
 					<div className={styles.formButtons}>
 						<Button className={styles.formBtn} htmlType='submit'>
 							Save

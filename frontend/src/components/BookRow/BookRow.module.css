@@ -4,7 +4,8 @@
 .shelfRow {
     position: relative;
 	display: flex;
-    gap: 1rem;
+    justify-content: center;
+    gap: 3rem;
     margin-bottom: 15rem;
 }
 
@@ -12,6 +13,6 @@
     position: absolute;
     height: 150px;
     width: 100%;
-    max-width: 150rem;
+    max-width: 200rem;
     bottom: -10rem;
 }

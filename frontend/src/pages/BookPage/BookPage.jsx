@@ -36,7 +36,6 @@ const BookPage = () => {
   }
   return (
     <section id="bookPage" className={styles.bookPage}>
-      <Link to='/' className={styles.backBtn}><LeftSquareOutlined />Back</Link>
       <div className={styles.bookContent}> 
         {isPending && <Loader />}
         {bookData && (
@@ -55,11 +54,11 @@ const BookPage = () => {
         </div>
         <div className={styles.btns}>
           {bookData && <Link to={`/books/${bookData._id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
-          {bookData && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Delete book</Button>}
+          {bookData && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Remove book from library</Button>}
         </div>
         {error && <h2 className={styles.errorMsg}>Sorry, something went wrong.<br></br>Please check your network connection or try later. </h2>}
         <Modal title='Confirm delete' open={deleteModalOpen} onOk={deleteBookHandler} onCancel={() => setDeleteModalOpen(false)}>
-        <p>Are you sure you want to delete this book?</p>
+        <p>Are you sure you want to remove this book from your library?</p>
         </Modal>
     </section>
   );

@@ -1,16 +1,15 @@
 
 import styles from "./BookRow.module.css";
 import Book from "../Book/Book";
-import shelfImg from "./shelf.png";
+import shelfImg from "../../../public/shelf.png";
 import { useBooksRow } from "../../hooks/useBooksRow";
 
 const BookRow = ({ books }) => {
-  const { booksPerShelf, screenWidth} = useBooksRow();
+  const { booksPerShelf} = useBooksRow();
   const shelves = [];
   for (let i = 0; i < books.length; i += booksPerShelf) {
     shelves.push(books.slice(i, i + booksPerShelf));
   }
-  console.log(booksPerShelf, screenWidth)
   return (
     <div className={styles.shelfWrapper}>
       {shelves.map((shelf, idx) => (

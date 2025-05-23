@@ -3,8 +3,6 @@ import supabase from "../config/supabase.js"
 
 const supabaseUploadHandler = async (bookId, req,res) => {
     try {
-        console.log(bookId, req);
-        
         const coverID = uuidv4();
         const {data, error} = await supabase
         .storage

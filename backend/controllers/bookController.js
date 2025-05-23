@@ -96,15 +96,19 @@ export const updateBook = async (req, res) => {
     try {
         const { id:bookId } = req.params;
         const { title, author, genre, publishYear } = req.body; 
-
         let updateFields = { title, author, genre, publishYear };
-        
         if (req.file) {
             const bookData = await Book.findById(bookId)
-            const oldCover = bookData.coverUrl.split('/').pop()
+            let oldCover = null
+            if(bookData.coverUrl !== null) {
+               oldCover = bookData.coverUrl.split('/').pop()
+            }
+            console.log(oldCover)
             const publicUrl = await supabaseUploadHandler(bookId, req, res)
             updateFields.coverUrl = publicUrl.publicUrl;
-            await supabaseDelete(bookId, oldCover)
+            if(oldCover !== null) {
+                await supabaseDelete(bookId, oldCover)
+            }
         }
         const book = await Book.findByIdAndUpdate(bookId, updateFields, {
             new: true, 

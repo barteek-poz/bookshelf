@@ -1,5 +1,5 @@
 import { LeftSquareOutlined } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Button, Input, InputNumber } from 'antd';
 import { useContext, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import BookCoverInput from '../../components/BookCoverInput/BookCoverInput';
@@ -24,7 +24,7 @@ const EditBook = () => {
       const formData = new FormData(e.target);  
       const appendData = {
         bookCover: cover,
-        genre: bookGenre
+        genre: bookGenre.genre
       };
       for (const [key, value] of Object.entries(appendData)) {
         if (value) {
@@ -74,8 +74,8 @@ const EditBook = () => {
                 {bookData && <form className={styles.bookForm} onSubmit={updateBookHandler} encType="multipart/form-data">
                     <Input defaultValue={bookData.title} placeholder='Book title' type='text' name='title' id='title' className={styles.bookInput}/>
                     <Input defaultValue={bookData.author} placeholder='Author' type='text' name='author' id='author' className={styles.bookInput}/>
-                    <Input defaultValue={bookData.publishYear} placeholder='Publish year' type='number' name='publishYear' id='publishYear' className={styles.bookInput}/>
-                    <GenreSelect defaultValue={bookData.genre} setBookGenre={setBookGenre}/>
+                    <InputNumber defaultValue={bookData.publishYear} placeholder='Publish year' type='number' name='publishYear' id='publishYear' className={styles.bookInput} min={1} max={new Date().getFullYear()} controls={false}/>
+                    <GenreSelect defaultValue={bookData.genre} setInputData={setBookGenre}/>
                     <div className={styles.formButtons}>
                     <Button className={styles.formBtn} htmlType='submit'>Save</Button>
                     <Link to={`/books/${bookId}`}><Button className={styles.formBtn}>Cancel</Button></Link>
