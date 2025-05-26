@@ -35,7 +35,7 @@ const Menu = () => {
       <h1 className={styles.logo}>Bookshelf</h1>
       <nav className={styles.navigation}>
         <Link to="/"><img src={bookIcon}/>Library</Link>
-        <Link to="/"><img src={searchIcon}/>Search</Link>
+        <Link to="/books/search"><img src={searchIcon}/>Search</Link>
         <Link to="/books/add"><img src={addBookIcon}/>Add book</Link>
         <Link onClick={logoutHandler}>
         <img src={logoutIcon}/>Logout

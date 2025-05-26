@@ -12,6 +12,7 @@ import Login from "./pages/Login/Login";
 import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import Menu from "./components/Menu/Menu";
+import SearchPage from "./pages/SearchPage/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: "books/:id", element: <ProtectedRoute><BookPage /></ProtectedRoute> },
       { path: "books/:id/edit", element: <ProtectedRoute><EditBook /></ProtectedRoute> },
       { path: "books/add", element: <ProtectedRoute><AddBook /></ProtectedRoute> },
+      { path: "books/search", element: <ProtectedRoute><SearchPage /></ProtectedRoute> },
     ],
   },
 ]);

@@ -1,4 +1,5 @@
 .mainLayout {
+    min-height: 100vh;
     height: fit-content;
     display: flex;
 }

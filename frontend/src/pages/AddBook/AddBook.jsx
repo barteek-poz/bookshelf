@@ -21,7 +21,7 @@ const AddBook = () => {
 	const [searchedTitle, setSearchedTitle] = useState(null);
 	const [cover, setCover] = useState(null);
 	const [coverPreview, setCoverPreview] = useState(null);
-	const { accessToken, user, setUserWasUpdated } = useContext(AuthContext);
+	const { accessToken, user } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	const addExistingBookHandler = async (e) => {

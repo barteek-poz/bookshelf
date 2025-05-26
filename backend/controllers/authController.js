@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
+import Book from '../models/bookModel.js';
 
 const signAccessToken = (userId) => {
 	return jwt.sign({ id: userId }, process.env.JWT_ACCESS_SECRET, {
@@ -104,37 +105,6 @@ export const refreshAccessToken = async (req, res) => {
 			.status(403)
 			.json({ message: 'Invalid or expired refresh token' });
 	}
-};
-
-export const isAuth = async (req, res, next) => {
-	let token;
-	if (
-		req.headers.authorization &&
-		req.headers.authorization.startsWith('Bearer ')
-	) {
-		token = req.headers.authorization.split(' ')[1];
-	}
-	if (!token) {
-		return res
-			.status(401)
-			.json({ message: 'You are not logged in. Please log in to get access' });
-	}
-	const verifiedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-	const currentUser = await User.findById(verifiedToken.id);
-	if (!currentUser) {
-		return res
-			.status(401)
-			.json({
-				message: 'The user belonging to this token does no longer exist',
-			});
-	}
-	if (currentUser.changedPasswordAfter(verifiedToken.iat)) {
-		return res
-			.status(401)
-			.json({ message: 'User recently changed password. Please log again.' });
-	}
-	req.user = currentUser;
-	next();
 };
 
 export const logout = async (req, res) => {

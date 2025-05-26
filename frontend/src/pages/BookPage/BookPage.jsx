@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
  import { LeftSquareOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import { Link, useNavigate, useParams } from "react-router";
@@ -9,10 +9,11 @@ import upperFirstLetter from '../../helpers/upperFirstLetter';
 import { AuthContext } from '../../context/AuthContext';
 
 const BookPage = () => {
+  const [canUserEdit, setCanUserEdit] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const bookId = useParams().id;
   const navigate = useNavigate()
-  const {accessToken} = useContext(AuthContext)
+  const {user, accessToken} = useContext(AuthContext)
   const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`,"GET");
 
   const deleteBookHandler = async () => {
@@ -34,6 +35,11 @@ const BookPage = () => {
       console.log(error)
     }
   }
+  useEffect(()=>{
+  if(bookData?.createdBy.toString() === user._id) {
+    setCanUserEdit(true)
+  }
+  },[bookData, user])
   return (
     <section id="bookPage" className={styles.bookPage}>
       <div className={styles.bookContent}> 
@@ -53,7 +59,7 @@ const BookPage = () => {
         )}
         </div>
         <div className={styles.btns}>
-          {bookData && <Link to={`/books/${bookData._id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
+          {canUserEdit && <Link to={`/books/${bookData._id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
           {bookData && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Remove book from library</Button>}
         </div>
         {error && <h2 className={styles.errorMsg}>Sorry, something went wrong.<br></br>Please check your network connection or try later. </h2>}

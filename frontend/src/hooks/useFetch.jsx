@@ -19,6 +19,10 @@ const useFetch = (url, reqMethod, reqBody, additionalDep) => {
 					},
 				});
 				if (!response.ok) {
+					setError({
+						message:response.statusText,
+						code: response.status
+					})
 					throw new Error(response.statusText);
 				}
 				const jsonData = await response.json();
@@ -26,12 +30,12 @@ const useFetch = (url, reqMethod, reqBody, additionalDep) => {
 				setData(jsonData.data);
 				setError(null);
 			} catch (err) {
-				setError(`Could not fetch data: ${err}`);
+				console.log(err)
 				setIsPending(false);
 			}
 		};
 		fetchData();
-	}, [url, additionalDep]);
+	}, [url, additionalDep, accessToken, reqBody, reqMethod]);
 	return { data, error, isPending };
 };
 

@@ -7,7 +7,11 @@
     width: 25%;
     max-width: 40rem;
     background-color: #eee1d0;
-    padding: 4rem;
+    padding: 3rem;
+}
+
+.logo {
+    padding-left: 10px;
 }
 
 .navigation {
@@ -21,8 +25,17 @@
 }
 
 .navigation a {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    transition: .3s;
+}
+
+.navigation a:hover {
+    margin-left: 10px;
+    background: #fff;
 }

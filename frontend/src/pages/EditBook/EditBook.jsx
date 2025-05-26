@@ -1,6 +1,6 @@
 import { LeftSquareOutlined } from '@ant-design/icons';
 import { Button, Input, InputNumber } from 'antd';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import BookCoverInput from '../../components/BookCoverInput/BookCoverInput';
 import GenreSelect from '../../components/GenreSelect/GenreSelect';
@@ -17,7 +17,7 @@ const EditBook = () => {
     const {accessToken} = useContext(AuthContext)
     const navigate = useNavigate()
     const bookId = useParams().id
-    const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
+    const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}/edit`);
 
     const updateBookHandler = async (e) => {
       e.preventDefault();
@@ -32,7 +32,7 @@ const EditBook = () => {
         }
       }
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}`, {
+            const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}/edit`, {
               method: "PATCH",
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -50,7 +50,7 @@ const EditBook = () => {
           alert(error);
         }
       };
-
+    
     const coverPreviewHandler = (e) => {
         const coverFile = e.target.files[0]
         if(coverFile) {
@@ -61,9 +61,13 @@ const EditBook = () => {
             reader.readAsDataURL(coverFile)
         }
     }    
+    useEffect(()=>{
+      if(error?.code === 401 || error?.code === 403) {
+        navigate(`/books/${bookId}`)
+      }
+    },[error])
     return (
-        <section id='addBook' className={styles.addBookSection}>
-        <Link to={`/books/${bookId}`} className={styles.backBtn}><LeftSquareOutlined />Back</Link>
+        <section id='editBook' className={styles.editBookSection}>
             <div className={styles.bookContent}>
                 {isPending && <Loader />}
                 {bookData && <div className={styles.bookCoverCont}>
