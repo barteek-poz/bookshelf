@@ -131,10 +131,6 @@ const AddBook = () => {
 	};
 	return (
 		<section id='addBook' className={styles.addBookSection}>
-			<Link to='/' className={styles.backBtn}>
-				<LeftSquareOutlined />
-				Back
-			</Link>
 			<div className={styles.bookContent}>
 				<div className={styles.bookCoverCont}>
 					<img

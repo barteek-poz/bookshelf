@@ -5,70 +5,48 @@ import styles from "./SearchPage.module.css";
 import { Button, Input } from "antd";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
-import BookPropositions from "../../components/BookPropositions/BookPropositions";
+import Loader from "../../components/Loader/Loader";
+import RecentBooks from "../../components/RecentBooks/RecentBooks";
+import SearchResults from "../../components/SearchResults/SearchResults";
 
 const SearchPage = () => {
-    const [inputData, setInputData] = useState({
-		title: '',
-		author: '',
-		publishYear: null,
-		genre: '',
-		coverUrl: '',
-	});
-	const [existingBooks, setExistingBooks] = useState([]);
-	const [searchedTitle, setSearchedTitle] = useState(null);
-	const [cover, setCover] = useState(null);
-	const [coverPreview, setCoverPreview] = useState(null);
-	const { accessToken, user } = useContext(AuthContext);
-	const navigate = useNavigate();
-  const {
-    data: books,
-    error,
-    isPending,
-  } = useFetch(`http://localhost:3000/api/v1/books/get-all`);
- 
+  const [inputData, setInputData] = useState("");
+  const [existingBooks, setExistingBooks] = useState([]);
+  const [searchStatus, setSearchStatus] = useState('');
+  const { accessToken, user } = useContext(AuthContext);
+
   const searchTitleHandler = async (bookTitle) => {
-    if (bookTitle.length >= 3) {
-        try {
-            const response = await fetch(
-                `http://localhost:3000/api/v1/books/search-by-title`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({ bookTitle: bookTitle }),
-                }
-            );
-            const data = await response.json();
-            if (response.ok) {
-                setExistingBooks(data.books);
-                console.log(data.books);
-            } else {
-                alert(`Could not get books: ${data.message}`);
-            }
-        } catch (error) {
-            alert(error);
+    if (bookTitle.length >= 2) {
+        setSearchStatus('search')
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/books/search-by-title`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+            body: JSON.stringify({ bookTitle: bookTitle }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+            setSearchStatus('finish')
+          setExistingBooks(data.books);
+        } else {
+            setSearchStatus('fail')
+          alert(`Could not get books: ${data.message}`);
         }
-    } else if (bookTitle.length < 3) {
-        setExistingBooks([]);
+      } catch (error) {
+        alert(error);
+      }
+    } else if (bookTitle.length < 2) {
+        setSearchStatus('')
+      setExistingBooks([]);
     }
-};
-console.log(existingBooks)
-const previewExistingBookHandler = (book) => {
-    setSearchedTitle(book);
-    setInputData({
-        title: book.title,
-        author: book.author,
-        publishYear: book.publishYear,
-        genre: book.genre,
-        coverUrl: book.coverUrl,
-    });
-    setCoverPreview(book.coverUrl);
-    setExistingBooks([]);
-};
+  };
   return (
     <section id="searchPage" className={styles.searchPage}>
       <div className={styles.searchBarWrapper}>
@@ -77,35 +55,18 @@ const previewExistingBookHandler = (book) => {
           placeholder="Enter the title of the book you are looking for..."
           className={styles.searchBar}
           onChange={(e) => {
-            setInputData((prev) => ({ ...prev, title: e.target.value }));
+            setInputData(e.target.value);
             searchTitleHandler(e.target.value);
-        }}
+          }}
         />
-        {existingBooks.length >= 1 && (
-							<BookPropositions
-								existingBooks={existingBooks}
-								previewExistingBookHandler={previewExistingBookHandler}
-							/>
-						)}
       </div>
-      <div className={styles.recentBooksWrapper}>
-      <h2>Recently added books</h2>
-      <div className={styles.recentBooks}>
-        {books &&
-          books.map((book) => {
-            return (
-              <Book
-                key={book._id}
-                id={book._id}
-                title={book.title}
-                author={book.author}
-                cover={book.coverUrl}
-              />
-            );
-          })}
+      <div className={styles.booksWrapper}>
+        <div>
+            {inputData.length >= 2 ? <h2>Results for "{inputData}"</h2> : <h2>Recently added books</h2>}
+        </div>
+        {existingBooks.length < 1 && inputData.length < 2 ? <RecentBooks /> : null}
+        {existingBooks && <SearchResults existingBooks={existingBooks}/>}
       </div>
-      </div>
-      
     </section>
   );
 };

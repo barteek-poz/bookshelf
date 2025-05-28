@@ -24,7 +24,7 @@ const BookRow = ({ books }) => {
             />
           ))}
 
-          <img src={shelfImg} className={styles.shelfImg} />
+          <img src={shelfImg} alt="shelf-img" className={styles.shelfImg} />
         </div>
       ))}
     </div>

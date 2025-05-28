@@ -16,7 +16,7 @@ const booksRouter = express.Router();
 booksRouter.use(isAuth);
 
 booksRouter.route('/search-by-title').post(searchBookByTitle);
-booksRouter.route('/get-all').get(getRecentBooks);
+booksRouter.route('/get-recent').get(getRecentBooks);
 booksRouter
 	.route('/add')
 	.post(upload.single('bookCover'), coverMiddleware, createBook);

@@ -34,11 +34,11 @@ const Menu = () => {
     <div className={styles.navWrapper}>
       <h1 className={styles.logo}>Bookshelf</h1>
       <nav className={styles.navigation}>
-        <Link to="/"><img src={bookIcon}/>Library</Link>
-        <Link to="/books/search"><img src={searchIcon}/>Search</Link>
-        <Link to="/books/add"><img src={addBookIcon}/>Add book</Link>
+        <Link to="/"><img src={bookIcon} alt="book-icon"/>Library</Link>
+        <Link to="/books/search"><img src={searchIcon} alt="search-icon"/>Search</Link>
+        <Link to="/books/add"><img src={addBookIcon} alt="add-book-icon"/>Add book</Link>
         <Link onClick={logoutHandler}>
-        <img src={logoutIcon}/>Logout
+        <img src={logoutIcon} alt="logout-icon"/>Logout
         </Link>
       </nav>
     </div>

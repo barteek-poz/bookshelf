@@ -15,7 +15,7 @@
   max-width: 100rem;
   height: 5rem;
 }
-.recentBooks {
+.recentBooks, .existingBooks {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
