@@ -2,3 +2,8 @@
     border-color: #11243a !important;
     outline: none; 
 }
+
+:global(.genreSelect .ant-select-selection-item[title='Select genre']) {
+    color: rgba(0, 0, 0, 0.25) !important;
+  }
+  

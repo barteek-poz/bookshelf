@@ -41,3 +41,8 @@ button {
   cursor: pointer;
 }
 
+.genreSelect .ant-select-selection-item[aria-hidden='true'] {
+  color: red !important;
+  font-style: italic;
+  opacity: 0.6;
+}
