@@ -2,13 +2,13 @@ import styles from "./GenreSelect.module.css";
 import { ConfigProvider, Select } from "antd";
 import useFetch from "../../hooks/useFetch";
 import upperFirstLetter from "../../helpers/upperFirstLetter";
+import { Controller } from "react-hook-form";
 
-const GenreSelect = ({ value, defaultValue, setInputData }) => {
+const GenreSelect = ({ defaultValue, control}) => {
   const { data: genresData } = useFetch("http://localhost:3000/api/v1/genres");
   const genresCapitalized = genresData?.map((genre) => {
     return { ...genre, label: upperFirstLetter(genre.label) };
   });
-
   return (
     <ConfigProvider
       theme={{
@@ -20,18 +20,19 @@ const GenreSelect = ({ value, defaultValue, setInputData }) => {
         },
       }}>
       {genresData && (
-        <Select
-          defaultValue={defaultValue || null}
-          value={value || undefined}
-          onChange={(e) => {
-            setInputData((prev) => ({ ...prev, genre: e }));
-          }}
-          showSearch
-          placeholder="Select genre"
-          options={genresCapitalized}
+        <Controller
           name="genre"
-          id="genre"
-          className="genreSelect"
+          control={control}
+          defaultValue={defaultValue}
+          render={({ field }) => (
+            <Select
+              {...field}
+              placeholder="Select genre"
+              options={genresCapitalized}
+              className="genreSelect"
+              onChange={(value) => field.onChange(value)}
+            />
+          )}
         />
       )}
     </ConfigProvider>

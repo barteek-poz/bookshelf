@@ -1,5 +1,5 @@
 import styles from "./AddBook.module.css";
-import { Button, Input } from "antd";
+import { Button, Input, InputNumber } from "antd";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LeftSquareOutlined } from "@ant-design/icons";
@@ -24,21 +24,17 @@ const AddBook = () => {
   const [coverPreview, setCoverPreview] = useState(null);
   const { accessToken, user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-	control,
-    formState: { errors },
-  } = useForm({defaultValues:{
-	title: "",
-    author: "",
-    publishYear: null,
-    genre: "",
-    coverUrl: "",
-  }});
+  const {reset,handleSubmit,control,formState: { errors }} = useForm({
+    defaultValues: {
+      title: "",
+      author: "",
+      publishYear: null,
+      genre: null,
+      coverUrl: "",
+    },
+  });
 
-  const addExistingBookHandler = async (e) => {
-    e.preventDefault();
+  const addExistingBookHandler = async () => {
     try {
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${user._id}/add-book`,
@@ -62,12 +58,14 @@ const AddBook = () => {
       alert(error);
     }
   };
-  const addBookHandler = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+
+  const addBookHandler = async (data) => {
+    const formData = new FormData();
+	Object.entries(data).forEach(([key, value]) => {
+		formData.append(key, value);
+	  });
     const newBookId = mongoObjectIdGenerator();
     formData.append("id", newBookId);
-    formData.append("genre", inputData.genre);
     if (cover) {
       formData.append("bookCover", cover);
     }
@@ -119,7 +117,6 @@ const AddBook = () => {
         const data = await response.json();
         if (response.ok) {
           setExistingBooks(data.books);
-          console.log(data.books);
         } else {
           alert(`Could not get books: ${data.message}`);
         }
@@ -132,17 +129,16 @@ const AddBook = () => {
   };
   const previewExistingBookHandler = (book) => {
     setSearchedTitle(book);
-    setInputData({
-      title: book.title,
-      author: book.author,
-      publishYear: book.publishYear,
-      genre: book.genre,
-      coverUrl: book.coverUrl,
-    });
+	reset({
+		title: book.title,
+		author: book.author,
+		publishYear: book.publishYear,
+		genre: book.genre,
+		coverUrl: book.coverUrl,
+	})
     setCoverPreview(book.coverUrl);
     setExistingBooks([]);
   };
-  console.log(errors)
   return (
     <section id="addBook" className={styles.addBookSection}>
       <div className={styles.bookContent}>
@@ -160,11 +156,11 @@ const AddBook = () => {
         </div>
         <form
           className={styles.bookForm}
-          onSubmit={handleSubmit((e) => {
+          onSubmit={handleSubmit((data) => {
             if (searchedTitle) {
-              addExistingBookHandler(e);
+              addExistingBookHandler();
             } else {
-              addBookHandler(e);
+              addBookHandler(data);
             }
           })}
           encType="multipart/form-data">
@@ -173,7 +169,7 @@ const AddBook = () => {
               name="title"
               control={control}
               defaultValue=""
-			  rules={{ required: 'Title is required' }}
+              rules={{ required: "Title is required" }}
               render={({ field }) => (
                 <Input
                   {...field}
@@ -193,37 +189,38 @@ const AddBook = () => {
               />
             )}
           </div>
-          <Input
-            placeholder="Author"
-            type="text"
+          <Controller
             name="author"
-            id="author"
-            className={styles.bookInput}
-            value={inputData.author}
-            onChange={(e) => {
-              setInputData((prev) => ({ ...prev, author: e.target.value }));
-            }}
+            control={control}
+            defaultValue=""
+            rules={{ required: "Author is required" }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Author"
+                className={styles.bookInput}
+                onChange={(e) => field.onChange(e)}
+              />
+            )}
           />
-          <Input
-            placeholder="Publish year"
-            type="number"
+          <Controller
             name="publishYear"
-            id="publishYear"
-            min={1}
-            max={new Date().getFullYear()}
-            className={styles.bookInput}
-            value={inputData.publishYear}
-            onChange={(e) => {
-              setInputData((prev) => ({
-                ...prev,
-                publishYear: e.target.value,
-              }));
-            }}
+            control={control}
+            defaultValue={null}
+            render={({ field }) => (
+              <InputNumber
+				{...field}
+                placeholder="Publish year"
+                min={1}
+                max={new Date().getFullYear()}
+                className={styles.bookInput}
+                onChange={(e) => field.onChange(e)}
+              />
+            )}
           />
           <GenreSelect
-            setInputData={setInputData}
-            value={inputData.genre}
-            defaultValue="Select genre"
+            control={control}
+            defaultValue={null}
           />
           <div className={styles.formButtons}>
             <Button className={styles.formBtn} htmlType="submit">
