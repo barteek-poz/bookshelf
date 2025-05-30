@@ -1,0 +1,35 @@
+.tooltipContainer {
+    display: inline-block;
+  }
+  
+  .tooltipBox {
+    position: absolute;
+    min-width: 18rem;
+    top: 39px;
+    left: 0%;
+    background-color: white;
+    border: 1px solid #ff0000cc;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .message {
+    color: #ff0000cc;
+    font-size: 14px;
+  }
+  
+  .arrow {
+    position: absolute;
+    top: -28%;
+    left: 2%;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ff0000cc;
+  }
+  

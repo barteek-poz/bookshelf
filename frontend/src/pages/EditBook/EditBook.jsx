@@ -1,94 +1,184 @@
-import { LeftSquareOutlined } from '@ant-design/icons';
-import { Button, Input, InputNumber } from 'antd';
-import { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import BookCoverInput from '../../components/BookCoverInput/BookCoverInput';
-import GenreSelect from '../../components/GenreSelect/GenreSelect';
-import Loader from '../../components/Loader/Loader';
-import useFetch from '../../hooks/useFetch';
-import styles from './EditBook.module.css';
-import { AuthContext } from '../../context/AuthContext';
-
+import { Button, Input, InputNumber } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
+import GenreSelect from "../../components/GenreSelect/GenreSelect";
+import Loader from "../../components/Loader/Loader";
+import useFetch from "../../hooks/useFetch";
+import styles from "./EditBook.module.css";
+import { AuthContext } from "../../context/AuthContext";
+import { useForm, Controller } from "react-hook-form";
 
 const EditBook = () => {
-    const [cover, setCover] = useState(null)
-    const [coverPreview, setCoverPreview] = useState(null)
-    const [bookGenre, setBookGenre] = useState("")
-    const {accessToken} = useContext(AuthContext)
-    const navigate = useNavigate()
-    const bookId = useParams().id
-    const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}/edit`);
+  const [cover, setCover] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const { accessToken } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const bookId = useParams().id;
+  const {
+    data: bookData,
+    error,
+    isPending,
+  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}/edit`);
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
 
-    const updateBookHandler = async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);  
-      const appendData = {
-        bookCover: cover,
-        genre: bookGenre.genre
-      };
-      for (const [key, value] of Object.entries(appendData)) {
-        if (value) {
-          formData.append(key, value);
-        }
+  const updateBookHandler = async (data) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+      });
+      if (cover) {
+        formData.append("bookCover", cover);
       }
-        try {
-            const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}/edit`, {
-              method: "PATCH",
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-              credentials: 'include',
-              body: formData,
-            });
-            const data = await response.json();
-            if (response.ok) {
-              navigate(`/books/${bookId}`)
-            } else {
-              alert("Could not update the book cover", data.error);
-            }
-        } catch (error) {
-          alert(error);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/books/${bookId}/edit`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+          body: formData,
         }
-      };
-    
-    const coverPreviewHandler = (e) => {
-        const coverFile = e.target.files[0]
-        if(coverFile) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setCoverPreview(reader.result)
-            }
-            reader.readAsDataURL(coverFile)
-        }
-    }    
-    useEffect(()=>{
-      if(error?.code === 401 || error?.code === 403) {
-        navigate(`/books/${bookId}`)
+      );
+      const data = await response.json();
+      if (response.ok) {
+        navigate(`/books/${bookId}`);
+      } else {
+        alert("Could not update the book cover", data.error);
       }
-    },[error])
-    return (
-        <section id='editBook' className={styles.editBookSection}>
-            <div className={styles.bookContent}>
-                {isPending && <Loader />}
-                {bookData && <div className={styles.bookCoverCont}>
-                     {!coverPreview && <img src={bookData.coverUrl ? bookData.coverUrl : "/cover-default.jpg"} alt="book cover" className={styles.bookCover} style={{border: bookData.coverUrl ? 'none' : '1px solid #11243a'}}/>}
-                     {coverPreview && <img src={coverPreview} alt="book cover" className={styles.bookCover}/>}
-                    <BookCoverInput setCover={setCover} coverPreviewHandler={coverPreviewHandler} />
-                </div>}
-                {bookData && <form className={styles.bookForm} onSubmit={updateBookHandler} encType="multipart/form-data">
-                    <Input defaultValue={bookData.title} placeholder='Book title' type='text' name='title' id='title' className={styles.bookInput}/>
-                    <Input defaultValue={bookData.author} placeholder='Author' type='text' name='author' id='author' className={styles.bookInput}/>
-                    <InputNumber defaultValue={bookData.publishYear} placeholder='Publish year' type='number' name='publishYear' id='publishYear' className={styles.bookInput} min={1} max={new Date().getFullYear()} controls={false}/>
-                    <GenreSelect defaultValue={bookData.genre} setInputData={setBookGenre}/>
-                    <div className={styles.formButtons}>
-                    <Button className={styles.formBtn} htmlType='submit'>Save</Button>
-                    <Link to={`/books/${bookId}`}><Button className={styles.formBtn}>Cancel</Button></Link>
-                    </div>
-                </form>}
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const coverPreviewHandler = (e) => {
+    const coverFile = e.target.files[0];
+    if (coverFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverPreview(reader.result);
+      };
+      reader.readAsDataURL(coverFile);
+    }
+  };
+  useEffect(() => {
+    if (error?.code === 401 || error?.code === 403) {
+      navigate(`/books/${bookId}`);
+    }
+  }, [error,bookId,navigate]);
+
+  return (
+    <section id="editBook" className={styles.editBookSection}>
+      <div className={styles.bookContent}>
+        {isPending && <Loader />}
+        {bookData && (
+          <div className={styles.bookCoverCont}>
+            {!coverPreview && (
+              <img
+                src={
+                  bookData.coverUrl ? bookData.coverUrl : "/cover-default.jpg"
+                }
+                alt="book cover"
+                className={styles.bookCover}
+                style={{
+                  border: bookData.coverUrl ? "none" : "1px solid #11243a",
+                }}
+              />
+            )}
+            {coverPreview && (
+              <img
+                src={coverPreview}
+                alt="book cover"
+                className={styles.bookCover}
+              />
+            )}
+            <BookCoverInput
+              setCover={setCover}
+              coverPreviewHandler={coverPreviewHandler}
+            />
+          </div>
+        )}
+        {bookData && (
+          <form
+            className={styles.bookForm}
+            onSubmit={handleSubmit(updateBookHandler)}
+            encType="multipart/form-data">
+            <div className={styles.bookInputWrapper}>
+            <Controller
+              name="title"
+              control={control}
+              defaultValue={bookData.title}
+              rules={{ required: "Please provide book title" }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Book title"
+                  className={styles.bookInput}
+                  onChange={(e) => {
+                    field.onChange(e);
+                  }}
+                />
+              )}
+            />
+            <p style={{ display: errors?.title ? "block" : "none" }} className={styles.errorMsg}> {errors?.title?.message}</p>
             </div>
-            
-       </section>
-    )
-}
+            <div className={styles.bookInputWrapper}>
+            <Controller
+              name="author"
+              control={control}
+              defaultValue={bookData.author}
+              rules={{ required: "Please provide book author" }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Author title"
+                  className={styles.bookInput}
+                  onChange={(e) => {
+                    field.onChange(e);
+                  }}
+                />
+              )}
+            />
+            <p style={{ display: errors?.author ? "block" : "none" }} className={styles.errorMsg}> {errors?.author?.message}</p>
+            </div>
+            <Controller
+              name="publishYear"
+              control={control}
+              defaultValue={bookData.publishYear}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  placeholder="Publish year"
+                  min={1}
+                  max={new Date().getFullYear()}
+                  className={styles.bookInput}
+                  onChange={(e) => field.onChange(e)}
+                />
+              )}
+            />
+            <GenreSelect
+              control={control}
+              defaultValue={bookData.genre}
+            />
+            <div className={styles.formButtons}>
+              <Button className={styles.formBtn} htmlType="submit">
+                Save
+              </Button>
+              <Link to={`/books/${bookId}`}>
+                <Button className={styles.formBtn}>Cancel</Button>
+              </Link>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+};
 
-export default EditBook
+export default EditBook;

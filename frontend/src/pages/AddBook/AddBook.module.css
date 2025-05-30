@@ -45,7 +45,7 @@
     min-width: 35rem;
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 2.4rem;
 }
 .bookInput {
     width: 100% !important;
@@ -71,8 +71,13 @@
     border-color: #11243a !important;
     background: transparent !important;
 }
-.bookTitleBar {
+.bookInputWrapper{
     position: relative;
 }
-
+.errorMsg {
+    position: absolute;
+    font-size: 1.4rem;
+    color: #ff0000cc;
+    padding: 2px;
+}
 

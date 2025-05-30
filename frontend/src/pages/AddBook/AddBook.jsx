@@ -9,22 +9,21 @@ import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import { AuthContext } from "../../context/AuthContext";
 import BookPropositions from "../../components/BookPropositions/BookPropositions";
 import { useForm, Controller } from "react-hook-form";
+import ValidationTooltip from "../../components/ValidationTooltip/ValidationTooltip";
 
 const AddBook = () => {
-  const [inputData, setInputData] = useState({
-    title: "",
-    author: "",
-    publishYear: null,
-    genre: "",
-    coverUrl: "",
-  });
   const [existingBooks, setExistingBooks] = useState([]);
   const [searchedTitle, setSearchedTitle] = useState(null);
   const [cover, setCover] = useState(null);
   const [coverPreview, setCoverPreview] = useState(null);
   const { accessToken, user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const {reset,handleSubmit,control,formState: { errors }} = useForm({
+  const {
+    reset,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       title: "",
       author: "",
@@ -61,9 +60,9 @@ const AddBook = () => {
 
   const addBookHandler = async (data) => {
     const formData = new FormData();
-	Object.entries(data).forEach(([key, value]) => {
-		formData.append(key, value);
-	  });
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
     const newBookId = mongoObjectIdGenerator();
     formData.append("id", newBookId);
     if (cover) {
@@ -129,16 +128,17 @@ const AddBook = () => {
   };
   const previewExistingBookHandler = (book) => {
     setSearchedTitle(book);
-	reset({
-		title: book.title,
-		author: book.author,
-		publishYear: book.publishYear,
-		genre: book.genre,
-		coverUrl: book.coverUrl,
-	})
+    reset({
+      title: book.title,
+      author: book.author,
+      publishYear: book.publishYear,
+      genre: book.genre,
+      coverUrl: book.coverUrl,
+    });
     setCoverPreview(book.coverUrl);
     setExistingBooks([]);
   };
+  console.log(errors);
   return (
     <section id="addBook" className={styles.addBookSection}>
       <div className={styles.bookContent}>
@@ -164,12 +164,12 @@ const AddBook = () => {
             }
           })}
           encType="multipart/form-data">
-          <div className={styles.bookTitleBar}>
+          <div className={styles.bookInputWrapper}>
             <Controller
               name="title"
               control={control}
               defaultValue=""
-              rules={{ required: "Title is required" }}
+              rules={{ required: "Please provide book title" }}
               render={({ field }) => (
                 <Input
                   {...field}
@@ -188,28 +188,40 @@ const AddBook = () => {
                 previewExistingBookHandler={previewExistingBookHandler}
               />
             )}
+            <p
+              style={{ display: errors?.title ? "block" : "none" }}
+              className={styles.errorMsg}>
+              {errors?.title?.message}
+            </p>
           </div>
-          <Controller
-            name="author"
-            control={control}
-            defaultValue=""
-            rules={{ required: "Author is required" }}
-            render={({ field }) => (
-              <Input
-                {...field}
-                placeholder="Author"
-                className={styles.bookInput}
-                onChange={(e) => field.onChange(e)}
-              />
-            )}
-          />
+          <div className={styles.bookInputWrapper}>
+            <Controller
+              name="author"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Please provide book author" }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Author"
+                  className={styles.bookInput}
+                  onChange={(e) => field.onChange(e)}
+                />
+              )}
+            />
+            <p
+              style={{ display: errors?.author ? "block" : "none" }}
+              className={styles.errorMsg}>
+              {errors?.author?.message}
+            </p>
+          </div>
           <Controller
             name="publishYear"
             control={control}
             defaultValue={null}
             render={({ field }) => (
               <InputNumber
-				{...field}
+                {...field}
                 placeholder="Publish year"
                 min={1}
                 max={new Date().getFullYear()}
@@ -218,10 +230,7 @@ const AddBook = () => {
               />
             )}
           />
-          <GenreSelect
-            control={control}
-            defaultValue={null}
-          />
+          <GenreSelect control={control} defaultValue={null} />
           <div className={styles.formButtons}>
             <Button className={styles.formBtn} htmlType="submit">
               Save
