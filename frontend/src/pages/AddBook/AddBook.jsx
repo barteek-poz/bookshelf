@@ -2,14 +2,12 @@ import styles from "./AddBook.module.css";
 import { Button, Input, InputNumber } from "antd";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LeftSquareOutlined } from "@ant-design/icons";
 import mongoObjectIdGenerator from "../../helpers/mongoObjectIdGenerator";
 import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import { AuthContext } from "../../context/AuthContext";
 import BookPropositions from "../../components/BookPropositions/BookPropositions";
 import { useForm, Controller } from "react-hook-form";
-import ValidationTooltip from "../../components/ValidationTooltip/ValidationTooltip";
 
 const AddBook = () => {
   const [existingBooks, setExistingBooks] = useState([]);

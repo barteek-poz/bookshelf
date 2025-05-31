@@ -13,6 +13,7 @@ import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import Menu from "./components/Menu/Menu";
 import SearchPage from "./pages/SearchPage/SearchPage";
+import bookLoader from "./loaders/bookLoader";
 
 const router = createBrowserRouter([
   {
@@ -20,11 +21,47 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { path: "login", element: <Login /> },
-      { path: '/', element: <ProtectedRoute><Dashboard/></ProtectedRoute> },
-      { path: "books/:id", element: <ProtectedRoute><BookPage /></ProtectedRoute> },
-      { path: "books/:id/edit", element: <ProtectedRoute><EditBook /></ProtectedRoute> },
-      { path: "books/add", element: <ProtectedRoute><AddBook /></ProtectedRoute> },
-      { path: "books/search", element: <ProtectedRoute><SearchPage /></ProtectedRoute> },
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "books/:id",
+        element: (
+          <ProtectedRoute>
+            <BookPage />
+          </ProtectedRoute>
+        ),
+        loader: bookLoader
+      },
+      {
+        path: "books/:id/edit",
+        element: (
+          <ProtectedRoute>
+            <EditBook />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "books/add",
+        element: (
+          <ProtectedRoute>
+            <AddBook />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "books/search",
+        element: (
+          <ProtectedRoute>
+            <SearchPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);

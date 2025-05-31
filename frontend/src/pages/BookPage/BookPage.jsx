@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
  import { LeftSquareOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useLoaderData, useNavigate, useParams } from "react-router";
 import Loader from "../../components/Loader/Loader";
 import useFetch from "../../hooks/useFetch";
 import styles from "./BookPage.module.css";
@@ -15,6 +15,8 @@ const BookPage = () => {
   const navigate = useNavigate()
   const {user, accessToken} = useContext(AuthContext)
   const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`,"GET");
+  const loaderData = useLoaderData()
+  console.log(loaderData)
 
   const deleteBookHandler = async () => {
     try {

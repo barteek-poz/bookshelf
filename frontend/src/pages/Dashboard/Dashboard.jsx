@@ -1,17 +1,14 @@
-import styles from "./Dashboard.module.css";
-import Loader from "../../components/Loader/Loader";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "antd";
-import { useContext, useState, useEffect, useMemo } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useContext, useEffect, useState } from "react";
 import BookRow from "../../components/BookRow/BookRow";
+import Loader from "../../components/Loader/Loader";
+import { AuthContext } from "../../context/AuthContext";
+import styles from "./Dashboard.module.css";
 
 const Dashboard = () => {
   const [books, setBooks] = useState(null);
   const [error, setError] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const { setIsAuthenticated, user, accessToken } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user, accessToken } = useContext(AuthContext);
 
   const userBooksLoader = async () => {
     setIsPending(true);

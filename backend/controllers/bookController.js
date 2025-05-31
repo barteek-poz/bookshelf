@@ -21,7 +21,7 @@ export const getAllBooks = async (req, res) => {
 
 export const getRecentBooks = async (req, res) => {
   try {
-    const books = await Book.find().sort({_id:-1}).limit(10)
+    const books = await Book.find().sort({_id:-1}).limit(5)
     res.status(200).json({
         status:'Success', 
         data:books
