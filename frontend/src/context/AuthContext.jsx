@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const refreshAccessToken = async () => {
+    setLoading(true)
     try {
       const response = await fetch("http://localhost:3000/api/v1/auth/refresh-token", {
         method: "POST",
@@ -33,7 +34,6 @@ const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.accessToken)
         saveAuthData(data.accessToken, data.user); 
       } else {
         clearAuthData();

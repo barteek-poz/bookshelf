@@ -136,7 +136,6 @@ const AddBook = () => {
     setCoverPreview(book.coverUrl);
     setExistingBooks([]);
   };
-  console.log(errors);
   return (
     <section id="addBook" className={styles.addBookSection}>
       <div className={styles.bookContent}>

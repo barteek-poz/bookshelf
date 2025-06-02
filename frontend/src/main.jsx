@@ -1,26 +1,30 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import "./index.css";
-import App from "./App";
-import BookPage from "./pages/BookPage/BookPage";
-import MainLayout from "./pages/MainLayout/MainLayout";
-import AddBook from "./pages/AddBook/AddBook";
-import EditBook from "./pages/EditBook/EditBook";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import Login from "./pages/Login/Login";
-import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import Menu from "./components/Menu/Menu";
-import SearchPage from "./pages/SearchPage/SearchPage";
+import AuthContextProvider from "./context/AuthContext";
+import "./index.css";
 import bookLoader from "./loaders/bookLoader";
+import libraryLoader from "./loaders/libraryLoader";
+import AddBook from "./pages/AddBook/AddBook";
+import BookPage from "./pages/BookPage/BookPage";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import EditBook from "./pages/EditBook/EditBook";
+import Login from "./pages/Login/Login";
+import MainLayout from "./pages/MainLayout/MainLayout";
+import SearchPage from "./pages/SearchPage/SearchPage";
+import tokenLoader from "./loaders/tokenLoader";
 
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Login />, 
+  },
+  {
     path: "/",
     element: <MainLayout />,
+    
     children: [
-      { path: "login", element: <Login /> },
       {
         path: "/",
         element: (
@@ -28,6 +32,7 @@ const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
+        
       },
       {
         path: "books/:id",
@@ -36,7 +41,7 @@ const router = createBrowserRouter([
             <BookPage />
           </ProtectedRoute>
         ),
-        loader: bookLoader
+        
       },
       {
         path: "books/:id/edit",
@@ -66,10 +71,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")).render(
+const root = createRoot(document.getElementById("root"));
+
+root.render(
   <StrictMode>
     <AuthContextProvider>
-      <RouterProvider router={router} />
+    <RouterProvider router={router}/>
     </AuthContextProvider>
   </StrictMode>
 );

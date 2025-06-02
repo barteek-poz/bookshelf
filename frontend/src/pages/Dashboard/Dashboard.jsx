@@ -3,12 +3,15 @@ import BookRow from "../../components/BookRow/BookRow";
 import Loader from "../../components/Loader/Loader";
 import { AuthContext } from "../../context/AuthContext";
 import styles from "./Dashboard.module.css";
+import { useLoaderData } from "react-router";
 
 const Dashboard = () => {
   const [books, setBooks] = useState(null);
   const [error, setError] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const { user, accessToken } = useContext(AuthContext);
+  const loaderData = useLoaderData()
+  console.log(loaderData)
 
   const userBooksLoader = async () => {
     setIsPending(true);
