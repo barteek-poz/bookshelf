@@ -32,15 +32,14 @@ export const signup = async (req, res, next) => {
 			sameSite: 'Strict',
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
-		res.status(201).json({
-			status: 'success',
-			accessToken,
-			user: {
-				id: newUser._id,
-				name: newUser.name,
-				email: newUser.email,
-			},
+		res.cookie('accessToken', accessToken, {
+			httpOnly: true,
+			secure: false,
+			sameSite: 'Strict',
+			path: '/',
+			maxAge: 15 * 60 * 1000,
 		});
+		
 	} catch (error) {
 		console.error('Signup error:', err);
 		res.status(400).json({ message: 'Signup failed', error: err.message });
@@ -69,7 +68,7 @@ export const login = async (req, res) => {
 		sameSite: 'Strict',
 		maxAge: 7 * 24 * 60 * 60 * 1000,
 	});
-
+	
 	res.status(200).json({
 		status: 'success',
 		accessToken,

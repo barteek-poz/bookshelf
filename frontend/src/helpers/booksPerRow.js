@@ -9,7 +9,11 @@ export const booksPerRow = (windowWidth) => {
     return 4;
   } else if (windowWidth >= 1100) {
     return 3;
-  } else if (windowWidth >= 800) {
+  } else if (windowWidth < 1100 && windowWidth >= 900) {
+    return 2
+  } else if (windowWidth <= 900 && windowWidth > 850) {
+    return 3
+  } else if (windowWidth <= 850 && windowWidth > 530) {
     return 2
   } 
   else {

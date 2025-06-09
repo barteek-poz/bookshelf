@@ -10,8 +10,6 @@ const Dashboard = () => {
   const [error, setError] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const { user, accessToken } = useContext(AuthContext);
-  const loaderData = useLoaderData()
-  console.log(loaderData)
 
   const userBooksLoader = async () => {
     setIsPending(true);

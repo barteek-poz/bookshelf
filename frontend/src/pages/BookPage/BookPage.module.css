@@ -76,6 +76,7 @@
     display: flex;
     gap: 1rem;
     align-self: flex-end;
+    margin-right: 3rem;
 }
 .editBtn {
     background: #11243a;
@@ -94,4 +95,52 @@
 }
 .errorMsg {
     text-align: center;
+}
+
+@media (max-width: 1250px) {
+  .bookContent {
+    gap: 3rem;
+  }
+}
+@media (max-width: 1250px) {
+  .bookInput input {
+    width: 100px;
+  }
+}
+@media (max-width: 1200px) {
+  .bookForm {
+    width: 35rem;
+  }
+  .bookCover {
+    width: 32rem;
+    height: 56rem;
+  }
+}
+@media (max-width: 1000px) {
+
+
+  .bookCoverCont {
+    align-items: center;
+  }
+  .formButtons {
+    align-self: center;
+  }
+}
+
+@media (max-width: 900px) {
+    .bookContent {
+        padding-top: 6rem;
+        flex-direction: column;
+    }
+      .bookCover {
+      width: 30rem;
+      height: 42rem;
+  }
+    .bookData {
+   text-align: center;
+  }
+  .btns {
+    align-self: center;
+    margin-right: 0rem;
+  }
 }

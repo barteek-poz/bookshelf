@@ -16,3 +16,12 @@
     max-width: 200rem;
     bottom: -10rem;
 }
+
+@media (max-width: 530px) {
+    .shelfImg {
+        display: none
+    }
+    .shelfRow {
+        margin-bottom: 1rem;
+    }
+}

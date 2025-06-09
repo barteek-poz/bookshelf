@@ -4,8 +4,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import AuthContextProvider from "./context/AuthContext";
 import "./index.css";
-import bookLoader from "./loaders/bookLoader";
-import libraryLoader from "./loaders/libraryLoader";
 import AddBook from "./pages/AddBook/AddBook";
 import BookPage from "./pages/BookPage/BookPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
@@ -13,7 +11,6 @@ import EditBook from "./pages/EditBook/EditBook";
 import Login from "./pages/Login/Login";
 import MainLayout from "./pages/MainLayout/MainLayout";
 import SearchPage from "./pages/SearchPage/SearchPage";
-import tokenLoader from "./loaders/tokenLoader";
 
 const router = createBrowserRouter([
   {

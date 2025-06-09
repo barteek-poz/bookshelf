@@ -5,3 +5,10 @@
     gap: 2rem;
     margin-top: 1rem;
   }
+
+  @media (max-width: 530px) {
+  .recentBooks {
+      align-items: center;
+      justify-content: center;
+    }
+}

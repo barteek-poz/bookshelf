@@ -15,7 +15,6 @@ const BookPage = () => {
   const navigate = useNavigate()
   const {user, accessToken} = useContext(AuthContext)
   const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`,"GET");
-  const loaderData = useLoaderData()
 
   const deleteBookHandler = async () => {
     try {

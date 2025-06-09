@@ -4,9 +4,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6rem;
     padding: 2rem;
 }
+
 .backBtn {
     display: flex;
     align-items: center;
@@ -81,3 +81,42 @@
     padding: 2px;
 }
 
+@media (max-width: 1250px) {
+  .bookContent {
+    gap: 3rem;
+  }
+}
+@media (max-width: 1250px) {
+  .bookInput input {
+    width: 100px;
+  }
+}
+@media (max-width: 1200px) {
+  .bookForm {
+    width: 35rem;
+  }
+  .bookCover {
+    width: 32rem;
+    height: 56rem;
+  }
+}
+@media (max-width: 1000px) {
+    .addBookSection {
+        padding-top: 6rem;
+    }
+
+  .bookContent {
+    flex-direction: column;
+  }
+  .bookCoverCont {
+    align-items: center;
+  }
+  .formButtons {
+    align-self: center;
+  }
+      .bookCover {
+      width: 30rem;
+      height: 42rem;
+  }
+
+}

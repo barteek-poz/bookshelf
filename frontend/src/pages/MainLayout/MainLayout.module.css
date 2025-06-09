@@ -19,3 +19,9 @@
     border-color: #11243a !important;
     background: transparent !important;
 }
+
+@media (max-width: 900px) {
+  .mainLayout {
+    flex-direction: column;
+  }
+}

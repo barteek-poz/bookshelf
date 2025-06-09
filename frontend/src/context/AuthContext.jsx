@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState, useContext } from "react";
-import {storeAccessToken} from '../helpers/authTokenStore'
 
 export const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -14,14 +13,14 @@ const AuthProvider = ({ children }) => {
     setAccessToken(token);
     setUser(userData);
     setIsAuthenticated(true);
-    storeAccessToken(token)
+   
   };
 
   const clearAuthData = () => {
     setAccessToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    storeAccessToken(null)
+  
   };
 
   const refreshAccessToken = async () => {
@@ -47,7 +46,12 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    refreshAccessToken();
+    refreshAccessToken()
+    const refreshInterval = setInterval(()=> {
+      refreshAccessToken();
+    }, 900000)
+
+    return () => clearInterval(refreshInterval)
   }, []);
 
   return (

@@ -3,7 +3,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Alert } from "antd";
-import { storeAccessToken } from "../../helpers/authTokenStore";
+
 
 const Login = () => {
   const { setAccessToken, setIsAuthenticated, setUser } = useContext(AuthContext);
@@ -29,7 +29,6 @@ const Login = () => {
       setAccessToken(data.accessToken);
       setIsAuthenticated(true);
       setUser(data.user)
-      storeAccessToken(data.accessToken)
       navigate("/");
     } catch (err) {
       setError("Invalid email or password");

@@ -1,5 +1,5 @@
 .navWrapper {
-    
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -22,6 +22,7 @@
     justify-content: flex-start;
     gap: 4rem;
     font-size: 2.4rem;
+    transition: .2s;
 }
 
 .navigation a {
@@ -38,4 +39,70 @@
 .navigation a:hover {
     margin-left: 10px;
     background: #fff;
+}
+
+@media (max-width: 950px) {
+  .navWrapper {
+    padding: 3rem 2rem;
+  }
+  .logo {
+    padding-left: 4px;
+  }
+  .navigation a {
+    padding: 4px;
+  }
+}
+@media (min-width: 900px) {
+    .burgerIcon {
+        display: none;
+    }
+    .closeIcon {
+        display: none;
+    }
+}
+@media (max-width: 900px) {
+  .navWrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    background: transparent;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .menuIcon {
+   display: none;
+  }
+  .logo {
+    padding: 0;
+  }
+  .navigation {
+    position: fixed;
+    width: 50%;
+    height: 100vh;
+    top: 0;
+    background: #fff;
+    padding: 16px;
+    flex-grow: 0;
+    align-items:start;
+    justify-content: start;
+    z-index: 3;
+  }
+  .navigation a {
+    padding: 0;
+  }
+  .burgerIcon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 16px;
+  }
+}
+
+
+@media (max-width: 500px) {
+  .navigation {
+    width: 100%;
+  }
 }
