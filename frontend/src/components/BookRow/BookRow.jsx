@@ -16,8 +16,8 @@ const BookRow = ({ books }) => {
         <div key={idx} className={styles.shelfRow}>
           {shelf.map((book) => (
             <Book
-              key={book._id}
-              id={book._id}
+              key={book.id}
+              id={book.id}
               title={book.title}
               author={book.author}
               cover={book.coverUrl}

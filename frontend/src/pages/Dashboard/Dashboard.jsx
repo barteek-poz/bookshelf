@@ -15,7 +15,7 @@ const Dashboard = () => {
     setIsPending(true);
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user._id}/books`,
+        `http://localhost:3000/api/v1/users/${user.id}/books`,
         {
           method: "GET",
           credentials: "include",
@@ -28,7 +28,7 @@ const Dashboard = () => {
 
       if (!response.ok) throw new Error(response.statusText);
       const jsonData = await response.json();
-      setBooks(jsonData.data);
+      setBooks(jsonData.books);
       setError(false);
     } catch (error) {
       console.log("Error loading books:", error);

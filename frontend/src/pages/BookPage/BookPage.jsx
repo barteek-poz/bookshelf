@@ -36,7 +36,7 @@ const BookPage = () => {
     }
   }
   useEffect(()=>{
-  if(bookData?.createdBy.toString() === user._id) {
+  if(bookData?.createdBy === user.id) {
     setCanUserEdit(true)
   }
   },[bookData, user])
@@ -59,7 +59,7 @@ const BookPage = () => {
         )}
         </div>
         <div className={styles.btns}>
-          {canUserEdit && <Link to={`/books/${bookData._id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
+          {canUserEdit && <Link to={`/books/${bookData.id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
           {bookData && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Remove book from library</Button>}
         </div>
         {error && <h2 className={styles.errorMsg}>Sorry, something went wrong.<br></br>Please check your network connection or try later. </h2>}

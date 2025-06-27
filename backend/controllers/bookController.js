@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 import mongoose from "mongoose";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
 import supabaseDelete from "../services/supabaseDelete.js";
+import { pool } from "../server.js";
 
 export const getAllBooks = async (req, res) => {
   try {
@@ -89,26 +90,38 @@ export const createBook = async (req, res) => {
 };
 
 export const getBookById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res
-        .status(400)
-        .json({ status: "Fail", message: "Invalid book ID" });
+  const bookID = req.params.id
+  try{
+    const [result] = await pool.query(`SELECT * FROM books WHERE id = ?  `, [bookID]);
+    const book = result[0]
+    if(!book) {
+      return res.status(404).json({ status: "Fail", message: "Book not found" });
     }
-
-    const book = await Book.findById(id);
-    if (!book) {
-      return res
-        .status(404)
-        .json({ status: "Fail", message: "Book not found" });
-    }
-
     res.status(200).json({ status: "Success", data: book });
-  } catch (err) {
+  }catch(error){
     console.error("Error fetching book:", err);
     res.status(500).json({ status: "Fail", message: "Internal server error" });
   }
+  // try {
+  //   const { id } = req.params;
+  //   if (!mongoose.Types.ObjectId.isValid(id)) {
+  //     return res
+  //       .status(400)
+  //       .json({ status: "Fail", message: "Invalid book ID" });
+  //   }
+
+  //   const book = await Book.findById(id);
+  //   if (!book) {
+  //     return res
+  //       .status(404)
+  //       .json({ status: "Fail", message: "Book not found" });
+  //   }
+
+  //   res.status(200).json({ status: "Success", data: book });
+  // } catch (err) {
+  //   console.error("Error fetching book:", err);
+  //   res.status(500).json({ status: "Fail", message: "Internal server error" });
+  // }
 };
 
 export const updateBook = async (req, res) => {

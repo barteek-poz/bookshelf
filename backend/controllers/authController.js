@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt'
+import { pool } from "../server.js";
 import User from '../models/userModel.js';
 import Book from '../models/bookModel.js';
 
@@ -47,33 +49,74 @@ export const signup = async (req, res, next) => {
 };
 
 export const login = async (req, res) => {
-	const { email, password } = req.body;
+try {
+	const {email, password} = req.body
 	if (!email || !password) {
-		return res
-			.status(401)
-			.json({ message: 'Please provide email and password' });
+			return res
+				.status(400)
+				.json({ message: 'Please provide email and password' });
+		}
+	const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
+	const user = result[0]
+	if(!user) {
+		return res.status(401).json({ message: 'Invalid credentials' });
 	}
-	const user = await User.findOne({ email }).select('+password');
-	if (!user || !(await user.correctPassword(password, user.password))) {
-		return res.status(401).json({ message: 'Incorect email or password' });
+	const isPasswordCorrect = await bcrypt.compare(password, user.password)
+	if(!isPasswordCorrect) {
+		return res.status(401).json({ message: 'Invalid password' });
 	}
-	const accessToken = signAccessToken(user._id);
-	const refreshToken = signRefreshToken(user._id);
-	user.refreshToken = refreshToken;
-	await user.save({ validateBeforeSave: false });
-
+	const accessToken = signAccessToken(user.id);
+	const refreshToken = signRefreshToken(user.id);
+	await pool.query(`UPDATE users SET refreshToken = ? WHERE id = ?`, [refreshToken, user.id])
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		secure: false,
 		sameSite: 'Strict',
 		maxAge: 7 * 24 * 60 * 60 * 1000,
 	});
-	
 	res.status(200).json({
 		status: 'success',
 		accessToken,
-		user,
+		user : {
+			id:user.id, 
+			username: user.user_name
+		}
 	});
+	}catch(error) {
+		console.error('Login error', error)
+		res.status(500).json({
+			status: 'Error',
+			message: 'Failed to login',
+		});
+	}
+
+	// const { email, password } = req.body;
+	// if (!email || !password) {
+	// 	return res
+	// 		.status(401)
+	// 		.json({ message: 'Please provide email and password' });
+	// }
+	// const user = await User.findOne({ email }).select('+password');
+	// if (!user || !(await user.correctPassword(password, user.password))) {
+	// 	return res.status(401).json({ message: 'Incorect email or password' });
+	// }
+	// const accessToken = signAccessToken(user._id);
+	// const refreshToken = signRefreshToken(user._id);
+	// user.refreshToken = refreshToken;
+	// await user.save({ validateBeforeSave: false });
+
+	// res.cookie('refreshToken', refreshToken, {
+	// 	httpOnly: true,
+	// 	secure: false,
+	// 	sameSite: 'Strict',
+	// 	maxAge: 7 * 24 * 60 * 60 * 1000,
+	// });
+	
+	// res.status(200).json({
+	// 	status: 'success',
+	// 	accessToken,
+	// 	user,
+	// });
 };
 
 export const refreshAccessToken = async (req, res) => {
@@ -86,7 +129,9 @@ export const refreshAccessToken = async (req, res) => {
 			token,
 			process.env.JWT_REFRESH_SECRET
 		);
-		const currentUser = await User.findById(decodedRefreshToken.id).select('+refreshToken');
+		const userID = decodedRefreshToken.id
+		const [result] = await pool.query(`SELECT * FROM users WHERE id = ?  `, [userID]);
+		const currentUser = result[0]
 		if (!currentUser || currentUser.refreshToken !== token) {
 			return res.status(403).json({ message: 'Invalid refresh token' });
 		}
@@ -94,9 +139,8 @@ export const refreshAccessToken = async (req, res) => {
 		res.status(200).json({
 			accessToken,
 			user: {
-			  _id: currentUser._id,	
+			  id: currentUser.id,	
 			  name: currentUser.name,
-			  books: currentUser.books, 
 			},
 		  });
 	} catch (error) {
@@ -104,6 +148,33 @@ export const refreshAccessToken = async (req, res) => {
 			.status(403)
 			.json({ message: 'Invalid or expired refresh token' });
 	}
+	// const token = req.cookies.refreshToken;
+	// if (!token) {
+	// 	return res.status(401).json({ message: 'No refresh token provided' });
+	// }
+	// try {
+	// 	const decodedRefreshToken = jwt.verify(
+	// 		token,
+	// 		process.env.JWT_REFRESH_SECRET
+	// 	);
+	// 	const currentUser = await User.findById(decodedRefreshToken.id).select('+refreshToken');
+	// 	if (!currentUser || currentUser.refreshToken !== token) {
+	// 		return res.status(403).json({ message: 'Invalid refresh token' });
+	// 	}
+	// 	const accessToken = signAccessToken(currentUser._id);
+	// 	res.status(200).json({
+	// 		accessToken,
+	// 		user: {
+	// 		  _id: currentUser._id,	
+	// 		  name: currentUser.name,
+	// 		  books: currentUser.books, 
+	// 		},
+	// 	  });
+	// } catch (error) {
+	// 	return res
+	// 		.status(403)
+	// 		.json({ message: 'Invalid or expired refresh token' });
+	// }
 };
 
 export const logout = async (req, res) => {
@@ -111,9 +182,9 @@ export const logout = async (req, res) => {
 	if (token) {
 		try {
 			const decodedToken = jwt.decode(token);
-			const userId = decodedToken.id;
+			const userID = decodedToken.id;
 
-			await User.findByIdAndUpdate(userId, { refreshToken: null });
+			await pool.query(`UPDATE users SET refreshToken = NULL WHERE id = ?  `, [userID]);
 			res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'Strict' });
 
 			return res.status(200).json({ message: 'Logged out successfully' });
@@ -126,4 +197,23 @@ export const logout = async (req, res) => {
 	} else {
 		return res.status(400).json({ message: 'No refresh token found' });
 	}
+	// const token = req.cookies.refreshToken;
+	// if (token) {
+	// 	try {
+	// 		const decodedToken = jwt.decode(token);
+	// 		const userId = decodedToken.id;
+
+	// 		await User.findByIdAndUpdate(userId, { refreshToken: null });
+	// 		res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'Strict' });
+
+	// 		return res.status(200).json({ message: 'Logged out successfully' });
+	// 	} catch (error) {
+	// 		console.error('Error logging out:', error);
+	// 		return res
+	// 			.status(500)
+	// 			.json({ message: 'Something went wrong during logout' });
+	// 	}
+	// } else {
+	// 	return res.status(400).json({ message: 'No refresh token found' });
+	// }
 };
