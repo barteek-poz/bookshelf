@@ -13,7 +13,7 @@ import { isAuth } from '../middlewares/isAuth.js';
 import { canEdit } from '../middlewares/canEdit.js';
 
 const booksRouter = express.Router();
-// booksRouter.use(isAuth);
+booksRouter.use(isAuth);
 
 booksRouter.route('/search-by-title').post(searchBookByTitle);
 booksRouter.route('/get-recent').get(getRecentBooks);

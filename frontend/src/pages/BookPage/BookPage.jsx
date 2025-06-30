@@ -18,13 +18,14 @@ const BookPage = () => {
 
   const deleteBookHandler = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/users/books/${bookId}`, {
+      const response = await fetch(`http://localhost:3000/api/v1/users/${user.id}/books/${bookId}`, {
         method: "DELETE",
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${accessToken}`,
         }
       });
+      console.log(response)
       if (response.ok) {       
         navigate('/')
       } else {

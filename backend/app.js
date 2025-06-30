@@ -20,7 +20,7 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/books', booksRouter)
-// app.use('/api/v1/genres', genresRouter)
+app.use('/api/v1/genres', genresRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/auth', authRouter)
 

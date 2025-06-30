@@ -9,7 +9,6 @@ export const coverMiddleware = async (req, res, next) => {
         return next();
     }
     try {
-        console.log(req.file)
         const resizedCover = await sharp(req.file.buffer)
             .resize(380, 620)
             .toFormat("jpeg")

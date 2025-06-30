@@ -4,14 +4,14 @@ import { updateUserBooks } from '../middlewares/updateUserBooks.js'
 import { isAuth } from '../middlewares/isAuth.js';
 
 const usersRouter = express.Router() 
-// usersRouter.use(isAuth)
+usersRouter.use(isAuth)
 
 usersRouter.route('/:id').get(getUserById)
 
 // usersRouter.route('/').get(getAllUsers)
 // usersRouter.route('/:id/add-book').post(addUserBook)
 usersRouter.route('/:id/books').get(getUserBooks)
-// usersRouter.route('/books/:bookId').delete(deleteUserBook)
+usersRouter.route('/:userId/books/:bookId').delete(deleteUserBook)
 
 
 

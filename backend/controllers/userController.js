@@ -56,58 +56,79 @@ export const getUserById = async (req, res) => {
 export const addUserBook = async (req, res) => {
   try {
     const { bookId } = req.body;
-    const { id: userId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res
-        .status(400)
-        .json({ status: "Fail", message: "Invalid user ID" });
-    } else if (!mongoose.Types.ObjectId.isValid(bookId)) {
-      return res
-        .status(400)
-        .json({ status: "Fail", message: "Invalid book ID" });
-    }
-    const user = await User.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ status: "Fail", message: "User not found" });
-    }
-    if (user.books.includes(bookId)) {
-      return res
-        .status(400)
-        .json({
-          status: "Fail",
-          message: "You already have this book in your Bookshelf.",
-        });
-    }
-    user.books.push(bookId);
-    await user.save({ validateBeforeSave: false });
-    res.status(200).json({ status: "success" });
   } catch (error) {
     console.error("Failed to add book:", error);
     res.status(400).json({ status: "Fail", message: "Failed to add book" });
   }
+//   try {
+//     const { bookId } = req.body;
+//     const { id: userId } = req.params;
+//     if (!mongoose.Types.ObjectId.isValid(userId)) {
+//       return res
+//         .status(400)
+//         .json({ status: "Fail", message: "Invalid user ID" });
+//     } else if (!mongoose.Types.ObjectId.isValid(bookId)) {
+//       return res
+//         .status(400)
+//         .json({ status: "Fail", message: "Invalid book ID" });
+//     }
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ status: "Fail", message: "User not found" });
+//     }
+//     if (user.books.includes(bookId)) {
+//       return res
+//         .status(400)
+//         .json({
+//           status: "Fail",
+//           message: "You already have this book in your Bookshelf.",
+//         });
+//     }
+//     user.books.push(bookId);
+//     await user.save({ validateBeforeSave: false });
+//     res.status(200).json({ status: "success" });
+//   } catch (error) {
+//     console.error("Failed to add book:", error);
+//     res.status(400).json({ status: "Fail", message: "Failed to add book" });
+//   }
 };
 
 export const deleteUserBook = async (req, res) => {
   try {
-    const user = req.user;
+    const userId = req.user.id
     const { bookId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(bookId)) {
-      return res
-        .status(400)
-        .json({ status: "Fail", message: "Invalid book ID" });
-    }
-    const updatedBooksArr = user.books.filter(
-      (arrBookId) => arrBookId.toString() !== bookId
-    );
-    user.books = updatedBooksArr;
-    await user.save({ validateBeforeSave: false });
-    res.status(200).json({ status: "sucess" });
-  } catch (error) {
+    if(!bookId) {
+        return res.status(400).json({ status: "Fail", message: "Invalid book ID" })
+     }
+     const result = await pool.query('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+     if (result.affectedRows === 0) {
+        return res.status(404).json({ status: "Fail", message: "Book not found for this user" });
+      }
+     res.status(200).json({ status: "sucess" });
+    } catch (error) {
     console.error("Failed to delete book:", error);
     res.status(400).json({ status: "Fail", message: "Failed to delete book" });
   }
+//   try {
+//     const user = req.user;
+//     const { bookId } = req.params;
+//     if (!mongoose.Types.ObjectId.isValid(bookId)) {
+//       return res
+//         .status(400)
+//         .json({ status: "Fail", message: "Invalid book ID" });
+//     }
+//     const updatedBooksArr = user.books.filter(
+//       (arrBookId) => arrBookId.toString() !== bookId
+//     );
+//     user.books = updatedBooksArr;
+//     await user.save({ validateBeforeSave: false });
+//     res.status(200).json({ status: "sucess" });
+//   } catch (error) {
+//     console.error("Failed to delete book:", error);
+//     res.status(400).json({ status: "Fail", message: "Failed to delete book" });
+//   }
 };
 
 export const getUserBooks = async (req, res) => {

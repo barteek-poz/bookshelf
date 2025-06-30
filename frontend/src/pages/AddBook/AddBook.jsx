@@ -34,7 +34,7 @@ const AddBook = () => {
   const addExistingBookHandler = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user._id}/add-book`,
+        `http://localhost:3000/api/v1/users/${user.id}/add-book`,
         {
           method: "POST",
           headers: {
@@ -42,7 +42,7 @@ const AddBook = () => {
             Authorization: `Bearer ${accessToken}`,
           },
           credentials: "include",
-          body: JSON.stringify({ bookId: searchedTitle._id }),
+          body: JSON.stringify({ bookId: searchedTitle.id }),
         }
       );
       const data = await response.json();
@@ -57,12 +57,11 @@ const AddBook = () => {
   };
 
   const addBookHandler = async (data) => {
+    console.log(data)
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
     });
-    const newBookId = mongoObjectIdGenerator();
-    formData.append("id", newBookId);
     if (cover) {
       formData.append("bookCover", cover);
     }
@@ -77,7 +76,7 @@ const AddBook = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        navigate(`/books/${newBookId}`);
+        navigate(`/`);
       } else {
         alert(`Could not add book: ${data.message}`);
       }

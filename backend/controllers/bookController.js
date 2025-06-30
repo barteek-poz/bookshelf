@@ -22,7 +22,7 @@ export const getAllBooks = async (req, res) => {
 
 export const getRecentBooks = async (req, res) => {
   try {
-    const books = await Book.find().sort({_id:-1}).limit(5)
+    const [books] = await pool.query(`SELECT * FROM books ORDER BY id DESC LIMIT 5`);
     res.status(200).json({
         status:'Success', 
         data:books
@@ -34,6 +34,19 @@ export const getRecentBooks = async (req, res) => {
     }
     )
   }
+  // try {
+  //   const books = await Book.find().sort({_id:-1}).limit(5)
+  //   res.status(200).json({
+  //       status:'Success', 
+  //       data:books
+  //   })
+  // } catch (err) {
+  //   res.status(400).json({
+  //       status:'Fail', 
+  //       message:err
+  //   }
+  //   )
+  // }
 };
 
 export const searchBookByTitle = async (req, res) => {
@@ -59,21 +72,18 @@ export const searchBookByTitle = async (req, res) => {
 
 export const createBook = async (req, res) => {
   try {
-    let coverUrl = null;
-    if (req.file) {
-      const publicUrl = await supabaseUploadHandler(req.body.id, req, res);
-      coverUrl = publicUrl.publicUrl;
+    const userId = req.user.id
+    const newBookData = req.body
+    
+    const newBook = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[newBookData.title, newBookData.author, newBookData.publishYear,newBookData.genre, NULL, userId ])
+    if(!newBook) {
+      return res.status(500).json({ status: "Fail", message: "Could not add new book" });
     }
-    const newBook = await Book.create({
-      _id: req.body.id,
-      ...req.body,
-      coverUrl,
-      createdBy: req.user._id,
-    });
-    if (newBook) {
-      const user = await User.findById(req.user._id);
-      user.books.push(req.body.id);
-      await user.save({ validateBeforeSave: false });
+    const newBookId = newBook.result.insertId
+    await pool.query('INSERT INTO user_book VALUES(?,?)',[userId,newBookId ])
+    if (req.file) {
+      const publicUrl = await supabaseUploadHandler(newBookId, req, res);
+      await pool.query('UPDATE books SET coverUrl = ? WHERE id=?',[publicUrl, newBookId])
     }
     res.status(201).json({
       status: "Success",
@@ -87,6 +97,35 @@ export const createBook = async (req, res) => {
       message: err.message,
     });
   }
+  // try {
+  //   let coverUrl = null;
+  //   if (req.file) {
+  //     const publicUrl = await supabaseUploadHandler(req.body.id, req, res);
+  //     coverUrl = publicUrl.publicUrl;
+  //   }
+  //   const newBook = await Book.create({
+  //     _id: req.body.id,
+  //     ...req.body,
+  //     coverUrl,
+  //     createdBy: req.user._id,
+  //   });
+  //   if (newBook) {
+  //     const user = await User.findById(req.user._id);
+  //     user.books.push(req.body.id);
+  //     await user.save({ validateBeforeSave: false });
+  //   }
+  //   res.status(201).json({
+  //     status: "Success",
+  //     data: {
+  //       newBook,
+  //     },
+  //   });
+  // } catch (err) {
+  //   res.status(400).json({
+  //     status: "Fail",
+  //     message: err.message,
+  //   });
+  // }
 };
 
 export const getBookById = async (req, res) => {

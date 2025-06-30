@@ -15,8 +15,8 @@ const RecentBooks = () => {
             recentBooks.map((book) => {
               return (
                 <Book
-                  key={book._id}
-                  id={book._id}
+                  key={book.id}
+                  id={book.id}
                   title={book.title}
                   author={book.author}
                   cover={book.coverUrl}

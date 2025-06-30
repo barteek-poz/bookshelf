@@ -135,7 +135,7 @@ export const refreshAccessToken = async (req, res) => {
 		if (!currentUser || currentUser.refreshToken !== token) {
 			return res.status(403).json({ message: 'Invalid refresh token' });
 		}
-		const accessToken = signAccessToken(currentUser._id);
+		const accessToken = signAccessToken(currentUser.id);
 		res.status(200).json({
 			accessToken,
 			user: {
