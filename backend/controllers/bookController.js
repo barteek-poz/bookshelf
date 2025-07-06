@@ -7,7 +7,7 @@ import { pool } from "../server.js";
 
 export const getAllBooks = async (req, res) => {
   try {
-    const books = await Book.find();
+    const [books] = await pool.query(`SELECT * FROM books`);
     res.status(200).json({
       status: "Success",
       data: books,
@@ -57,9 +57,7 @@ export const searchBookByTitle = async (req, res) => {
       .json({ status: "Fail", message: "Invalid book title" });
   }
   try {
-    const booksByTitle = await Book.find({
-      title: { $regex: bookTitle, $options: "i" },
-    });
+    const [booksByTitle] = await pool.query('SELECT * FROM books WHERE title LIKE ?', [`%${bookTitle}%`])
     res.status(200).json({
       status: "success",
       books: booksByTitle,
@@ -68,23 +66,42 @@ export const searchBookByTitle = async (req, res) => {
     console.error("Error searching books:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+  // const { bookTitle } = req.body;
+  // if (!bookTitle) {
+  //   return res
+  //     .status(400)
+  //     .json({ status: "Fail", message: "Invalid book title" });
+  // }
+  // try {
+  //   const booksByTitle = await Book.find({
+  //     title: { $regex: bookTitle, $options: "i" },
+  //   });
+  //   res.status(200).json({
+  //     status: "success",
+  //     books: booksByTitle,
+  //   });
+  // } catch (error) {
+  //   console.error("Error searching books:", error);
+  //   res.status(500).json({ message: "Internal server error" });
+  // }
 };
 
 export const createBook = async (req, res) => {
   try {
     const userId = req.user.id
     const newBookData = req.body
-    
-    const newBook = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[newBookData.title, newBookData.author, newBookData.publishYear,newBookData.genre, NULL, userId ])
-    if(!newBook) {
+    const newPublishYear = newBookData.publishYear=== '' || newBookData.publishYear === 'null' || newBookData.publishYear == null ? null : parseInt(newBookData.publishYear, 10)
+    const [result] = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[newBookData.title, newBookData.author, newPublishYear,newBookData.genre, null, userId ])
+    if(!result.insertId) {
       return res.status(500).json({ status: "Fail", message: "Could not add new book" });
     }
-    const newBookId = newBook.result.insertId
-    await pool.query('INSERT INTO user_book VALUES(?,?)',[userId,newBookId ])
+    const newBookId = result.insertId
+    await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,newBookId ])
     if (req.file) {
-      const publicUrl = await supabaseUploadHandler(newBookId, req, res);
-      await pool.query('UPDATE books SET coverUrl = ? WHERE id=?',[publicUrl, newBookId])
+      const coverUrl = await supabaseUploadHandler(newBookId, req, res);
+      await pool.query('UPDATE books SET coverUrl = ? WHERE id=?',[coverUrl.publicUrl, newBookId])
     }
+    const newBook = await pool.query('SELECT * FROM books WHERE id=?', [newBookId])
     res.status(201).json({
       status: "Success",
       data: {
@@ -129,16 +146,19 @@ export const createBook = async (req, res) => {
 };
 
 export const getBookById = async (req, res) => {
-  const bookID = req.params.id
   try{
-    const [result] = await pool.query(`SELECT * FROM books WHERE id = ?  `, [bookID]);
+    const bookId = req.params.id
+    if (!Number.isInteger(Number(bookId))) {
+      return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
+    }
+    const [result] = await pool.query(`SELECT * FROM books WHERE id = ?  `, [bookId]);
     const book = result[0]
     if(!book) {
       return res.status(404).json({ status: "Fail", message: "Book not found" });
     }
     res.status(200).json({ status: "Success", data: book });
   }catch(error){
-    console.error("Error fetching book:", err);
+    console.error("Error fetching book:", error);
     res.status(500).json({ status: "Fail", message: "Internal server error" });
   }
   // try {
@@ -166,38 +186,68 @@ export const getBookById = async (req, res) => {
 export const updateBook = async (req, res) => {
   try {
     const { id: bookId } = req.params;
-    const { title, author, genre, publishYear } = req.body;
-    let updateFields = { title, author, genre, publishYear };
-    if (req.file) {
-      const bookData = await Book.findById(bookId);
-      let oldCover = null;
-      if (bookData.coverUrl !== null) {
-        oldCover = bookData.coverUrl.split("/").pop();
-      }
-      console.log(oldCover);
-      const publicUrl = await supabaseUploadHandler(bookId, req, res);
-      updateFields.coverUrl = publicUrl.publicUrl;
-      if (oldCover !== null) {
+    if (!Number.isInteger(Number(bookId))) {
+      return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
+    }
+    const {title, author, genre, publishYear } = req.body
+    let newBookData = {title, author, genre, publishYear}
+    const newPublishYear = newBookData.publishYear=== '' || newBookData.publishYear === 'null' || newBookData.publishYear == null ? null : parseInt(newBookData.publishYear, 10)
+    newBookData.publishYear = newPublishYear
+
+   const [updatedBook] = await pool.query('UPDATE books SET title=?, author=?, publishYear=?, genre=? WHERE id=?',[newBookData.title, newBookData.author, newPublishYear, newBookData.genre,bookId])
+   
+    if(req.file){
+      const [book] = await pool.query('SELECT coverUrl FROM books WHERE id=?', [bookId])
+      let oldCover = null
+      if(book[0].coverUrl !== null) {
+        oldCover = book[0].coverUrl.split("/").pop();
         await supabaseDelete(bookId, oldCover);
       }
-    }
-    const book = await Book.findByIdAndUpdate(bookId, updateFields, {
-      new: true,
-      runValidators: true,
-    });
-    if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      const coverUrl = await supabaseUploadHandler(bookId, req, res);
+      await pool.query('UPDATE books SET coverUrl=? WHERE id=?',[coverUrl.publicUrl,bookId])
     }
     res.status(200).json({
       status: "Success",
-      data: {
-        updatedBook: book,
-      },
+      updatedBook
     });
   } catch (error) {
     console.error("Could not update book data:", error);
     res.status(500).json({ error: "Could not update book data" });
   }
+  // try {
+  //   const { id: bookId } = req.params;
+  //   const { title, author, genre, publishYear } = req.body;
+  //   let updateFields = { title, author, genre, publishYear };
+  //   if (req.file) {
+  //     const bookData = await Book.findById(bookId);
+  //     let oldCover = null;
+  //     if (bookData.coverUrl !== null) {
+  //       oldCover = bookData.coverUrl.split("/").pop();
+  //     }
+  //     console.log(oldCover);
+  //     const publicUrl = await supabaseUploadHandler(bookId, req, res);
+  //     updateFields.coverUrl = publicUrl.publicUrl;
+  //     if (oldCover !== null) {
+  //       await supabaseDelete(bookId, oldCover);
+  //     }
+  //   }
+  //   const book = await Book.findByIdAndUpdate(bookId, updateFields, {
+  //     new: true,
+  //     runValidators: true,
+  //   });
+  //   if (!book) {
+  //     return res.status(404).json({ error: "Book not found" });
+  //   }
+  //   res.status(200).json({
+  //     status: "Success",
+  //     data: {
+  //       updatedBook: book,
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.error("Could not update book data:", error);
+  //   res.status(500).json({ error: "Could not update book data" });
+  // }
 };
 
 export const deleteBook = async (req, res) => {

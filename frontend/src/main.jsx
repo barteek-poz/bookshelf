@@ -11,11 +11,16 @@ import EditBook from "./pages/EditBook/EditBook";
 import Login from "./pages/Login/Login";
 import MainLayout from "./pages/MainLayout/MainLayout";
 import SearchPage from "./pages/SearchPage/SearchPage";
+import Signup from "./pages/Signup/Signup";
 
 const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />, 
+  },
+  {
+    path: "/signup",
+    element: <Signup />, 
   },
   {
     path: "/",

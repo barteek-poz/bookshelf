@@ -1,3 +1,5 @@
+import styles from "./EditBook.module.css";
+import defaultBookCover from '../../assets/cover-default.jpg'
 import { Button, Input, InputNumber } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -5,7 +7,6 @@ import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import Loader from "../../components/Loader/Loader";
 import useFetch from "../../hooks/useFetch";
-import styles from "./EditBook.module.css";
 import { AuthContext } from "../../context/AuthContext";
 import { useForm, Controller } from "react-hook-form";
 
@@ -30,10 +31,10 @@ const EditBook = () => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
-      });
-      if (cover) {
-        formData.append("bookCover", cover);
-      }
+    });
+    if (cover) {
+      formData.append("bookCover", cover);
+    }
     try {
       const response = await fetch(
         `http://localhost:3000/api/v1/books/${bookId}/edit`,
@@ -71,7 +72,7 @@ const EditBook = () => {
     if (error?.code === 401 || error?.code === 403) {
       navigate(`/books/${bookId}`);
     }
-  }, [error,bookId,navigate]);
+  }, [error, bookId, navigate]);
 
   return (
     <section id="editBook" className={styles.editBookSection}>
@@ -82,7 +83,7 @@ const EditBook = () => {
             {!coverPreview && (
               <img
                 src={
-                  bookData.coverUrl ? bookData.coverUrl : "/cover-default.jpg"
+                  bookData.coverUrl ? bookData.coverUrl : defaultBookCover
                 }
                 alt="book cover"
                 className={styles.bookCover}
@@ -110,42 +111,52 @@ const EditBook = () => {
             onSubmit={handleSubmit(updateBookHandler)}
             encType="multipart/form-data">
             <div className={styles.bookInputWrapper}>
-            <Controller
-              name="title"
-              control={control}
-              defaultValue={bookData.title}
-              rules={{ required: "Please provide book title" }}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder="Book title"
-                  className={styles.bookInput}
-                  onChange={(e) => {
-                    field.onChange(e);
-                  }}
-                />
-              )}
-            />
-            <p style={{ display: errors?.title ? "block" : "none" }} className={styles.errorMsg}> {errors?.title?.message}</p>
+              <Controller
+                name="title"
+                control={control}
+                defaultValue={bookData.title}
+                rules={{ required: "Please provide book title" }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Book title"
+                    className={styles.bookInput}
+                    onChange={(e) => {
+                      field.onChange(e);
+                    }}
+                  />
+                )}
+              />
+              <p
+                style={{ display: errors?.title ? "block" : "none" }}
+                className={styles.errorMsg}>
+                {" "}
+                {errors?.title?.message}
+              </p>
             </div>
             <div className={styles.bookInputWrapper}>
-            <Controller
-              name="author"
-              control={control}
-              defaultValue={bookData.author}
-              rules={{ required: "Please provide book author" }}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  placeholder="Author title"
-                  className={styles.bookInput}
-                  onChange={(e) => {
-                    field.onChange(e);
-                  }}
-                />
-              )}
-            />
-            <p style={{ display: errors?.author ? "block" : "none" }} className={styles.errorMsg}> {errors?.author?.message}</p>
+              <Controller
+                name="author"
+                control={control}
+                defaultValue={bookData.author}
+                rules={{ required: "Please provide book author" }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Author title"
+                    className={styles.bookInput}
+                    onChange={(e) => {
+                      field.onChange(e);
+                    }}
+                  />
+                )}
+              />
+              <p
+                style={{ display: errors?.author ? "block" : "none" }}
+                className={styles.errorMsg}>
+                {" "}
+                {errors?.author?.message}
+              </p>
             </div>
             <Controller
               name="publishYear"
@@ -162,10 +173,7 @@ const EditBook = () => {
                 />
               )}
             />
-            <GenreSelect
-              control={control}
-              defaultValue={bookData.genre}
-            />
+            <GenreSelect control={control} defaultValue={bookData.genre} />
             <div className={styles.formButtons}>
               <Button className={styles.formBtn} htmlType="submit">
                 Save
@@ -173,6 +181,7 @@ const EditBook = () => {
               <Link to={`/books/${bookId}`}>
                 <Button className={styles.formBtn}>Cancel</Button>
               </Link>
+            
             </div>
           </form>
         )}

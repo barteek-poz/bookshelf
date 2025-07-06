@@ -10,6 +10,9 @@
 	gap: 2rem;
 	margin: 5rem 0 0 0;
 }
+.dashboard h2 {
+	align-self: center;
+}
 .booksGrid {
 	display: flex;
 	align-items: flex-start;

@@ -16,18 +16,24 @@ const signRefreshToken = (userId) => {
 	});
 };
 
-export const signup = async (req, res, next) => {
+export const signup = async (req, res) => {
 	try {
-		const newUser = await User.create({
-			name: req.body.name,
-			email: req.body.email,
-			password: req.body.password,
-			passwordConfirm: req.body.passwordConfirm,
-		});
-		const accessToken = signAccessToken(newUser._id);
-		const refreshToken = signRefreshToken(newUser._id);
-		newUser.refreshToken = refreshToken;
-		await newUser.save({ validateBeforeSave: false });
+		const newUserData = req.body
+		console.log(newUserData)
+		if(newUserData.password !== newUserData.passwordConfirm) {
+			return res.status(400).json({ message: 'Passwords do not match' });
+		}
+		const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [newUserData.email]);
+		const existingUser = result[0]
+		if(existingUser) {
+			return res.status(400).json({ message: 'User with this email is already signed up' });
+		}
+		newUserData.password = await bcrypt.hash(newUserData.password, 12);
+		const [newUser] = await pool.query('INSERT INTO users(user_name, email, password) VALUES(?,?,?)',[newUserData.name, newUserData.email, newUserData.password])
+		const newUserId = newUser.insertId
+		const accessToken = signAccessToken(newUserId);
+		const refreshToken = signRefreshToken(newUserId);
+		await pool.query('UPDATE users SET refreshToken=? WHERE id=?',[refreshToken, newUserId])
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			secure: false,
@@ -41,11 +47,47 @@ export const signup = async (req, res, next) => {
 			path: '/',
 			maxAge: 15 * 60 * 1000,
 		});
-		
+		res.status(200).json({
+			status:'success',
+			accessToken,
+			user: {
+				id: newUser.id,
+				email: newUser.email
+			}
+		})
 	} catch (error) {
-		console.error('Signup error:', err);
-		res.status(400).json({ message: 'Signup failed', error: err.message });
+		console.error('Signup error:', error);
+		res.status(400).json({ message: 'Signup failed', error: error.message });
 	}
+	// try {
+	// 	const newUser = await User.create({
+	// 		name: req.body.name,
+	// 		email: req.body.email,
+	// 		password: req.body.password,
+	// 		passwordConfirm: req.body.passwordConfirm,
+	// 	});
+	// 	const accessToken = signAccessToken(newUser._id);
+	// 	const refreshToken = signRefreshToken(newUser._id);
+	// 	newUser.refreshToken = refreshToken;
+	// 	await newUser.save({ validateBeforeSave: false });
+	// 	res.cookie('refreshToken', refreshToken, {
+	// 		httpOnly: true,
+	// 		secure: false,
+	// 		sameSite: 'Strict',
+	// 		maxAge: 7 * 24 * 60 * 60 * 1000,
+	// 	});
+	// 	res.cookie('accessToken', accessToken, {
+	// 		httpOnly: true,
+	// 		secure: false,
+	// 		sameSite: 'Strict',
+	// 		path: '/',
+	// 		maxAge: 15 * 60 * 1000,
+	// 	});
+		
+	// } catch (error) {
+	// 	console.error('Signup error:', err);
+	// 	res.status(400).json({ message: 'Signup failed', error: err.message });
+	// }
 };
 
 export const login = async (req, res) => {
@@ -67,7 +109,7 @@ try {
 	}
 	const accessToken = signAccessToken(user.id);
 	const refreshToken = signRefreshToken(user.id);
-	await pool.query(`UPDATE users SET refreshToken = ? WHERE id = ?`, [refreshToken, user.id])
+	await pool.query(`UPDATE users SET refreshToken = ? WHERE id = ?;`, [refreshToken, user.id])
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		secure: false,
@@ -129,8 +171,8 @@ export const refreshAccessToken = async (req, res) => {
 			token,
 			process.env.JWT_REFRESH_SECRET
 		);
-		const userID = decodedRefreshToken.id
-		const [result] = await pool.query(`SELECT * FROM users WHERE id = ?  `, [userID]);
+		const userId = decodedRefreshToken.id
+		const [result] = await pool.query(`SELECT * FROM users WHERE id = ?  `, [userId]);
 		const currentUser = result[0]
 		if (!currentUser || currentUser.refreshToken !== token) {
 			return res.status(403).json({ message: 'Invalid refresh token' });
@@ -140,7 +182,7 @@ export const refreshAccessToken = async (req, res) => {
 			accessToken,
 			user: {
 			  id: currentUser.id,	
-			  name: currentUser.name,
+			  name: currentUser.name
 			},
 		  });
 	} catch (error) {

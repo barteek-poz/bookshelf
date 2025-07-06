@@ -1,20 +1,32 @@
-import { useContext, useEffect, useState } from 'react';
- import { LeftSquareOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
-import { Link, useLoaderData, useNavigate, useParams } from "react-router";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from "react-router";
+import { addExistingBookHandler } from "../../api/books";
+import defaultBookCover from '../../assets/cover-default.jpg';
 import Loader from "../../components/Loader/Loader";
+import { AuthContext } from '../../context/AuthContext';
+import upperFirstLetter from '../../helpers/upperFirstLetter';
 import useFetch from "../../hooks/useFetch";
 import styles from "./BookPage.module.css";
-import upperFirstLetter from '../../helpers/upperFirstLetter';
-import { AuthContext } from '../../context/AuthContext';
 
 const BookPage = () => {
   const [canUserEdit, setCanUserEdit] = useState(false)
+  const [inLibrary, setInLibrary] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const bookId = useParams().id;
   const navigate = useNavigate()
   const {user, accessToken} = useContext(AuthContext)
   const {data: bookData, error, isPending} = useFetch(`http://localhost:3000/api/v1/books/${bookId}`,"GET");
+  const {data:userBooks} = useFetch(`http://localhost:3000/api/v1/users/${user.id}/books`, "GET");
+
+  const addExistingBook = async() => {
+    try {
+      await addExistingBookHandler(user.id, accessToken, bookId)
+      navigate('/')
+    }catch(error) {
+      alert(error)
+    }
+  }
 
   const deleteBookHandler = async () => {
     try {
@@ -36,18 +48,28 @@ const BookPage = () => {
       console.log(error)
     }
   }
+
   useEffect(()=>{
   if(bookData?.createdBy === user.id) {
     setCanUserEdit(true)
   }
   },[bookData, user])
+
+  useEffect(() => {
+      const userBooksArr = userBooks?.map(book => book.id)
+      if(userBooksArr?.includes(+bookId)) {
+        console.log('test1')
+        setInLibrary(true)
+    }
+  },[userBooks, bookId])
+ 
   return (
     <section id="bookPage" className={styles.bookPage}>
       <div className={styles.bookContent}> 
         {isPending && <Loader />}
         {bookData && (
           <div className={styles.bookCoverCont}>
-            {bookData && <img src={bookData.coverUrl ? bookData.coverUrl : "/cover-default.jpg"} alt="book cover" className={styles.bookCover} style={{border: bookData.coverUrl ? 'none' : '1px solid #11243a'}}/>}
+            {bookData && <img src={bookData.coverUrl ? bookData.coverUrl : defaultBookCover} alt="book cover" className={styles.bookCover} style={{border: bookData.coverUrl ? 'none' : '1px solid #11243a'}}/>}
           </div>
         )}
         {bookData && (
@@ -59,10 +81,11 @@ const BookPage = () => {
           </div>
         )}
         </div>
-        <div className={styles.btns}>
+        {bookData && <div className={styles.btns}>
+          {!inLibrary && <Button className={styles.editBtn} onClick={addExistingBook}>Add book to your library</Button>}
           {canUserEdit && <Link to={`/books/${bookData.id}/edit`}><Button className={styles.editBtn}>Edit book</Button></Link>}
-          {bookData && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Remove book from library</Button>}
-        </div>
+          {inLibrary && <Button danger type='primary' onClick={()=>{setDeleteModalOpen(true)}} className={styles.deleteBtn}>Remove book from library</Button> }
+        </div>}
         {error && <h2 className={styles.errorMsg}>Sorry, something went wrong.<br></br>Please check your network connection or try later. </h2>}
         <Modal title='Confirm delete' open={deleteModalOpen} onOk={deleteBookHandler} onCancel={() => setDeleteModalOpen(false)}>
         <p>Are you sure you want to remove this book from your library?</p>

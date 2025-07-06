@@ -55,7 +55,16 @@ export const getUserById = async (req, res) => {
 
 export const addUserBook = async (req, res) => {
   try {
+    const userId = req.user.id
     const { bookId } = req.body;
+    if(!bookId) {
+      return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
+    }
+    const result = await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,bookId])
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ status: "Fail", message: "Could not add book to user's library" });
+    }
+    res.status(200).json({status:'Success'})
   } catch (error) {
     console.error("Failed to add book:", error);
     res.status(400).json({ status: "Fail", message: "Failed to add book" });
@@ -140,7 +149,7 @@ export const getUserBooks = async (req, res) => {
         WHERE user_books.user_id = ?;`, [userID]);
         res.status(200).json({
             status: 'Success', 
-            books: result
+            data: result
         })
     } catch (error) {
         res.status(500).json({

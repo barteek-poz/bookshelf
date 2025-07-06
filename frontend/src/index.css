@@ -46,3 +46,6 @@ button {
   font-style: italic;
   opacity: 0.6;
 }
+.ant-alert.ant-alert-error {
+  margin-bottom: 20px;
+}

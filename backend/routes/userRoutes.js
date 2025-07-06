@@ -9,7 +9,7 @@ usersRouter.use(isAuth)
 usersRouter.route('/:id').get(getUserById)
 
 // usersRouter.route('/').get(getAllUsers)
-// usersRouter.route('/:id/add-book').post(addUserBook)
+usersRouter.route('/:id/add-book').post(addUserBook)
 usersRouter.route('/:id/books').get(getUserBooks)
 usersRouter.route('/:userId/books/:bookId').delete(deleteUserBook)
 

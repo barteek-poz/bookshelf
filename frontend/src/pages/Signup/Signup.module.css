@@ -1,4 +1,4 @@
-.loginWrapper {
+.signupWrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -6,33 +6,31 @@
     justify-content: flex-start;
     margin-top: 5rem;
 }
-.loginHeader {
+.signupHeader {
     margin-bottom: 5rem;
 }
-.loginBtn {
-    width: 20rem;
-    height: 3.2rem;
+.signupBtn {
+    width: 200px;
+    height: 32px;
     background: #391e10;
     box-shadow: none;
     border: none;
     border-radius: 6px;
-    margin-top: 1rem;
     color: #fff;
     font-size: 1.6rem;
     transition: .3s;
 }
 
-.loginBtn:hover {
+.signupBtn:hover {
     background: #eee1d0;
     color: #391e10;
 }
-
-.signupInfo {
+.loginInfo {
     font-size: 1.6rem;
     margin-top: 2rem;
 }
 
-.signupInfo a {
+.loginInfo a {
     font-weight: 700;
     text-decoration: underline;
 }

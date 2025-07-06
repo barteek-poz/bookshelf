@@ -1,7 +1,7 @@
 
 import styles from "./BookRow.module.css";
 import Book from "../Book/Book";
-import shelfImg from "../../../public/shelf.png";
+import shelfImg from "../../assets/shelf.png";
 import { useBooksRow } from "../../hooks/useBooksRow";
 
 const BookRow = ({ books }) => {

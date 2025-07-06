@@ -1,50 +1,59 @@
-import styles from "./Login.module.css"
+import styles from "./Signup.module.css"
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Input, Button, Alert } from "antd";
 
 
-const Login = () => {
+const Signup = () => {
   const { setAccessToken, setIsAuthenticated, setUser } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const onLogin = async (values) => {
+  const onSingup = async (values) => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
+      if(values.password !== values.passwordConfirm) {
+        throw new Error("Passwords do not match");
+      }  
+      const response = await fetch("http://localhost:3000/api/v1/auth/signup", {
         method: "POST",
         credentials: "include", 
-        headers: {
-          "Content-Type": "application/json", },
+        headers: {"Content-Type": "application/json", },
         body: JSON.stringify({
+          name: values.name,
           email: values.email,
           password: values.password,
+          passwordConfirm: values.passwordConfirm
         }),
       });
-
-      if (!response.ok) throw new Error("Invalid credentials");
-
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
       setAccessToken(data.accessToken);
       setIsAuthenticated(true);
       setUser(data.user)
       navigate("/");
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.message);
       console.error(err);
     }
   };
 
   return (
-    <div className={styles.loginWrapper}>
-     <h1 className={styles.loginHeader}>Bookshelf</h1>
+    <div className={styles.signupWrapper}>
+     <h1 className={styles.signupHeader}>Bookshelf</h1>
       {error && <Alert message={error} type="error" showIcon closable />}
       <Form
         layout="vertical"
-        onFinish={onLogin}
+        onFinish={onSingup}
         autoComplete="off"
       >
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[{ required: true, message: "What's your name?" }]}
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
           label="Email"
           name="email"
@@ -60,16 +69,22 @@ const Login = () => {
         >
           <Input.Password />
         </Form.Item>
+        <Form.Item
+          label="Password confirm"
+          name="passwordConfirm"
+          rules={[{ required: true, message: "Confirm your password" }]}
+        >
+          <Input.Password />
+        </Form.Item>
 
         <Form.Item>
-          <button type="primary" htmlType="submit" block className={styles.loginBtn}>
-            Login
-          </button>
+          <button type="primary" htmlType="submit" block className={styles.signupBtn}>
+            Create account         </button>
         </Form.Item>
       </Form>
-      <span className={styles.signupInfo}>You don't have Bookshelf account yet? Sign up <Link to='/signup'>here</Link></span>
+      <span className={styles.loginInfo}>You already have Bookshelf account? Login <Link to='/login'>here</Link></span>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

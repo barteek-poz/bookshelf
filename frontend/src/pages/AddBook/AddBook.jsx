@@ -1,8 +1,8 @@
 import styles from "./AddBook.module.css";
+import defaultBookCover from '../../assets/cover-default.jpg'
 import { Button, Input, InputNumber } from "antd";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import mongoObjectIdGenerator from "../../helpers/mongoObjectIdGenerator";
 import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import { AuthContext } from "../../context/AuthContext";
@@ -140,7 +140,7 @@ const AddBook = () => {
       <div className={styles.bookContent}>
         <div className={styles.bookCoverCont}>
           <img
-            src={coverPreview ? coverPreview : "/cover-default.jpg"}
+            src={coverPreview ? coverPreview : defaultBookCover}
             alt="cover preview"
             className={styles.bookCover}
             style={{ border: coverPreview ? "none" : "1px solid #11243a " }}
