@@ -1,0 +1,33 @@
+{
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "bookshelf",
+      "database": "bookshelf_db",
+      "username": "root"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Enabled",
+        "ssl": {
+          "key": "/Users/bartek/Downloads/ca.pem"
+        }
+      },
+      "previewLimit": 50,
+      "server": "mysql://avnadmin:AVNS_6XdAZnpUB8NAW_pyb9C@bookshelf-bookshelf-db.d.aivencloud.com:26083/defaultdb?ssl-mode=REQUIRED",
+      "port": 26083,
+      "driver": "MySQL",
+      "name": "bookshelf-aiven",
+      "database": "defaultdb",
+      "username": "avnadmin"
+    }
+  ]
+}
