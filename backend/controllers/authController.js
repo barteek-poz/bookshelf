@@ -19,7 +19,6 @@ const signRefreshToken = (userId) => {
 export const signup = async (req, res) => {
 	try {
 		const newUserData = req.body
-		console.log(newUserData)
 		if(newUserData.password !== newUserData.passwordConfirm) {
 			return res.status(400).json({ message: 'Passwords do not match' });
 		}
