@@ -1,36 +1,36 @@
-import styles from "./Signup.module.css"
+import styles from "./Signup.module.css";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Input, Button, Alert } from "antd";
 
-
 const Signup = () => {
-  const { setAccessToken, setIsAuthenticated, setUser } = useContext(AuthContext);
+  const { setAccessToken, setIsAuthenticated, setUser } =
+    useContext(AuthContext);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const onSingup = async (values) => {
     try {
-      if(values.password !== values.passwordConfirm) {
+      if (values.password !== values.passwordConfirm) {
         throw new Error("Passwords do not match");
-      }  
+      }
       const response = await fetch("http://localhost:3000/api/v1/auth/signup", {
         method: "POST",
-        credentials: "include", 
-        headers: {"Content-Type": "application/json", },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: values.name,
           email: values.email,
           password: values.password,
-          passwordConfirm: values.passwordConfirm
+          passwordConfirm: values.passwordConfirm,
         }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
       setAccessToken(data.accessToken);
       setIsAuthenticated(true);
-      setUser(data.user)
+      setUser(data.user);
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -40,49 +40,48 @@ const Signup = () => {
 
   return (
     <div className={styles.signupWrapper}>
-     <h1 className={styles.signupHeader}>Bookshelf</h1>
+      <h1 className={styles.signupHeader}>Bookshelf</h1>
       {error && <Alert message={error} type="error" showIcon closable />}
-      <Form
-        layout="vertical"
-        onFinish={onSingup}
-        autoComplete="off"
-      >
+      <Form layout="vertical" onFinish={onSingup} autoComplete="off">
         <Form.Item
           label="Name"
           name="name"
-          rules={[{ required: true, message: "What's your name?" }]}
-        >
+          rules={[{ required: true, message: "What's your name?" }]}>
           <Input />
         </Form.Item>
         <Form.Item
           label="Email"
           name="email"
-          rules={[{ required: true, message: "Provide your email" }]}
-        >
+          rules={[{ required: true, message: "Provide your email" }]}>
           <Input />
         </Form.Item>
 
         <Form.Item
           label="Password"
           name="password"
-          rules={[{ required: true, message: "Provide your password" }]}
-        >
+          rules={[{ required: true, message: "Provide your password" }]}>
           <Input.Password />
         </Form.Item>
         <Form.Item
           label="Password confirm"
           name="passwordConfirm"
-          rules={[{ required: true, message: "Confirm your password" }]}
-        >
+          rules={[{ required: true, message: "Confirm your password" }]}>
           <Input.Password />
         </Form.Item>
 
         <Form.Item>
-          <button type="primary" htmlType="submit" block className={styles.signupBtn}>
-            Create account         </button>
+          <button
+            type="primary"
+            htmlType="submit"
+            block
+            className={styles.signupBtn}>
+            Create account{" "}
+          </button>
         </Form.Item>
       </Form>
-      <span className={styles.loginInfo}>You already have Bookshelf account? Login <Link to='/login'>here</Link></span>
+      <span className={styles.loginInfo}>
+        You already have Bookshelf account? Login <Link to="/login">here</Link>
+      </span>
     </div>
   );
 };

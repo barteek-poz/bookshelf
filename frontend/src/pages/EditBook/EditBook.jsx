@@ -1,5 +1,5 @@
 import styles from "./EditBook.module.css";
-import defaultBookCover from '../../assets/cover-default.jpg'
+import defaultBookCover from "../../assets/cover-default.jpg";
 import { Button, Input, InputNumber } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import Loader from "../../components/Loader/Loader";
 import useFetch from "../../hooks/useFetch";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import { useForm, Controller } from "react-hook-form";
 
 const EditBook = () => {
@@ -20,7 +20,7 @@ const EditBook = () => {
     data: bookData,
     error,
     isPending,
-  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}/edit`);
+  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
   const {
     handleSubmit,
     control,
@@ -82,9 +82,7 @@ const EditBook = () => {
           <div className={styles.bookCoverCont}>
             {!coverPreview && (
               <img
-                src={
-                  bookData.coverUrl ? bookData.coverUrl : defaultBookCover
-                }
+                src={bookData.coverUrl ? bookData.coverUrl : defaultBookCover}
                 alt="book cover"
                 className={styles.bookCover}
                 style={{
@@ -181,7 +179,6 @@ const EditBook = () => {
               <Link to={`/books/${bookId}`}>
                 <Button className={styles.formBtn}>Cancel</Button>
               </Link>
-            
             </div>
           </form>
         )}

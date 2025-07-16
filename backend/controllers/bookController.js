@@ -156,6 +156,7 @@ export const getBookById = async (req, res) => {
     if(!book) {
       return res.status(404).json({ status: "Fail", message: "Book not found" });
     }
+    console.log(book)
     res.status(200).json({ status: "Success", data: book });
   }catch(error){
     console.error("Error fetching book:", error);

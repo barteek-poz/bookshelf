@@ -1,11 +1,11 @@
 import styles from "./AddBook.module.css";
-import defaultBookCover from '../../assets/cover-default.jpg'
+import defaultBookCover from "../../assets/cover-default.jpg";
 import { Button, Input, InputNumber } from "antd";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import BookPropositions from "../../components/BookPropositions/BookPropositions";
 import { useForm, Controller } from "react-hook-form";
 
@@ -30,7 +30,7 @@ const AddBook = () => {
       coverUrl: "",
     },
   });
-
+  console.log(user);
   const addExistingBookHandler = async () => {
     try {
       const response = await fetch(
@@ -57,7 +57,7 @@ const AddBook = () => {
   };
 
   const addBookHandler = async (data) => {
-    console.log(data)
+    console.log(data);
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);

@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { addExistingBookHandler } from "../../api/books";
 import defaultBookCover from "../../assets/cover-default.jpg";
 import Loader from "../../components/Loader/Loader";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import upperFirstLetter from "../../helpers/upperFirstLetter";
 import useFetch from "../../hooks/useFetch";
 import styles from "./BookPage.module.css";
@@ -20,10 +20,9 @@ const BookPage = () => {
     data: bookData,
     error,
     isPending,
-  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}`, "GET");
+  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
   const { data: userBooks } = useFetch(
-    `http://localhost:3000/api/v1/users/${user.id}/books`,
-    "GET"
+    `http://localhost:3000/api/v1/users/${user.id}/books`
   );
 
   const addExistingBook = async () => {

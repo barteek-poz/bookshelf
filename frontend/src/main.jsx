@@ -2,11 +2,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import AuthContextProvider from "./context/AuthContext";
+import AuthContextProvider from "./context/AuthContext.tsx";
 import "./index.css";
 import AddBook from "./pages/AddBook/AddBook";
 import BookPage from "./pages/BookPage/BookPage";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 import EditBook from "./pages/EditBook/EditBook";
 import Login from "./pages/Login/Login";
 import MainLayout from "./pages/MainLayout/MainLayout";
@@ -16,16 +16,16 @@ import Signup from "./pages/Signup/Signup";
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />, 
+    element: <Login />,
   },
   {
     path: "/signup",
-    element: <Signup />, 
+    element: <Signup />,
   },
   {
     path: "/",
     element: <MainLayout />,
-    
+
     children: [
       {
         path: "/",
@@ -34,7 +34,6 @@ const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
-        
       },
       {
         path: "books/:id",
@@ -43,7 +42,6 @@ const router = createBrowserRouter([
             <BookPage />
           </ProtectedRoute>
         ),
-        
       },
       {
         path: "books/:id/edit",
@@ -78,7 +76,7 @@ const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
     <AuthContextProvider>
-    <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </AuthContextProvider>
   </StrictMode>
 );

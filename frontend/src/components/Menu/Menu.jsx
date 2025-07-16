@@ -1,7 +1,7 @@
 import styles from "./Menu.module.css";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.tsx";
 import bookIcon from "../../assets/book-icon.svg";
 import searchIcon from "../../assets/search-icon.svg";
 import addBookIcon from "../../assets/add-book-icon.svg";
@@ -11,7 +11,7 @@ import closeIcon from "../../assets/close-icon.svg";
 
 const Menu = () => {
   const [burgerActive, setBurgerActive] = useState(false);
-  const { setIsAuthenticated, user, setUser } = useContext(AuthContext);
+  const { setIsAuthenticated, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const logoutHandler = async () => {
