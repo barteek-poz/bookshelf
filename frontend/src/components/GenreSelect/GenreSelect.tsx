@@ -3,9 +3,10 @@ import { ConfigProvider, Select } from "antd";
 import useFetch from "../../hooks/useFetch";
 import upperFirstLetter from "../../helpers/upperFirstLetter";
 import { Controller } from "react-hook-form";
+import { BookGenreType } from "../../types/bookTypes";
 
 const GenreSelect = ({ defaultValue, control}) => {
-  const { data: genresData } = useFetch("http://localhost:3000/api/v1/genres");
+  const { data: genresData } = useFetch<BookGenreType[]>("http://localhost:3000/api/v1/genres");
   const genresCapitalized = genresData?.map((genre) => {
     return { ...genre, label: upperFirstLetter(genre.label) };
   });

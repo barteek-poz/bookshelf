@@ -1,5 +1,15 @@
+import { BookCoverInputTypes } from "../../types/bookTypes";
 import styles from "./BookCoverInput.module.css"
-const BookCoverInput = ({setCover, coverPreviewHandler}) => {
+
+
+const BookCoverInput = ({setCover, coverPreviewHandler} : BookCoverInputTypes) => {
+
+  const bookCoverHandler = (bookCover:File|null) => {
+    if(bookCover) {
+      setCover(bookCover);
+      coverPreviewHandler(bookCover);
+    }
+  }
   return (
     <>
       <label className={styles.coverInput} htmlFor="bookCover">
@@ -12,8 +22,9 @@ const BookCoverInput = ({setCover, coverPreviewHandler}) => {
         id="bookCover"
         className={styles.inputFile}
         onChange={(e) => {
-          setCover(e.target.files[0]);
-          coverPreviewHandler(e.target.files[0]);
+          if(e.target.files) {
+            bookCoverHandler(e.target.files[0])
+          }
         }}
       />
     </>

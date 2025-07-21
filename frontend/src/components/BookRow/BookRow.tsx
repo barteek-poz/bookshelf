@@ -3,8 +3,9 @@ import styles from "./BookRow.module.css";
 import Book from "../Book/Book";
 import shelfImg from "../../assets/shelf.png";
 import { useBooksRow } from "../../hooks/useBooksRow";
+import { BookRowType } from "../../types/bookTypes";
 
-const BookRow = ({ books }) => {
+const BookRow = ({ books }:BookRowType) => {
   const { booksPerShelf} = useBooksRow();
   const shelves = [];
   for (let i = 0; i < books.length; i += booksPerShelf) {
@@ -20,7 +21,10 @@ const BookRow = ({ books }) => {
               id={book.id}
               title={book.title}
               author={book.author}
-              cover={book.coverUrl}
+              coverUrl={book.coverUrl}
+              createdBy={book.createdBy}
+              genre={book.genre}
+              publishYear={book.publishYear}
             />
           ))}
 

@@ -11,7 +11,7 @@ const SearchResults = ({existingBooks}) => {
               id={book._id}
               title={book.title}
               author={book.author}
-              cover={book.coverUrl}
+              coverUrl={book.coverUrl}
             />
           );
         })}

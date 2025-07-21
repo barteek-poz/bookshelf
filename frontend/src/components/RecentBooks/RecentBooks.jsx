@@ -19,7 +19,7 @@ const RecentBooks = () => {
                   id={book.id}
                   title={book.title}
                   author={book.author}
-                  cover={book.coverUrl}
+                  coverUrl={book.coverUrl}
                 />
               );
             })}

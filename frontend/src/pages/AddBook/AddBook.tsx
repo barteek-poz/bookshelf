@@ -129,7 +129,6 @@ const AddBook = () => {
     }
   };
   const previewExistingBookHandler = (book:BookDataType) => {
-    console.log(book)
     setSearchedTitle(book);
     reset({
       title: book.title,

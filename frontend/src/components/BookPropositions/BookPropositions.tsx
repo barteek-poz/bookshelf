@@ -1,5 +1,7 @@
+import { BookPropositionsType } from '../../types/bookTypes';
 import styles from './BookPropositions.module.css';
-const BookPropositions = ({existingBooks, previewExistingBookHandler}) => {
+
+const BookPropositions = ({existingBooks, previewExistingBookHandler}:BookPropositionsType) => {
 	return (
 		<div className={styles.bookPropositions}>
 			<p className={styles.bookPropositionsHeader}>
@@ -9,7 +11,7 @@ const BookPropositions = ({existingBooks, previewExistingBookHandler}) => {
 			</p>
 			<ul className={styles.bookPropositionsList}>
                 {existingBooks.map(book => {
-                    return <li key={book._id} onClick={()=>{previewExistingBookHandler(book)}}><span>{book.title},</span><p>&nbsp;{book.author}</p></li>
+                    return <li key={book.id} onClick={()=>{previewExistingBookHandler(book)}}><span>{book.title},</span><p>&nbsp;{book.author}</p></li>
                 })}
 				
 			</ul>
