@@ -1,17 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.tsx";
 import AuthContextProvider from "./context/AuthContext.tsx";
 import "./index.css";
-import AddBook from "./pages/AddBook/AddBook";
-import BookPage from "./pages/BookPage/BookPage";
+import AddBook from "./pages/AddBook/AddBook.tsx";
+import BookPage from "./pages/BookPage/BookPage.tsx";
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
-import EditBook from "./pages/EditBook/EditBook";
-import Login from "./pages/Login/Login";
-import MainLayout from "./pages/MainLayout/MainLayout";
-import SearchPage from "./pages/SearchPage/SearchPage";
-import Signup from "./pages/Signup/Signup";
+import EditBook from "./pages/EditBook/EditBook.tsx";
+import Login from "./pages/Login/Login.tsx";
+import MainLayout from "./pages/MainLayout/MainLayout.tsx";
+import SearchPage from "./pages/SearchPage/SearchPage.tsx";
+import Signup from "./pages/Signup/Signup.tsx";
 
 const router = createBrowserRouter([
   {

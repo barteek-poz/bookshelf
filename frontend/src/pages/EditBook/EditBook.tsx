@@ -1,37 +1,38 @@
-import styles from "./EditBook.module.css";
-import defaultBookCover from "../../assets/cover-default.jpg";
 import { Button, Input, InputNumber } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import defaultBookCover from "../../assets/cover-default.jpg";
 import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
 import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import Loader from "../../components/Loader/Loader";
+import useAuthUser from "../../hooks/useAuthUser";
 import useFetch from "../../hooks/useFetch";
-import { AuthContext } from "../../context/AuthContext.tsx";
-import { useForm, Controller } from "react-hook-form";
+import styles from "./EditBook.module.css";
+import { BookDataType, BookInputType } from "../../types/bookTypes";
 
 const EditBook = () => {
-  const [cover, setCover] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const { accessToken } = useContext(AuthContext);
+  const [cover, setCover] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const { accessToken } = useAuthUser();
   const navigate = useNavigate();
-  const bookId = useParams().id;
+  const bookId:string | undefined = useParams().id;
   const {
     data: bookData,
     error,
     isPending,
-  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
+  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm<BookInputType>();
 
-  const updateBookHandler = async (data) => {
+  const updateBookHandler = async (data:BookInputType):Promise<void> => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+    formData.append(key, value !== null ? String(value) : 'null');
+    }); 
     if (cover) {
       formData.append("bookCover", cover);
     }
@@ -51,23 +52,24 @@ const EditBook = () => {
       if (response.ok) {
         navigate(`/books/${bookId}`);
       } else {
-        alert("Could not update the book cover", data.error);
+        alert(`Could not update the book cover: ${data.error}`);
       }
     } catch (error) {
       alert(error);
     }
   };
 
-  const coverPreviewHandler = (e) => {
-    const coverFile = e.target.files[0];
+  const coverPreviewHandler = (coverFile:File) => {
     if (coverFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCoverPreview(reader.result);
+        const result = reader.result as string
+        setCoverPreview(result);
       };
       reader.readAsDataURL(coverFile);
     }
   };
+
   useEffect(() => {
     if (error?.code === 401 || error?.code === 403) {
       navigate(`/books/${bookId}`);

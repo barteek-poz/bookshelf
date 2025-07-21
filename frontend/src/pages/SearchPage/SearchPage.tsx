@@ -1,23 +1,18 @@
-import { useContext, useState } from "react";
-import Book from "../../components/Book/Book";
-import useFetch from "../../hooks/useFetch";
-import styles from "./SearchPage.module.css";
-import { Button, Input } from "antd";
-import { useNavigate } from "react-router";
-import { AuthContext } from "../../context/AuthContext.tsx";
-import Loader from "../../components/Loader/Loader";
+import { Input } from "antd";
+import { useState } from "react";
 import RecentBooks from "../../components/RecentBooks/RecentBooks";
 import SearchResults from "../../components/SearchResults/SearchResults";
+import useAuthUser from "../../hooks/useAuthUser";
+import { BookDataType } from "../../types/bookTypes";
+import styles from "./SearchPage.module.css";
 
 const SearchPage = () => {
-  const [inputData, setInputData] = useState("");
-  const [existingBooks, setExistingBooks] = useState([]);
-  const [searchStatus, setSearchStatus] = useState("");
-  const { accessToken, user } = useContext(AuthContext);
+  const [inputData, setInputData] = useState<string>("");
+  const [existingBooks, setExistingBooks] = useState<BookDataType[] | []>([]);
+  const { accessToken, user } = useAuthUser();
 
-  const searchTitleHandler = async (bookTitle) => {
+  const searchTitleHandler = async (bookTitle:string) => {
     if (bookTitle.length >= 2) {
-      setSearchStatus("search");
       try {
         const response = await fetch(
           `http://localhost:3000/api/v1/books/search-by-title`,
@@ -33,17 +28,14 @@ const SearchPage = () => {
         );
         const data = await response.json();
         if (response.ok) {
-          setSearchStatus("finish");
           setExistingBooks(data.books);
         } else {
-          setSearchStatus("fail");
           alert(`Could not get books: ${data.message}`);
         }
       } catch (error) {
         alert(error);
       }
-    } else if (bookTitle.length < 2) {
-      setSearchStatus("");
+    } else if (bookTitle.length < 2) { 
       setExistingBooks([]);
     }
   };

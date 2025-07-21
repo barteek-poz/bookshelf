@@ -13,7 +13,7 @@ const BookCoverInput = ({setCover, coverPreviewHandler}) => {
         className={styles.inputFile}
         onChange={(e) => {
           setCover(e.target.files[0]);
-          coverPreviewHandler(e);
+          coverPreviewHandler(e.target.files[0]);
         }}
       />
     </>

@@ -1,40 +1,41 @@
 import { Button, Modal } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { addExistingBookHandler } from "../../api/books";
 import defaultBookCover from "../../assets/cover-default.jpg";
 import Loader from "../../components/Loader/Loader";
-import { AuthContext } from "../../context/AuthContext.tsx";
 import upperFirstLetter from "../../helpers/upperFirstLetter";
+import useAuthUser from "../../hooks/useAuthUser";
 import useFetch from "../../hooks/useFetch";
+import { BookDataType } from "../../types/bookTypes";
 import styles from "./BookPage.module.css";
 
 const BookPage = () => {
-  const [canUserEdit, setCanUserEdit] = useState(false);
-  const [inLibrary, setInLibrary] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const bookId = useParams().id;
+  const [canUserEdit, setCanUserEdit] = useState<boolean>(false);
+  const [inLibrary, setInLibrary] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const bookId:string | undefined = useParams().id;
   const navigate = useNavigate();
-  const { user, accessToken } = useContext(AuthContext);
+  const { user, accessToken } = useAuthUser();
   const {
     data: bookData,
     error,
     isPending,
-  } = useFetch(`http://localhost:3000/api/v1/books/${bookId}`);
-  const { data: userBooks } = useFetch(
+  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
+  const { data: userBooks } = useFetch<BookDataType[]>(
     `http://localhost:3000/api/v1/users/${user.id}/books`
   );
 
-  const addExistingBook = async () => {
+  const addExistingBook = async ():Promise<void>  => {
     try {
       await addExistingBookHandler(user.id, accessToken, bookId);
       navigate("/");
-    } catch (error) {
+    } catch (error:unknown) {
       alert(error);
     }
   };
 
-  const deleteBookHandler = async () => {
+  const deleteBookHandler = async ():Promise<void> => {
     try {
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${user.id}/books/${bookId}`,
@@ -46,15 +47,13 @@ const BookPage = () => {
           },
         }
       );
-      console.log(response);
       if (response.ok) {
         navigate("/");
       } else {
         throw error;
       }
-    } catch (error) {
+    } catch (error:unknown) {
       alert("Could not delete the book");
-      console.log(error);
     }
   };
 
@@ -66,8 +65,7 @@ const BookPage = () => {
 
   useEffect(() => {
     const userBooksArr = userBooks?.map((book) => book.id);
-    if (userBooksArr?.includes(+bookId)) {
-      console.log("test1");
+    if (bookId && userBooksArr?.includes(+bookId)) {
       setInLibrary(true);
     }
   }, [userBooks, bookId]);

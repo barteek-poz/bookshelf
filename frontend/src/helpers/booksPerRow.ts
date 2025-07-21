@@ -1,4 +1,4 @@
-export const booksPerRow = (windowWidth) => {
+export const booksPerRow = (windowWidth:number) => {
   if (windowWidth >= 2300) {
     return 7;
   } else if(windowWidth >= 2000) {

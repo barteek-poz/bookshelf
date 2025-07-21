@@ -1,16 +1,16 @@
-import styles from "./Login.module.css";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext.tsx";
+import { Alert, Form, Input } from "antd";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Alert } from "antd";
+import useAuthUser from "../../hooks/useAuthUser";
+import { UserLoginType } from "../../types/userTypes";
+import styles from "./Login.module.css";
 
 const Login = () => {
-  const { setAccessToken, setIsAuthenticated, setUser } =
-    useContext(AuthContext);
-  const [error, setError] = useState(null);
+  const { setAccessToken, setIsAuthenticated, setUser } = useAuthUser();
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const onLogin = async (values) => {
+  const onLogin = async (values:UserLoginType):Promise<void> => {
     try {
       const response = await fetch("http://localhost:3000/api/v1/auth/login", {
         method: "POST",
@@ -23,9 +23,7 @@ const Login = () => {
           password: values.password,
         }),
       });
-
       if (!response.ok) throw new Error("Invalid credentials");
-
       const data = await response.json();
       setAccessToken(data.accessToken);
       setIsAuthenticated(true);
@@ -58,9 +56,7 @@ const Login = () => {
 
         <Form.Item>
           <button
-            type="primary"
-            htmlType="submit"
-            block
+            type="submit"
             className={styles.loginBtn}>
             Login
           </button>

@@ -90,7 +90,7 @@ export const createBook = async (req, res) => {
   try {
     const userId = req.user.id
     const newBookData = req.body
-    const newPublishYear = newBookData.publishYear=== '' || newBookData.publishYear === 'null' || newBookData.publishYear == null ? null : parseInt(newBookData.publishYear, 10)
+    const newPublishYear = newBookData.publishYear === 'null' ? null : parseInt(newBookData.publishYear, 10)
     const [result] = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[newBookData.title, newBookData.author, newPublishYear,newBookData.genre, null, userId ])
     if(!result.insertId) {
       return res.status(500).json({ status: "Fail", message: "Could not add new book" });
@@ -192,7 +192,7 @@ export const updateBook = async (req, res) => {
     }
     const {title, author, genre, publishYear } = req.body
     let newBookData = {title, author, genre, publishYear}
-    const newPublishYear = newBookData.publishYear=== '' || newBookData.publishYear === 'null' || newBookData.publishYear == null ? null : parseInt(newBookData.publishYear, 10)
+    const newPublishYear = newBookData.publishYear === 'null' ? null : parseInt(newBookData.publishYear, 10)
     newBookData.publishYear = newPublishYear
 
    const [updatedBook] = await pool.query('UPDATE books SET title=?, author=?, publishYear=?, genre=? WHERE id=?',[newBookData.title, newBookData.author, newPublishYear, newBookData.genre,bookId])

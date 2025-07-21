@@ -1,27 +1,14 @@
 import BookRow from "../../components/BookRow/BookRow";
 import Loader from "../../components/Loader/Loader";
-import {  useAuth } from "../../context/AuthContext";
+import useAuthUser from "../../hooks/useAuthUser";
 import useFetch from "../../hooks/useFetch";
+import { BookDataType } from "../../types/bookTypes";
 import styles from "./Dashboard.module.css";
 
-type BookDataType = {
-  id: number ,
-  title: string, 
-  author: string, 
-  createdBy: number, 
-  coverUrl: string, 
-  genre: string, 
-  publishYear: string
-}
 
 const Dashboard = () => {
-  const { user} = useAuth()
-  const {
-    data: books,
-    error,
-    isPending,
-  } = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
-  console.log(books)
+  const { user} = useAuthUser()
+  const {data: books, error, isPending} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
   return (
     <section id="dashboard" className={styles.dashboard}>
       {isPending && <Loader />}

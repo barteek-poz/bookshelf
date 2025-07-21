@@ -1,27 +1,28 @@
-import styles from "./AddBook.module.css";
-import defaultBookCover from "../../assets/cover-default.jpg";
 import { Button, Input, InputNumber } from "antd";
-import { useContext, useState } from "react";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import defaultBookCover from "../../assets/cover-default.jpg";
 import BookCoverInput from "../../components/BookCoverInput/BookCoverInput";
-import GenreSelect from "../../components/GenreSelect/GenreSelect";
-import { AuthContext } from "../../context/AuthContext.tsx";
 import BookPropositions from "../../components/BookPropositions/BookPropositions";
-import { useForm, Controller } from "react-hook-form";
+import GenreSelect from "../../components/GenreSelect/GenreSelect";
+import useAuthUser from "../../hooks/useAuthUser";
+import { BookDataType, BookInputType } from "../../types/bookTypes";
+import styles from "./AddBook.module.css";
 
 const AddBook = () => {
-  const [existingBooks, setExistingBooks] = useState([]);
-  const [searchedTitle, setSearchedTitle] = useState(null);
-  const [cover, setCover] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const { accessToken, user } = useContext(AuthContext);
+  const [existingBooks, setExistingBooks] = useState<BookDataType[]>([]);
+  const [searchedTitle, setSearchedTitle] = useState<BookDataType | null>(null);
+  const [cover, setCover] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const { accessToken, user } = useAuthUser();
   const navigate = useNavigate();
   const {
     reset,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm({
+  } = useForm<BookInputType>({
     defaultValues: {
       title: "",
       author: "",
@@ -30,37 +31,40 @@ const AddBook = () => {
       coverUrl: "",
     },
   });
-  console.log(user);
-  const addExistingBookHandler = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.id}/add-book`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          body: JSON.stringify({ bookId: searchedTitle.id }),
-        }
-      );
-      const data = await response.json();
-      if (response.ok) {
-        navigate(`/`);
-      } else {
-        alert(`Could not add book: ${data.message}`);
-      }
-    } catch (error) {
-      alert(error);
+
+  const addExistingBookHandler = async ():Promise<void> =>  {
+    if(!searchedTitle) { 
+      alert(`Could not add the book because of book title error`);
+      return
     }
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/users/${user.id}/add-book`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+            body: JSON.stringify({ bookId: searchedTitle.id }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          navigate(`/`);
+        } else {
+          alert(`Could not add book: ${data.message}`);
+        }
+      } catch (error:unknown) {
+        alert(error);
+      }
   };
 
-  const addBookHandler = async (data) => {
-    console.log(data);
+  const addBookHandler = async (data:BookInputType):Promise<void> => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+    formData.append(key, value !== null ? String(value) : 'null');
     });
     if (cover) {
       formData.append("bookCover", cover);
@@ -80,22 +84,23 @@ const AddBook = () => {
       } else {
         alert(`Could not add book: ${data.message}`);
       }
-    } catch (error) {
+    } catch (error:unknown) {
       alert(error);
     }
   };
 
-  const coverPreviewHandler = (e) => {
-    const coverFile = e.target.files[0];
+  const coverPreviewHandler = (coverFile:File) => {
     if (coverFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCoverPreview(reader.result);
+        const result = reader.result as string
+        setCoverPreview(result);
       };
       reader.readAsDataURL(coverFile);
     }
   };
-  const searchTitleHandler = async (bookTitle) => {
+
+  const searchTitleHandler = async (bookTitle:string):Promise<void> => {
     if (bookTitle.length >= 3) {
       try {
         const response = await fetch(
@@ -116,14 +121,15 @@ const AddBook = () => {
         } else {
           alert(`Could not get books: ${data.message}`);
         }
-      } catch (error) {
+      } catch (error:unknown) {
         alert(error);
       }
     } else if (bookTitle.length < 3) {
       setExistingBooks([]);
     }
   };
-  const previewExistingBookHandler = (book) => {
+  const previewExistingBookHandler = (book:BookDataType) => {
+    console.log(book)
     setSearchedTitle(book);
     reset({
       title: book.title,

@@ -1,16 +1,16 @@
-import styles from "./Signup.module.css";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext.tsx";
+import { Alert, Form, Input } from "antd";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Alert } from "antd";
+import useAuthUser from "../../hooks/useAuthUser";
+import styles from "./Signup.module.css";
+import { UserLoginType } from "../../types/userTypes";
 
 const Signup = () => {
-  const { setAccessToken, setIsAuthenticated, setUser } =
-    useContext(AuthContext);
-  const [error, setError] = useState(null);
+  const { setAccessToken, setIsAuthenticated, setUser } = useAuthUser();
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  const onSingup = async (values) => {
+  
+  const onSingup = async (values:UserLoginType) => {
     try {
       if (values.password !== values.passwordConfirm) {
         throw new Error("Passwords do not match");
@@ -33,7 +33,8 @@ const Signup = () => {
       setUser(data.user);
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      const catchError = err as Error
+      setError(catchError.message);
       console.error(err);
     }
   };
@@ -71,9 +72,7 @@ const Signup = () => {
 
         <Form.Item>
           <button
-            type="primary"
-            htmlType="submit"
-            block
+            type="submit"
             className={styles.signupBtn}>
             Create account{" "}
           </button>
