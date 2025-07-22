@@ -13,7 +13,6 @@ const SearchPage = () => {
   const { accessToken, user } = useAuthUser();
   const {errorHandler} = useErrorHandler()
 
-
   const searchTitleHandler = async (bookTitle: string): Promise<void> => {
     if (bookTitle.length < 2) {
       setExistingBooks([]);

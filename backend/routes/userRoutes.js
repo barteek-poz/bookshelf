@@ -1,6 +1,5 @@
-import express from 'express'
-import { getAllUsers, deleteUser, getUserById, updateUser, getUserBooks, addUserBook, deleteUserBook } from '../controllers/userController.js'
-import { updateUserBooks } from '../middlewares/updateUserBooks.js'
+import express from 'express';
+import { addUserBook, deleteUserBook, getUserBooks, getUserById } from '../controllers/userController.js';
 import { isAuth } from '../middlewares/isAuth.js';
 
 const usersRouter = express.Router() 

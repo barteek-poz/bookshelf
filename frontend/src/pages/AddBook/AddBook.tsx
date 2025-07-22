@@ -37,7 +37,7 @@ const AddBook = () => {
 
   const addExistingBookHandler = async ():Promise<void> =>  {
     if(!searchedTitle) { 
-      alert(`Could not add the book because of book title error`);
+      errorHandler('Sorry, we could not add this book to your library. Please refresh the page or try again later.')
       return
     }
       try {
@@ -81,6 +81,7 @@ const AddBook = () => {
         body: formData,
       });
       const data = await response.json();
+      console.log(data)
       if (!response.ok) {
         throw new Error()
       } 

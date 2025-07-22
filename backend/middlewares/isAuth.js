@@ -1,6 +1,4 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/userModel.js';
-import Book from '../models/bookModel.js';
 import { pool } from "../server.js";
 
 export const isAuth = async (req, res, next) => {
