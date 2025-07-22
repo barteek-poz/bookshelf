@@ -1,5 +1,6 @@
 import { useContext } from "react"
-import { AuthContext, AuthContextType } from "../context/AuthContext"
+import { AuthContext} from "../context/AuthContext"
+import { AuthContextType } from "../types/authTypes"
 
 //hook to check if user is not null in every component
 const useAuthUser = () => {

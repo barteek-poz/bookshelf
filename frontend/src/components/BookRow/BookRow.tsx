@@ -22,9 +22,6 @@ const BookRow = ({ books }:BookRowType) => {
               title={book.title}
               author={book.author}
               coverUrl={book.coverUrl}
-              createdBy={book.createdBy}
-              genre={book.genre}
-              publishYear={book.publishYear}
             />
           ))}
 

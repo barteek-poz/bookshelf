@@ -1,18 +1,20 @@
-import styles from "./Menu.module.css";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { AuthContext } from "../../context/AuthContext.tsx";
-import bookIcon from "../../assets/book-icon.svg";
-import searchIcon from "../../assets/search-icon.svg";
 import addBookIcon from "../../assets/add-book-icon.svg";
-import logoutIcon from "../../assets/logout-icon.svg";
+import bookIcon from "../../assets/book-icon.svg";
 import burgerIcon from "../../assets/burger-icon.svg";
 import closeIcon from "../../assets/close-icon.svg";
+import logoutIcon from "../../assets/logout-icon.svg";
+import searchIcon from "../../assets/search-icon.svg";
+import useAuthUser from "../../hooks/useAuthUser";
+import styles from "./Menu.module.css";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const Menu = () => {
-  const [burgerActive, setBurgerActive] = useState(false);
-  const { setIsAuthenticated, setUser } = useContext(AuthContext);
+  const [burgerActive, setBurgerActive] = useState<boolean>(false);
+  const { setIsAuthenticated, setUser } = useAuthUser();
   const navigate = useNavigate();
+  const {errorHandler} = useErrorHandler()
 
   const logoutHandler = async () => {
     try {
@@ -20,16 +22,14 @@ const Menu = () => {
         method: "POST",
         credentials: "include",
       });
-      if (response.ok) {
-        setUser(null);
-        setIsAuthenticated(false);
-        navigate("/login");
-      } else {
-        throw new Error("Logout failed");
-      }
+      if (!response.ok) {
+        throw new Error()
+      } 
+      setUser(null);
+      setIsAuthenticated(false);
+      navigate("/login");
     } catch (error) {
-      alert("Could not logout");
-      console.log(error);
+      errorHandler('Sorry, something went wrong and we could not log You out. Please refresh the page or try again later.')
     }
   };
   return (
@@ -70,7 +70,7 @@ const Menu = () => {
           />
           Add book
         </Link>
-        <Link onClick={logoutHandler}>
+        <Link to="" onClick={logoutHandler}>
           <img src={logoutIcon} alt="logout-icon" className={styles.menuIcon} />
           Logout
         </Link>

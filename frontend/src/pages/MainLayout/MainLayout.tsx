@@ -1,10 +1,10 @@
 import { Outlet } from "react-router";
 import Menu from "../../components/Menu/Menu";
-import useAuthUser from "../../hooks/useAuthUser";
+import { useAuth } from "../../context/AuthContext";
 import styles from "./MainLayout.module.css";
 
 const MainLayout = () => {
-  const { isAuthenticated } = useAuthUser();
+  const { isAuthenticated } = useAuth();
   return (
     <main className={styles.mainLayout}>
       {isAuthenticated && <Menu />}

@@ -1,12 +1,21 @@
+import { Control } from "react-hook-form"
+
 export type BookDataType = {
     id: number ,
     title: string, 
     author: string, 
-    createdBy: number, 
+    createdBy?: number, 
     coverUrl: string | null, 
-    genre: string | null, 
-    publishYear: number | null
+    genre?: string | null, 
+    publishYear?: number | null
   }
+
+ export type SingleBookType = {
+  id: number ,
+    title: string, 
+    author: string, 
+    coverUrl: string | null, 
+ }
 
   export type BookInputType = {
     title: string, 
@@ -33,4 +42,9 @@ export type BookDataType = {
   export type BookGenreType = {
    option: string,
    label: string
+  }
+
+  export type GenreSelectType = {
+    control: Control<BookInputType, any, BookInputType>,
+    defaultValue: string | null | undefined
   }

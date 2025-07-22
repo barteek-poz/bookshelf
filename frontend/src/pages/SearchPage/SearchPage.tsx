@@ -3,6 +3,7 @@ import { useState } from "react";
 import RecentBooks from "../../components/RecentBooks/RecentBooks";
 import SearchResults from "../../components/SearchResults/SearchResults";
 import useAuthUser from "../../hooks/useAuthUser";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 import { BookDataType } from "../../types/bookTypes";
 import styles from "./SearchPage.module.css";
 
@@ -10,33 +11,36 @@ const SearchPage = () => {
   const [inputData, setInputData] = useState<string>("");
   const [existingBooks, setExistingBooks] = useState<BookDataType[] | []>([]);
   const { accessToken, user } = useAuthUser();
+  const {errorHandler} = useErrorHandler()
 
-  const searchTitleHandler = async (bookTitle:string) => {
-    if (bookTitle.length >= 2) {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/v1/books/search-by-title`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-            credentials: "include",
-            body: JSON.stringify({ bookTitle: bookTitle }),
-          }
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setExistingBooks(data.books);
-        } else {
-          alert(`Could not get books: ${data.message}`);
-        }
-      } catch (error) {
-        alert(error);
-      }
-    } else if (bookTitle.length < 2) { 
+
+  const searchTitleHandler = async (bookTitle: string): Promise<void> => {
+    if (bookTitle.length < 2) {
       setExistingBooks([]);
+      return;
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/books/search-by-title",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({ bookTitle }),
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error();
+      }
+      setExistingBooks(data.books);
+    } catch (error) {
+      errorHandler("Sorry, something went wrong and we could not load books. Please refresh the page or try again later.");
     }
   };
   return (

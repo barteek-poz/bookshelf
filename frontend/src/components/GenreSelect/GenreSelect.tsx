@@ -1,15 +1,23 @@
-import styles from "./GenreSelect.module.css";
 import { ConfigProvider, Select } from "antd";
-import useFetch from "../../hooks/useFetch";
-import upperFirstLetter from "../../helpers/upperFirstLetter";
 import { Controller } from "react-hook-form";
-import { BookGenreType } from "../../types/bookTypes";
+import upperFirstLetter from "../../helpers/upperFirstLetter";
+import useFetch from "../../hooks/useFetch";
+import { BookGenreType, GenreSelectType } from "../../types/bookTypes";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
+import { useEffect } from "react";
 
-const GenreSelect = ({ defaultValue, control}) => {
-  const { data: genresData } = useFetch<BookGenreType[]>("http://localhost:3000/api/v1/genres");
+const GenreSelect = ({ defaultValue, control}:GenreSelectType) => {
+  const { data: genresData, error } = useFetch<BookGenreType[]>("http://localhost:3000/api/v1/genres");
+  const {errorHandler} = useErrorHandler()
   const genresCapitalized = genresData?.map((genre) => {
     return { ...genre, label: upperFirstLetter(genre.label) };
   });
+
+  useEffect(()=> {
+    if(error) {
+      errorHandler("Sorry, but something went wrong and we could not load the book page. Please refresh the page or try again later.")
+    }
+  },[error])
   return (
     <ConfigProvider
       theme={{

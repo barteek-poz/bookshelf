@@ -1,24 +1,6 @@
 import React, { createContext, useEffect, useState, useContext, useMemo } from "react";
-
-type User = {
-  id: number
-}
-
-export type AuthContextType = {
-  user: User | null, 
-  setUser: React.Dispatch<React.SetStateAction<User | null>>,
-  accessToken: string | null, 
-  setAccessToken : React.Dispatch<React.SetStateAction<string | null>>,
-  isAuthenticated: boolean,
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-  loading: boolean
-}
-
-type AuthContextProviderProps = {
-  children: React.ReactNode;
-}
-
-
+import { User } from "../types/userTypes";
+import { AuthContextProviderProps, AuthContextType } from "../types/authTypes";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 

@@ -9,6 +9,7 @@ import GenreSelect from "../../components/GenreSelect/GenreSelect";
 import useAuthUser from "../../hooks/useAuthUser";
 import { BookDataType, BookInputType } from "../../types/bookTypes";
 import styles from "./AddBook.module.css";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const AddBook = () => {
   const [existingBooks, setExistingBooks] = useState<BookDataType[]>([]);
@@ -17,6 +18,8 @@ const AddBook = () => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const { accessToken, user } = useAuthUser();
   const navigate = useNavigate();
+  const {errorHandler} = useErrorHandler()
+
   const {
     reset,
     handleSubmit,
@@ -51,13 +54,12 @@ const AddBook = () => {
           }
         );
         const data = await response.json();
-        if (response.ok) {
-          navigate(`/`);
-        } else {
-          alert(`Could not add book: ${data.message}`);
-        }
-      } catch (error:unknown) {
-        alert(error);
+        if (!response.ok) {
+          throw new Error()
+        } 
+        navigate(`/`);
+      } catch (error) {
+        errorHandler("Sorry, something went wrong and we could not add the book to your library. Please refresh the page or try again later.");
       }
   };
 
@@ -79,13 +81,12 @@ const AddBook = () => {
         body: formData,
       });
       const data = await response.json();
-      if (response.ok) {
-        navigate(`/`);
-      } else {
-        alert(`Could not add book: ${data.message}`);
-      }
-    } catch (error:unknown) {
-      alert(error);
+      if (!response.ok) {
+        throw new Error()
+      } 
+      navigate(`/`);
+    } catch (error) {
+      errorHandler("Sorry, something went wrong and we could not add the book to your library. Please refresh the page or try again later.");
     }
   };
 
@@ -116,13 +117,12 @@ const AddBook = () => {
           }
         );
         const data = await response.json();
-        if (response.ok) {
-          setExistingBooks(data.books);
-        } else {
-          alert(`Could not get books: ${data.message}`);
-        }
+        if (!response.ok) {
+          throw new Error()
+        } 
+        setExistingBooks(data.books);
       } catch (error:unknown) {
-        alert(error);
+        errorHandler("Sorry, something went wrong and we could not search the book. Please refresh the page or try again later.");
       }
     } else if (bookTitle.length < 3) {
       setExistingBooks([]);

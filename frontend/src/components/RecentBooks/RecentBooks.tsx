@@ -2,10 +2,20 @@ import useFetch from "../../hooks/useFetch";
 import styles from "./RecentBooks.module.css";
 import Book from "../Book/Book";
 import Loader from "../Loader/Loader";
+import { BookDataType } from "../../types/bookTypes";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
+import { useEffect } from "react";
 
 const RecentBooks = () => {
-  const {data: recentBooks, error,isPending} = useFetch(`http://localhost:3000/api/v1/books/get-recent`);
+  const {data: recentBooks, error,isPending} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/books/get-recent`);
+  const {errorHandler} = useErrorHandler()
 
+  useEffect(()=> {
+    if(error) {
+      errorHandler("Sorry, but something went wrong and we could not load recent books. Please refresh the page or try again later.")
+    }
+  },[error])
+  
   return (
     <div>
       {isPending && <Loader />}
@@ -24,7 +34,6 @@ const RecentBooks = () => {
               );
             })}
         </div>}
-      {error && <h3>Error</h3>}
     </div>
   );
 };

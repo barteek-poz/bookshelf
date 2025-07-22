@@ -1,12 +1,19 @@
 import { Alert, Form, Input } from "antd";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthUser from "../../hooks/useAuthUser";
 import { UserLoginType } from "../../types/userTypes";
 import styles from "./Login.module.css";
+import { AuthContext } from "../../context/AuthContext";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const Login = () => {
-  const { setAccessToken, setIsAuthenticated, setUser } = useAuthUser();
+  const authContext = useContext(AuthContext)
+  const {errorHandler} = useErrorHandler()
+  if(!authContext){
+   throw new Error()
+  }
+  const { setAccessToken, setIsAuthenticated, setUser } = authContext;
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 

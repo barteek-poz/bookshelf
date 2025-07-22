@@ -1,14 +1,15 @@
+import { BookDataType, BookPropositionsType } from '../../types/bookTypes';
 import Book from '../Book/Book';
 import styles from './SearchResults.module.css'
-const SearchResults = ({existingBooks}) => {
+const SearchResults = ({existingBooks}:Omit<BookPropositionsType,'previewExistingBookHandler'>) => {
   return (
     <div className={styles.existingBooks}>
       {existingBooks &&
         existingBooks.map((book) => {
           return (
             <Book
-              key={book._id}
-              id={book._id}
+              key={book.id}
+              id={book.id}
               title={book.title}
               author={book.author}
               coverUrl={book.coverUrl}
