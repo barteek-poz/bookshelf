@@ -1,19 +1,19 @@
-import express from 'express'
-import cors from 'cors'
+import express, { Application } from 'express'
+import cors, {CorsOptions} from 'cors'
 import cookieParser from 'cookie-parser'
-import booksRouter from './routes/booksRoutes.js'
-import genresRouter from './routes/genresRoutes.js'
-import usersRouter from './routes/userRoutes.js'
-import authRouter from './routes/authRoutes.js'
+import booksRouter from './routes/booksRoutes'
+import genresRouter from './routes/genresRoutes'
+import usersRouter from './routes/userRoutes'
+import authRouter from './routes/authRoutes'
 
-const corsOptions = {
+const corsOptions:CorsOptions = {
     origin: 'http://localhost:5173',  
     credentials: true,  
     allowedHeaders: ['Content-Type', 'Authorization'], 
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   };
 
-const app = express()
+const app:Application = express()
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())

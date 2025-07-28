@@ -1,20 +1,31 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import {Request,Response} from 'express'
 import { addNewUserModel, clearUserTokensModel, getUserByEmailModel, getUserByIdModel, updateUserTokensModel } from '../models/authModel.js';
 
-const signAccessToken = (userId) => {
-	return jwt.sign({ id: userId }, process.env.JWT_ACCESS_SECRET, {
-		expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
+const signAccessToken = (userId:number):string => {
+	const secret = process.env.JWT_ACCESS_SECRET 
+	const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN ?? '15m'
+	if(!secret) {
+		throw new Error('JWT secret is not defined');
+	}
+	return jwt.sign({ id: userId }, secret, {
+		expiresIn: expiresIn as jwt.SignOptions['expiresIn']
 	});
 };
 
-const signRefreshToken = (userId) => {
-	return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
-		expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+const signRefreshToken = (userId:number):string => {
+	const secret = process.env.JWT_REFRESH_SECRET 
+	const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN ?? '14d'
+	if(!secret) {
+		throw new Error('JWT secret is not defined');
+	}
+	return jwt.sign({ id: userId }, secret, {
+		expiresIn: expiresIn as jwt.SignOptions['expiresIn']
 	});
 };
 
-export const signup = async (req, res) => {
+export const signup = async (req:Request, res:Response) => {
 	try {
 		const newUserData = req.body
 		if(newUserData.password !== newUserData.passwordConfirm) {
@@ -30,16 +41,17 @@ export const signup = async (req, res) => {
 		const accessToken = signAccessToken(newUserId);
 		const refreshToken = signRefreshToken(newUserId);
 		await updateUserTokensModel(refreshToken, newUserId)
+		const userFinalData = await getUserByIdModel(newUserId);
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			secure: false,
-			sameSite: 'Strict',
+			sameSite: 'strict',
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
 			secure: false,
-			sameSite: 'Strict',
+			sameSite: 'strict',
 			path: '/',
 			maxAge: 15 * 60 * 1000,
 		});
@@ -47,17 +59,17 @@ export const signup = async (req, res) => {
 			status:'success',
 			accessToken,
 			user: {
-				id: newUser.id,
-				email: newUser.email
+				id: userFinalData.id,
+				email: userFinalData.email
 			}
 		})
 	} catch (error) {
 		console.error('Signup error:', error);
-		res.status(400).json({ message: 'Signup failed', error: error.message });
+		res.status(400).json({ message: 'Signup failed', error: error});
 	}
 };
 
-export const login = async (req, res) => {
+export const login = async (req:Request, res:Response) => {
 try {
 	const {email, password} = req.body
 	if (!email || !password) {
@@ -79,7 +91,7 @@ try {
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		secure: false,
-		sameSite: 'Strict',
+		sameSite: 'strict',
 		maxAge: 7 * 24 * 60 * 60 * 1000,
 	});
 	res.status(200).json({
@@ -99,16 +111,16 @@ try {
 	}
 };
 
-export const refreshAccessToken = async (req, res) => {
+export const refreshAccessToken = async (req:Request, res:Response) => {
 	const token = req.cookies.refreshToken;
-	if (!token) {
+	if (!token|| !process.env.JWT_REFRESH_SECRET) {
 		return res.status(401).json({ message: 'No refresh token provided' });
 	}
 	try {
 		const decodedRefreshToken = jwt.verify(
 			token,
 			process.env.JWT_REFRESH_SECRET
-		);
+		) as JwtPayload;
 		const userId = decodedRefreshToken.id
 		const currentUser = await getUserByIdModel(userId)
 		if (!currentUser || currentUser.refreshToken !== token) {
@@ -129,15 +141,15 @@ export const refreshAccessToken = async (req, res) => {
 	}
 };
 
-export const logout = async (req, res) => {
+export const logout = async (req:Request, res:Response) => {
 	const token = req.cookies.refreshToken;
 	if (token) {
 		try {
-			const decodedToken = jwt.decode(token);
+			const decodedToken = jwt.decode(token) as JwtPayload;
 			const userId = decodedToken.id;
 
 			await clearUserTokensModel(userId);
-			res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'Strict' });
+			res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict' });
 
 			return res.status(200).json({ message: 'Logged out successfully' });
 		} catch (error) {
