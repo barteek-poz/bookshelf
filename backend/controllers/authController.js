@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { pool } from "../server.js";
+import { addNewUserModel, clearUserTokensModel, getUserByEmailModel, getUserByIdModel, updateUserTokensModel } from '../models/authModel.js';
 
 const signAccessToken = (userId) => {
 	return jwt.sign({ id: userId }, process.env.JWT_ACCESS_SECRET, {
@@ -20,17 +20,16 @@ export const signup = async (req, res) => {
 		if(newUserData.password !== newUserData.passwordConfirm) {
 			return res.status(400).json({ message: 'Passwords do not match' });
 		}
-		const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [newUserData.email]);
-		const existingUser = result[0]
+		const existingUser = await getUserByEmailModel(newUserData.email);
 		if(existingUser) {
 			return res.status(400).json({ message: 'User with this email is already signed up' });
 		}
 		newUserData.password = await bcrypt.hash(newUserData.password, 12);
-		const [newUser] = await pool.query('INSERT INTO users(user_name, email, password) VALUES(?,?,?)',[newUserData.name, newUserData.email, newUserData.password])
+		const newUser = await addNewUserModel(newUserData.name, newUserData.email, newUserData.password)
 		const newUserId = newUser.insertId
 		const accessToken = signAccessToken(newUserId);
 		const refreshToken = signRefreshToken(newUserId);
-		await pool.query('UPDATE users SET refreshToken=? WHERE id=?',[refreshToken, newUserId])
+		await updateUserTokensModel(refreshToken, newUserId)
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
 			secure: false,
@@ -66,8 +65,7 @@ try {
 				.status(400)
 				.json({ message: 'Please provide email and password' });
 		}
-	const [result] = await pool.query(`SELECT * FROM users WHERE email = ?`, [email]);
-	const user = result[0]
+	const user = await getUserByEmailModel(email)
 	if(!user) {
 		return res.status(401).json({ message: 'Invalid credentials' });
 	}
@@ -77,7 +75,7 @@ try {
 	}
 	const accessToken = signAccessToken(user.id);
 	const refreshToken = signRefreshToken(user.id);
-	await pool.query(`UPDATE users SET refreshToken = ? WHERE id = ?;`, [refreshToken, user.id])
+	await updateUserTokensModel(refreshToken, user.id)
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
 		secure: false,
@@ -112,8 +110,7 @@ export const refreshAccessToken = async (req, res) => {
 			process.env.JWT_REFRESH_SECRET
 		);
 		const userId = decodedRefreshToken.id
-		const [result] = await pool.query(`SELECT * FROM users WHERE id = ?  `, [userId]);
-		const currentUser = result[0]
+		const currentUser = await getUserByIdModel(userId)
 		if (!currentUser || currentUser.refreshToken !== token) {
 			return res.status(403).json({ message: 'Invalid refresh token' });
 		}
@@ -137,9 +134,9 @@ export const logout = async (req, res) => {
 	if (token) {
 		try {
 			const decodedToken = jwt.decode(token);
-			const userID = decodedToken.id;
+			const userId = decodedToken.id;
 
-			await pool.query(`UPDATE users SET refreshToken = NULL WHERE id = ?  `, [userID]);
+			await clearUserTokensModel(userId);
 			res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'Strict' });
 
 			return res.status(200).json({ message: 'Logged out successfully' });

@@ -1,9 +1,8 @@
-import User from "../models/userModel.js";
-import { pool } from "../server.js";
+import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await getAllUsersModel()
     res.status(200).json({
       status: "Success",
       data: users,
@@ -17,10 +16,9 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const getUserById = async (req, res) => {
-  const userID = req.params;
+  const userId = req.params;
   try {
-    const [result] = await pool.query(`SELECT * FROM users WHERE id = ?  `, [userID]);
-    const user = result[0]
+    const user = await getUserDataModel(userId)
     if (!user) {
         return res.status(404).json({ status: "Fail", message: "User not found" });
     }
@@ -44,7 +42,7 @@ export const addUserBook = async (req, res) => {
     if(!bookId) {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
-    const result = await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,bookId])
+    const result = await addUserBookModel(userId,bookId)
     if (result.affectedRows === 0) {
       return res.status(400).json({ status: "Fail", message: "Could not add book to user's library" });
     }
@@ -63,7 +61,7 @@ export const deleteUserBook = async (req, res) => {
     if(!bookId) {
         return res.status(400).json({ status: "Fail", message: "Invalid book ID" })
      }
-     const result = await pool.query('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+     const result = await deleteUserBookModel(userId, bookId)
      if (result.affectedRows === 0) {
         return res.status(404).json({ status: "Fail", message: "Book not found for this user" });
       }
@@ -76,15 +74,12 @@ export const deleteUserBook = async (req, res) => {
 };
 
 export const getUserBooks = async (req, res) => {
-    const userID = req.params.id
+    const userId = req.params.id
     try {
-        const [result] = await pool.query(
-        `SELECT books.* FROM books 
-        JOIN user_books ON books.id = user_books.book_id 
-        WHERE user_books.user_id = ?;`, [userID]);
+        const userBooks = await getUserBooksModel(userId)
         res.status(200).json({
             status: 'Success', 
-            data: result
+            data: userBooks
         })
     } catch (error) {
         res.status(500).json({

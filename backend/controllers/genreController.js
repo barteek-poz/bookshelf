@@ -1,9 +1,8 @@
-import Genre from '../models/genreModel.js'
-import { pool } from "../server.js";
+import { getGenresModel } from '../models/genreModel.js';
 
 export const getAllGenres = async (req, res) => {
     try {
-      const [genres] = await pool.query('SELECT * FROM genres')
+      const genres = await getGenresModel()
       res.status(200).json({
           status:'Success',
           data: genres

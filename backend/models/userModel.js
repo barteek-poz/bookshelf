@@ -1,95 +1,31 @@
-import mongoose from "mongoose";
-import validator from "validator";
-import bcrypt from "bcrypt";
-import { ObjectId } from "mongodb";
+import { pool } from "../server.js";
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Please provide your name for better communication"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "Please provide your email"],
-      unique: true,
-      lowercase: true,
-      validate: [validator.isEmail, "Please provide a valid email"],
-    },
-    password: {
-      type: String,
-      minlength: 8,
-      required: [true, "Enter your password"],
-      select: false,
-    },
-    passwordConfirm: {
-      type: String,
-      required: [true, "Confirm your password"],
-      validate: {
-        validator: function (pass) {
-          return pass === this.password;
-        },
-        message: "Passwords are not the same",
-      },
-    },
-    passwordChangedAt: Date,
-    refreshToken: {
-      type: String,
-      select: false,
-    },
-    photo: {
-      type: String,
-      default: null,
-    },
-    books: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
-      },
-    ],
-  },
-  {
-    timestamps: true,
-  }
-);
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
-  next();
-});
+export const getAllUsersModel = async (bookTitle) => {
+  const [users] = await pool.query('SELECT * FROM users')
+  return users
+}
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password") || this.isNew) return next();
-  this.passwordChangedAt = Date.now() - 1000;
-  next();
-});
+export const getUserDataModel = async(userId)=> {
+  const [result] = await pool.query(`SELECT * FROM users WHERE id = ?`,[userId]);
+  const user = result[0]
+  return user
+}
 
-userSchema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
+export const getUserBooksModel = async(userId)=> {
+  const [result] = await pool.query(
+    `SELECT books.* FROM books 
+    JOIN user_books ON books.id = user_books.book_id 
+    WHERE user_books.user_id = ?;`, [userId]);  
+  return result
+}
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    );
-    return JWTTimestamp < changedTimestamp;
-  }
-};
+export const addUserBookModel = async(userId,bookId) => {
+  const result = await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,bookId])
+  return result
+}
 
-userSchema.methods.toJSON = function () {
-  const userObj = this.toObject();
-  delete userObj.password;
-  delete userObj.refreshToken;
-  return userObj;
-};
-
-const User = mongoose.model("User", userSchema);
-export default User;
+export const deleteUserBookModel = async(userId,bookId) => {
+  const result = await pool.query('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+  return result
+}
