@@ -1,18 +1,18 @@
 import express from 'express';
 import {
-	getAllBooks,
 	createBook,
-	getBookById,
 	deleteBook,
-	updateBook,
-	searchBookByTitle,
+	getBookById,
 	getRecentBooks,
+	searchBookByTitle,
+	updateBook
 } from '../controllers/bookController.js';
-import { upload, coverMiddleware } from '../middlewares/coverMiddleware.js';
-import { isAuth } from '../middlewares/isAuth.js';
 import { canEdit } from '../middlewares/canEdit.js';
+import { coverMiddleware, upload } from '../middlewares/coverMiddleware.js';
+import { isAuth } from '../middlewares/isAuth.js';
 
 const booksRouter = express.Router();
+
 booksRouter.use(isAuth);
 
 booksRouter.route('/search-by-title').post(searchBookByTitle);

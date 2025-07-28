@@ -1,8 +1,10 @@
 import {addBookCoverModel, addBookModel, addBookToUserModel, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel} from '../models/bookModel.js'
 import supabaseDelete from "../services/supabaseDelete.js";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
+import {Request,Response} from 'express'
+import { AuthRequest } from '../types/authTypes.js';
 
-export const getAllBooks = async (req, res) => {
+export const getAllBooks = async (req:Request, res:Response) => {
   try {
     const books = await getAllBooksModel()
     res.status(200).json({
@@ -17,7 +19,7 @@ export const getAllBooks = async (req, res) => {
   }
 };
 
-export const getRecentBooks = async (req, res) => {
+export const getRecentBooks = async (req:Request, res:Response) => {
   try {
     const books = await getRecentBooksModel()
     res.status(200).json({
@@ -34,7 +36,7 @@ export const getRecentBooks = async (req, res) => {
   
 };
 
-export const searchBookByTitle = async (req, res) => {
+export const searchBookByTitle = async (req:Request, res:Response) => {
   const { bookTitle } = req.body;
   if (!bookTitle) {
     return res
@@ -53,10 +55,11 @@ export const searchBookByTitle = async (req, res) => {
   }
 };
 
-export const createBook = async (req, res) => {
+export const createBook = async (req:Request, res:Response) => {
+  const authReq = req as AuthRequest
   try {
-    const userId = req.user.id
-    const {title, author, genre, publishYear } = req.body
+    const userId = authReq.user.id
+    const {title, author, genre, publishYear } = authReq.body
     let newBookData = {title, author, genre, publishYear}
     newBookData.publishYear = newBookData.publishYear === 'null' ? null : parseInt(newBookData.publishYear, 10)
     newBookData.genre = newBookData.genre === 'null' ? null : newBookData.genre
@@ -67,8 +70,8 @@ export const createBook = async (req, res) => {
     }
     const newBookId = result.insertId
     await addBookToUserModel(userId,newBookId)
-    if (req.file) {
-      const coverUrl = await supabaseUploadHandler(newBookId, req, res);
+    if (authReq.file) {
+      const coverUrl = await supabaseUploadHandler(newBookId, authReq, res);
       await addBookCoverModel(coverUrl.publicUrl, newBookId)
     }
     const newBook = await getBookDataModel(newBookId)
@@ -81,18 +84,19 @@ export const createBook = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: "Fail",
-      message: err.message,
+      message: err,
     });
   }
 };
 
-export const getBookById = async (req, res) => {
+export const getBookById = async (req:Request, res:Response) => {
   try{
-    const bookId = req.params.id
+    const bookId = parseInt(req.params.id)
     if (!Number.isInteger(Number(bookId))) {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
     const book = await getBookDataModel(bookId)
+    console.log(book)
     if(!book) {
       return res.status(404).json({ status: "Fail", message: "Book not found" });
     }
@@ -103,9 +107,10 @@ export const getBookById = async (req, res) => {
   }
 };
 
-export const updateBook = async (req, res) => {
+export const updateBook = async (req:Request, res:Response) => {
   try {
-    const { id: bookId } = req.params;
+    let { id: bookId } = (req.params);
+    const bookIdNum = parseInt(bookId)
     if (!Number.isInteger(Number(bookId))) {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
@@ -114,17 +119,17 @@ export const updateBook = async (req, res) => {
     newBookData.publishYear = newBookData.publishYear === 'null' ? null : parseInt(newBookData.publishYear, 10)
     newBookData.genre = newBookData.genre === 'null' ? null : newBookData.genre
     
-   const updatedBook = await updateBookModel(newBookData.title, newBookData.author, newBookData.publishYear, newBookData.genre,bookId)
+   const updatedBook = await updateBookModel(newBookData.title, newBookData.author, newBookData.publishYear, newBookData.genre,bookIdNum)
    
     if(req.file){
-      const book = await getBookCoverModel(bookId)
+      const book = await getBookCoverModel(bookIdNum)
       let oldCover = null
       if(book[0].coverUrl !== null) {
         oldCover = book[0].coverUrl.split("/").pop();
         await supabaseDelete(bookId, oldCover);
       }
       const coverUrl = await supabaseUploadHandler(bookId, req, res);
-      await updateBookCoverModel(coverUrl.publicUrl,bookId)
+      await updateBookCoverModel(coverUrl.publicUrl,bookIdNum)
     }
     res.status(200).json({
       status: "Success",
@@ -136,23 +141,6 @@ export const updateBook = async (req, res) => {
   }
 };
 
-export const deleteBook = async (req, res) => {
-  try {
-    const bookId = req.params.id;
-    const book = await Book.findById(bookId);
-    if (book.coverId) {
-      const coverId = book.coverUrl.split("/").pop();
-      await supabaseDelete(bookId, coverId);
-    }
-    await Book.findByIdAndDelete(bookId);
-    res.status(200).json({
-      status: "Success",
-      message: "Book has been removed",
-    });
-  } catch (err) {
-    res.status(405).json({
-      status: "Fail",
-      message: err,
-    });
-  }
+export const deleteBook = async (req:Request, res:Response) => {
+  console.log('delete handler')
 };
