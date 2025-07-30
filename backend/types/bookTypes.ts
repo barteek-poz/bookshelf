@@ -7,3 +7,8 @@ export type BookDataType = {
     genre: string | null, 
     publishYear?: number | null
   }
+
+  export type BookGenreType = {
+    option: string,
+    label: string
+   }

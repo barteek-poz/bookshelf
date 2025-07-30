@@ -1,6 +1,8 @@
+import { AuthRequest } from './../types/authTypes';
+import { Request, Response } from "express";
 import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel.js";
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req:Request, res:Response) => {
   try {
     const users = await getAllUsersModel()
     res.status(200).json({
@@ -15,8 +17,8 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
-  const userId = req.params;
+export const getUserById = async (req:Request, res:Response) => {
+  const userId = parseInt(req.params.id);
   try {
     const user = await getUserDataModel(userId)
     if (!user) {
@@ -35,10 +37,11 @@ export const getUserById = async (req, res) => {
   }
 };
 
-export const addUserBook = async (req, res) => {
+export const addUserBook = async (req:Request, res:Response) => {
+  const authReq = req as AuthRequest
   try {
-    const userId = req.user.id
-    const { bookId } = req.body;
+    const userId = authReq.user.id
+    const { bookId } = authReq.body;
     if(!bookId) {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
@@ -54,14 +57,16 @@ export const addUserBook = async (req, res) => {
 
 };
 
-export const deleteUserBook = async (req, res) => {
+export const deleteUserBook = async (req:Request, res:Response) => {
+  const authReq = req as AuthRequest
   try {
-    const userId = req.user.id
-    const { bookId } = req.params;
+    const userId = authReq.user.id
+    const { bookId } = authReq.params;
+    const bookIdNum = parseInt(bookId)
     if(!bookId) {
         return res.status(400).json({ status: "Fail", message: "Invalid book ID" })
      }
-     const result = await deleteUserBookModel(userId, bookId)
+     const result = await deleteUserBookModel(userId, bookIdNum)
      if (result.affectedRows === 0) {
         return res.status(404).json({ status: "Fail", message: "Book not found for this user" });
       }
@@ -73,8 +78,8 @@ export const deleteUserBook = async (req, res) => {
 
 };
 
-export const getUserBooks = async (req, res) => {
-    const userId = req.params.id
+export const getUserBooks = async (req:Request, res:Response) => {
+    const userId = parseInt(req.params.id)
     try {
         const userBooks = await getUserBooksModel(userId)
         res.status(200).json({
@@ -91,25 +96,25 @@ export const getUserBooks = async (req, res) => {
 
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req:Request, res:Response) => {
   res.status(500).json({
     status: "error",
     message: "This route is not defined!",
   });
 };
 
-export const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    await User.findByIdAndDelete(userId);
-    res.status(200).json({
-      status: "Success",
-      message: "User has been removed",
-    });
-  } catch (err) {
-    res.status(405).json({
-      status: "Fail",
-      message: err,
-    });
-  }
+export const deleteUser = async (req:Request, res:Response) => {
+  // try {
+  //   const userId = req.params.id;
+  //   await User.findByIdAndDelete(userId);
+  //   res.status(200).json({
+  //     status: "Success",
+  //     message: "User has been removed",
+  //   });
+  // } catch (err) {
+  //   res.status(405).json({
+  //     status: "Fail",
+  //     message: err,
+  //   });
+  // }
 };
