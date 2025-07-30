@@ -4,5 +4,6 @@ export type UserBackendDataType = {
     name: string,
     email:string,
     password:string,
-    refreshToken:string | null
+    refreshToken:string | null,
+    is_admin: boolean
 }

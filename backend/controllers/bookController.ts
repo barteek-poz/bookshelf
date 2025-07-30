@@ -1,4 +1,4 @@
-import {addBookCoverModel, addBookModel, addBookToUserModel, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel} from '../models/bookModel.js'
+import {addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel} from '../models/bookModel.js'
 import supabaseDelete from "../services/supabaseDelete.js";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
 import {Request,Response} from 'express'
@@ -96,7 +96,6 @@ export const getBookById = async (req:Request, res:Response) => {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
     const book = await getBookDataModel(bookId)
-    console.log(book)
     if(!book) {
       return res.status(404).json({ status: "Fail", message: "Book not found" });
     }
@@ -142,5 +141,19 @@ export const updateBook = async (req:Request, res:Response) => {
 };
 
 export const deleteBook = async (req:Request, res:Response) => {
-  console.log('delete handler')
+  try {
+    const { id:bookId } = req.params;
+    const bookIdNum = parseInt(bookId)
+    if(!bookId) {
+        return res.status(400).json({ status: "Fail", message: "Invalid book ID" })
+     }
+     const result = await deleteBookFromDB(bookIdNum)
+     if (result.affectedRows === 0) {
+        return res.status(404).json({ status: "Fail", message: "Book not found in DB" });
+      }
+     res.status(200).json({ status: "sucess" });
+    } catch (error) {
+    console.error("Failed to delete book:", error);
+    res.status(400).json({ status: "Fail", message: "Failed to delete book" });
+  }
 };

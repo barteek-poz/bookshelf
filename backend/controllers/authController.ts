@@ -3,24 +3,24 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import {Request,Response} from 'express'
 import { addNewUserModel, clearUserTokensModel, getUserByEmailModel, getUserByIdModel, updateUserTokensModel } from '../models/authModel.js';
 
-const signAccessToken = (userId:number):string => {
+const signAccessToken = (userId:number, isAdmin:boolean):string => {
 	const secret = process.env.JWT_ACCESS_SECRET 
 	const expiresIn = process.env.JWT_ACCESS_EXPIRES_IN ?? '15m'
 	if(!secret) {
 		throw new Error('JWT secret is not defined');
 	}
-	return jwt.sign({ id: userId }, secret, {
+	return jwt.sign({ id: userId, admin: isAdmin }, secret, {
 		expiresIn: expiresIn as jwt.SignOptions['expiresIn']
 	});
 };
 
-const signRefreshToken = (userId:number):string => {
+const signRefreshToken = (userId:number, isAdmin: boolean):string => {
 	const secret = process.env.JWT_REFRESH_SECRET 
 	const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN ?? '14d'
 	if(!secret) {
 		throw new Error('JWT secret is not defined');
 	}
-	return jwt.sign({ id: userId }, secret, {
+	return jwt.sign({ id: userId, admin: isAdmin }, secret, {
 		expiresIn: expiresIn as jwt.SignOptions['expiresIn']
 	});
 };
@@ -38,8 +38,8 @@ export const signup = async (req:Request, res:Response) => {
 		newUserData.password = await bcrypt.hash(newUserData.password, 12);
 		const newUser = await addNewUserModel(newUserData.name, newUserData.email, newUserData.password)
 		const newUserId = newUser.insertId
-		const accessToken = signAccessToken(newUserId);
-		const refreshToken = signRefreshToken(newUserId);
+		const accessToken = signAccessToken(newUserId, false);
+		const refreshToken = signRefreshToken(newUserId, false);
 		await updateUserTokensModel(refreshToken, newUserId)
 		const userFinalData = await getUserByIdModel(newUserId);
 		res.cookie('refreshToken', refreshToken, {
@@ -60,7 +60,8 @@ export const signup = async (req:Request, res:Response) => {
 			accessToken,
 			user: {
 				id: userFinalData.id,
-				email: userFinalData.email
+				email: userFinalData.email,
+				is_admin: userFinalData.is_admin
 			}
 		})
 	} catch (error) {
@@ -85,8 +86,8 @@ try {
 	if(!isPasswordCorrect) {
 		return res.status(401).json({ message: 'Invalid password' });
 	}
-	const accessToken = signAccessToken(user.id);
-	const refreshToken = signRefreshToken(user.id);
+	const accessToken = signAccessToken(user.id, user.is_admin);
+	const refreshToken = signRefreshToken(user.id, user.is_admin);
 	await updateUserTokensModel(refreshToken, user.id)
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
@@ -99,7 +100,8 @@ try {
 		accessToken,
 		user : {
 			id:user.id, 
-			username: user.user_name
+			username: user.user_name,
+			is_admin:user.is_admin
 		}
 	});
 	}catch(error) {
@@ -119,19 +121,20 @@ export const refreshAccessToken = async (req:Request, res:Response) => {
 	try {
 		const decodedRefreshToken = jwt.verify(
 			token,
-			process.env.JWT_REFRESH_SECRET
+			process.env.JWT_REFRESH_SECRET as string
 		) as JwtPayload;
 		const userId = decodedRefreshToken.id
 		const currentUser = await getUserByIdModel(userId)
 		if (!currentUser || currentUser.refreshToken !== token) {
 			return res.status(403).json({ message: 'Invalid refresh token' });
 		}
-		const accessToken = signAccessToken(currentUser.id);
+		const accessToken = signAccessToken(currentUser.id, currentUser.is_admin);
 		res.status(200).json({
 			accessToken,
 			user: {
 			  id: currentUser.id,	
-			  name: currentUser.name
+			  name: currentUser.name,
+			  is_admin: currentUser.is_admin
 			},
 		  });
 	} catch (error) {

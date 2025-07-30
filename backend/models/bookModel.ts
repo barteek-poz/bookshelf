@@ -56,3 +56,14 @@ export const updateBookCoverModel = async(coverUrl:string, bookId:number) => {
   const result = await pool.query('UPDATE books SET coverUrl=? WHERE id=?',[coverUrl,bookId])
   return result
 }
+
+export const canEditBookModel = async(bookId:number, userId:number):Promise<BookDataType> => {
+  const [result] = await pool.query('SELECT * FROM books WHERE id = ? AND createdBy = ?', [bookId, userId])
+  const book = result[0]
+  return book
+}
+
+export const deleteBookFromDB = async (bookId:number):Promise<ResultSetHeader> => {
+  const result = await pool.query('DELETE FROM books WHERE id = ?', [bookId])
+  return result
+}

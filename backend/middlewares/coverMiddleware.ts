@@ -1,10 +1,11 @@
+import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import sharp from "sharp"
 
 const storage = multer.memoryStorage();
 export const upload = multer({ storage });
 
-export const coverMiddleware = async (req, res, next) => {
+export const coverMiddleware = async (req:Request, res:Response, next:NextFunction) => {
     if (!req.file) {
         return next();
     }

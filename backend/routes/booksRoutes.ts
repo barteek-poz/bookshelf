@@ -10,6 +10,7 @@ import {
 import { canEdit } from '../middlewares/canEdit.js';
 import { coverMiddleware, upload } from '../middlewares/coverMiddleware.js';
 import { isAuth } from '../middlewares/isAuth.js';
+import { isAdmin } from '../middlewares/isAdmin.js';
 
 const booksRouter = express.Router();
 
@@ -23,7 +24,7 @@ booksRouter
 booksRouter
 	.route('/:id')
 	.get(getBookById)
-	.delete(deleteBook)
+	.delete(isAdmin, deleteBook)
 booksRouter
 .route('/:id/edit')
 .get(canEdit,getBookById)

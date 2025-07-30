@@ -75,7 +75,6 @@ export const deleteUserBook = async (req:Request, res:Response) => {
     console.error("Failed to delete book:", error);
     res.status(400).json({ status: "Fail", message: "Failed to delete book" });
   }
-
 };
 
 export const getUserBooks = async (req:Request, res:Response) => {
