@@ -6,13 +6,14 @@ import burgerIcon from "../../assets/burger-icon.svg";
 import closeIcon from "../../assets/close-icon.svg";
 import logoutIcon from "../../assets/logout-icon.svg";
 import searchIcon from "../../assets/search-icon.svg";
+import adminIcon from "../../assets/admin-icon.svg";
 import useAuthUser from "../../hooks/useAuthUser";
 import styles from "./Menu.module.css";
 import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const Menu = () => {
   const [burgerActive, setBurgerActive] = useState<boolean>(false);
-  const { setIsAuthenticated, setUser } = useAuthUser();
+  const { setIsAuthenticated, setUser, user } = useAuthUser();
   const navigate = useNavigate();
   const {errorHandler} = useErrorHandler()
 
@@ -74,6 +75,10 @@ const Menu = () => {
           <img src={logoutIcon} alt="logout-icon" className={styles.menuIcon} />
           Logout
         </Link>
+        {user.is_admin ? <Link to="/admin">
+          <img src={adminIcon} alt="admin-icon" className={`${styles.menuIcon} ${styles.adminIcon}`} />
+          Admin panel
+        </Link> : null}
       </nav>
     </div>
   );

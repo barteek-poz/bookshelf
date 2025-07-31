@@ -1,0 +1,32 @@
+.adminPage {
+  width: 100%;
+  max-width: 200rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 2rem;
+  padding: 3rem;
+  font-size: 2rem;
+}
+.adminPage h2 {
+    margin-bottom: 4rem;
+}
+.logo {
+    font-weight: 700;
+}
+.btnsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+}
+.adminBtns {
+    background: #11243a;
+    color: #fff;
+    border: 1px solid transparent;
+}
+.adminBtns:hover {
+    color: #11243a !important;
+    border-color: #11243a !important;
+    background: transparent !important;
+}

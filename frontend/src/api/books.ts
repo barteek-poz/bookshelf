@@ -1,4 +1,4 @@
-export const addExistingBookHandler = async (userId, accessToken, bookId) => {
+export const addExistingBookHandler = async (userId:number, accessToken:string, bookId:string) => {
     try {
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${userId}/add-book`,
@@ -12,11 +12,9 @@ export const addExistingBookHandler = async (userId, accessToken, bookId) => {
           body: JSON.stringify({ bookId: bookId }),
         }
       );
-      const data = await response.json();
       if (!response.ok) {
-          throw new Error(`Could not add book: ${data.message}`); 
+          throw new Error(`Could not add book`); 
       }
-      return data
     } catch (error) {
       alert(error);
     }

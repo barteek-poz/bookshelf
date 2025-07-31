@@ -3,17 +3,19 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.js";
 import AuthContextProvider from "./context/AuthContext.js";
+import { ErrorProvider } from "./context/ErrorContext.js";
 import "./index.css";
 import AddBook from "./pages/AddBook/AddBook.js";
+import AdminPage from "./pages/AdminPage/AdminPage.js";
 import BookPage from "./pages/BookPage/BookPage.js";
 import Dashboard from "./pages/Dashboard/Dashboard.js";
 import EditBook from "./pages/EditBook/EditBook.js";
+import ErrorPage from "./pages/ErrorPage/ErrorPage.js";
 import Login from "./pages/Login/Login.js";
 import MainLayout from "./pages/MainLayout/MainLayout.js";
 import SearchPage from "./pages/SearchPage/SearchPage.js";
 import Signup from "./pages/Signup/Signup.js";
-import { ErrorProvider } from "./context/ErrorContext.js";
-import ErrorPage from "./pages/ErrorPage/ErrorPage.js";
+import AdminRoute from "./components/AdminRoute/AdminRoute.js";
 
 const router = createBrowserRouter([
   {
@@ -70,13 +72,23 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPage/>
+            </AdminRoute>
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "error",
         element: (
           <ProtectedRoute>
             <ErrorPage />
           </ProtectedRoute>
         ),
-      },
+      }
     ],
   },
 ]);

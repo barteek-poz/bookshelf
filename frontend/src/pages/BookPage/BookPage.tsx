@@ -9,14 +9,17 @@ import useAuthUser from "../../hooks/useAuthUser";
 import useFetch from "../../hooks/useFetch";
 import { BookDataType } from "../../types/bookTypes";
 import styles from "./BookPage.module.css";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const BookPage = () => {
   const [canUserEdit, setCanUserEdit] = useState<boolean>(false);
   const [inLibrary, setInLibrary] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [deleteFromDBModal, setDeleteFromDBModal] = useState<boolean>(false);
   const bookId:string | undefined = useParams().id;
   const navigate = useNavigate();
   const { user, accessToken } = useAuthUser();
+  const {errorHandler} = useErrorHandler()
   const {
     data: bookData,
     error,
@@ -28,10 +31,11 @@ const BookPage = () => {
 
   const addExistingBook = async ():Promise<void>  => {
     try {
+      if(accessToken && bookId)
       await addExistingBookHandler(user.id, accessToken, bookId);
       navigate("/");
     } catch (error:unknown) {
-      alert(error);
+      errorHandler('Sorry, but we could not add this book to your library. Please refresh the page or try again later.')
     }
   };
 
@@ -53,7 +57,28 @@ const BookPage = () => {
         throw error;
       }
     } catch (error:unknown) {
-      alert("Could not delete the book");
+      errorHandler("Sorry, but someting went wrong and we could not delete this book from your library. Please refresh the page or try again later.")
+    }
+  };
+  const deleteFromDBHandler = async ():Promise<void> => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/books/${bookId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.ok) {
+        navigate("/");
+      } else {
+        throw error;
+      }
+    } catch (error:unknown) {
+      errorHandler("Sorry, but someting went wrong and we could not delete this book from database. Please refresh the page or try again later.")
     }
   };
 
@@ -128,12 +153,23 @@ const BookPage = () => {
               Remove book from library
             </Button>
           )}
+          {user.is_admin ? (
+            <Button
+              danger
+              type="primary"
+              onClick={() => {
+                setDeleteFromDBModal(true);
+              }}
+              className={styles.deleteBtn}>
+              Remove book from database
+            </Button>
+          ): null}
         </div>
       )}
       {error && (
         <h2 className={styles.errorMsg}>
           Sorry, something went wrong.<br></br>Please check your network
-          connection or try later.{" "}
+          connection or try later.
         </h2>
       )}
       <Modal
@@ -142,6 +178,13 @@ const BookPage = () => {
         onOk={deleteBookHandler}
         onCancel={() => setDeleteModalOpen(false)}>
         <p>Are you sure you want to remove this book from your library?</p>
+      </Modal>
+      <Modal
+        title="Confirm delete from database"
+        open={deleteFromDBModal}
+        onOk={deleteFromDBHandler}
+        onCancel={() => setDeleteFromDBModal(false)}>
+        <p>Are you sure you want to remove this book PERMANENTLY FROM DATABASE?</p>
       </Modal>
     </section>
   );

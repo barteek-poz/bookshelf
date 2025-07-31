@@ -1,5 +1,6 @@
 export type User = {
-    id: number
+    id: number,
+    is_admin: boolean
   }
 
 export type  UserLoginType = { 
