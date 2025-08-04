@@ -21,7 +21,7 @@ const EditBook = () => {
     data: bookData,
     error,
     isPending,
-  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
+  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`, true);
   const {
     handleSubmit,
     control,

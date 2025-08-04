@@ -48,3 +48,7 @@ export type BookDataType = {
     control: Control<BookInputType, any, BookInputType>,
     defaultValue: string | null | undefined
   }
+
+  export type BookListProps = {
+    booksData: BookDataType[]
+  }

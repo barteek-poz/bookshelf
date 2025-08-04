@@ -1,6 +1,6 @@
 import { AuthRequest } from './../types/authTypes';
 import { Request, Response } from "express";
-import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel.js";
+import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel";
 
 export const getAllUsers = async (req:Request, res:Response) => {
   try {

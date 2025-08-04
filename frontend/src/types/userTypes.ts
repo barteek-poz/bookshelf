@@ -10,3 +10,13 @@ export type  UserLoginType = {
     passwordConfirm: string,
 
 }
+
+export type UsersListType = {
+    id: number,
+    name: string, 
+    email: string
+}
+
+export type UserListProps = { 
+  usersData: UsersListType[]
+}

@@ -6,12 +6,12 @@ type fetchError = {
   code: number
 }
 
-const useFetch = <T,> (url:string) => {
+const useFetch = <T,> (url:string, autoFetch: boolean) => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<fetchError | null>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
   const { accessToken } = useAuth();
-  useEffect(() => {
+  
     const fetchData = async () => {
       setIsPending(true);
       try {
@@ -38,8 +38,12 @@ const useFetch = <T,> (url:string) => {
         setIsPending(false);
       }
     };
-    fetchData();
-  }, [url, accessToken]);
+    useEffect(() => {
+      if (autoFetch && url) {
+        fetchData();
+      }
+    }, [autoFetch, url]);
+
   return { data, error, isPending };
 };
 

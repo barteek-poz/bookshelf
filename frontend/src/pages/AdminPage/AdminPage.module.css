@@ -30,3 +30,7 @@
     border-color: #11243a !important;
     background: transparent !important;
 }
+.adminList li {
+    display: flex;
+    gap: 4rem;
+}

@@ -2,6 +2,7 @@ import express from 'express';
 import {
 	createBook,
 	deleteBook,
+	getAllBooks,
 	getBookById,
 	getRecentBooks,
 	searchBookByTitle,
@@ -16,6 +17,7 @@ const booksRouter = express.Router();
 
 booksRouter.use(isAuth);
 
+booksRouter.route('/get-all').get(getAllBooks);
 booksRouter.route('/search-by-title').post(searchBookByTitle);
 booksRouter.route('/get-recent').get(getRecentBooks);
 booksRouter

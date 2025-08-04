@@ -1,7 +1,7 @@
-import {addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel} from '../models/bookModel.js'
+import { Request, Response } from 'express';
+import { addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel } from '../models/bookModel.js';
 import supabaseDelete from "../services/supabaseDelete.js";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
-import {Request,Response} from 'express'
 import { AuthRequest } from '../types/authTypes.js';
 
 export const getAllBooks = async (req:Request, res:Response) => {
