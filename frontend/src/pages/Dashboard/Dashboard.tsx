@@ -8,7 +8,7 @@ import styles from "./Dashboard.module.css";
 
 const Dashboard = () => {
   const { user} = useAuthUser()
-  const {data: books, error, isPending} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`, true);
+  const {data: books, error, isPending} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
   return (
     <section id="dashboard" className={styles.dashboard}>
       {isPending && <Loader />}

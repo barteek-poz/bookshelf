@@ -5,6 +5,7 @@ import booksRouter from './routes/booksRoutes'
 import genresRouter from './routes/genresRoutes'
 import usersRouter from './routes/userRoutes'
 import authRouter from './routes/authRoutes'
+import adminRouter from './routes/adminRoutes'
 
 const corsOptions:CorsOptions = {
     origin: 'http://localhost:5173',  
@@ -23,5 +24,6 @@ app.use('/api/v1/books', booksRouter)
 app.use('/api/v1/genres', genresRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/admin', adminRouter)
 
 export default app

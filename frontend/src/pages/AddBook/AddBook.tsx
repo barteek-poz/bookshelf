@@ -34,7 +34,6 @@ const AddBook = () => {
       coverUrl: "",
     },
   });
-
   const addExistingBookHandler = async ():Promise<void> =>  {
     if(!searchedTitle) { 
       errorHandler('Sorry, we could not add this book to your library. Please refresh the page or try again later.')

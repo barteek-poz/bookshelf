@@ -1,6 +1,7 @@
-import { ResultSetHeader } from "../node_modules/mysql2/promise.js";
+import { ResultSetHeader, } from "mysql2";
 import { pool } from "../server.js";
 import { BookDataType } from "../types/bookTypes.js";
+import { UserBooks } from "../types/userTypes.js";
 
 
 export const searchBookByTitleModel = async (bookTitle:string):Promise<BookDataType[]> => {
@@ -22,6 +23,13 @@ export const getNumOfBooksModel = async():Promise<number> => {
 export const getAllBooksModel = async ():Promise<BookDataType[]> => {
   const [books] = await pool.query(`SELECT * FROM books`);
   return books
+}
+
+export const checkUserBooksModel = async (userId: number, booksArr: number[]):Promise<number[]> => {
+  const booksPlaceholders = booksArr.map(() => "?").join(', ')
+  const [result] = await pool.query<UserBooks[]>(`SELECT * FROM user_books WHERE user_id = ? AND book_id IN (${booksPlaceholders})`,[userId, ...booksArr])
+  const userBooks = result.map(book => book.book_id)
+  return userBooks
 }
 
 export const addBookModel = async (title:string, author:string, publishYear:number, genre:string, coverUrl:string | null, userId:number):Promise<ResultSetHeader> => {

@@ -24,9 +24,9 @@ const BookPage = () => {
     data: bookData,
     error,
     isPending,
-  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`, true);
+  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
   const { data: userBooks } = useFetch<BookDataType[]>(
-    `http://localhost:3000/api/v1/users/${user.id}/books`, true
+    `http://localhost:3000/api/v1/users/${user.id}/books`
   );
 
   const addExistingBook = async ():Promise<void>  => {

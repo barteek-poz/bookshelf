@@ -1,0 +1,12 @@
+import { pool } from "../server";
+import { AdminSummary } from "../types/adminTypes";
+
+export const getAdminSummaryModel = async (): Promise<AdminSummary> => {
+    const [rows] = await pool.query<AdminSummary[]>(
+      `SELECT 
+        (SELECT COUNT(*) FROM books) AS numOfBooks,
+        (SELECT COUNT(*) FROM users) AS numOfUsers`
+    );
+  
+    return rows[0]; // ponieważ zapytanie zwraca jedną linię
+  };

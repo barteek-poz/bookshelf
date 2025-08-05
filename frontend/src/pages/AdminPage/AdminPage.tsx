@@ -7,6 +7,7 @@ import useFetch from '../../hooks/useFetch';
 import { BookDataType } from '../../types/bookTypes';
 import { UsersListType } from '../../types/userTypes';
 import styles from './AdminPage.module.css';
+import { AdminSummary } from '../../types/adminTypes';
 
 const AdminPage = () => {
     const [books, setBooks] = useState<BookDataType[] | null>(null)
@@ -14,6 +15,7 @@ const AdminPage = () => {
     const {errorHandler} = useErrorHandler()
     const {fetchData:fetchUsers, error:usersError} = useFetch<UsersListType[]>()
     const {fetchData:fetchBooks, error:booksError} = useFetch<BookDataType[]>()
+    const {data:summary, error:summaryError} = useFetch<AdminSummary>('http://localhost:3000/api/v1/admin/get-summary')
 
     const getUsersHandler = async () => {
        const fetchedUsers = await fetchUsers('http://localhost:3000/api/v1/users/get-all')
@@ -37,14 +39,18 @@ const AdminPage = () => {
             errorHandler('Sorry, something went wrong and we could not fetch books from our database. Please refresh the page or try again later.')
 
         }
+        else if (summaryError) {
+            errorHandler('Sorry, something went wrong and we could not fetch summary information from database. Please refresh the page or try again later.')
+
+        }
     },[usersError, booksError, errorHandler])
 
-
+    console.log(summary)
     return <section className={styles.adminPage}>
         <h2>Admin panel</h2>
         <p><span className={styles.logo}>Bookshelf</span> summary:</p>
-        <p>Number of books in databse: 31</p>
-        <p>Number of users: 5</p>
+        <p>Number of books in databse: {summary?.numOfBooks}</p>
+        <p>Number of users: {summary?.numOfUsers}</p>
         <div className={styles.btnsWrapper}>
             <Button className={styles.adminBtns} onClick={getUsersHandler}>Show all users</Button>
             <Button className={styles.adminBtns} onClick={getBooksHandler}>Show all books</Button>

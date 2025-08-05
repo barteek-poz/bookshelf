@@ -1,6 +1,5 @@
 import app from "./app"
 import dotenv from 'dotenv'
-import mongoose from "mongoose"
 import fs from 'fs'
 import http from 'http'
 import mysql from 'mysql2'
