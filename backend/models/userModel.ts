@@ -8,7 +8,11 @@ export const getAllUsersModel = async ():Promise<UserBackendDataType[]> => {
   const [users] = await pool.query('SELECT * FROM users')
   return users
 }
-
+export const getNumOfUsersModel = async():Promise<number> => {
+  const [rows] = await pool.query('SELECT COUNT(*) AS total FROM users');
+  const numOfUsers = rows[0].total;
+  return numOfUsers
+}
 export const getUserDataModel = async(userId:number):Promise<UserBackendDataType>=> {
   const [result] = await pool.query(`SELECT * FROM users WHERE id = ?`,[userId]);
   const user = result[0]

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel } from '../models/bookModel.js';
+import { addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getNumOfBooksModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel } from '../models/bookModel.js';
 import supabaseDelete from "../services/supabaseDelete.js";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
 import { AuthRequest } from '../types/authTypes.js';
@@ -18,6 +18,22 @@ export const getAllBooks = async (req:Request, res:Response) => {
     });
   }
 };
+
+export const getNumOfBooks = async(req:Request, res:Response) => {
+  try {
+    const numOfBooks = await getNumOfBooksModel()
+    res.status(200).json({
+        status:'Success', 
+        data:numOfBooks
+    })
+  } catch (err) {
+    res.status(400).json({
+        status:'Fail', 
+        message:err
+    }
+    )
+  }
+}
 
 export const getRecentBooks = async (req:Request, res:Response) => {
   try {

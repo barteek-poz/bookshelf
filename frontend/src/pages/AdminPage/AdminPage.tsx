@@ -1,68 +1,44 @@
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useErrorHandler } from '../../hooks/useErrorHandler';
-import { User, UsersListType } from '../../types/userTypes';
-import styles from './AdminPage.module.css';
-import { BookDataType } from '../../types/bookTypes';
-import UsersList from '../../components/UsersList/UsersList';
 import BooksList from '../../components/BooksList/BooksList';
+import UsersList from '../../components/UsersList/UsersList';
+import { useErrorHandler } from '../../hooks/useErrorHandler';
+import useFetch from '../../hooks/useFetch';
+import { BookDataType } from '../../types/bookTypes';
+import { UsersListType } from '../../types/userTypes';
+import styles from './AdminPage.module.css';
 
 const AdminPage = () => {
+    const [books, setBooks] = useState<BookDataType[] | null>(null)
     const [users, setUsers] = useState<UsersListType[] | null>(null)
-    const [books,setBooks] = useState<BookDataType[] | null>(null)
-    const {user, accessToken} = useAuth()
     const {errorHandler} = useErrorHandler()
+    const {fetchData:fetchUsers, error:usersError} = useFetch<UsersListType[]>()
+    const {fetchData:fetchBooks, error:booksError} = useFetch<BookDataType[]>()
 
-    // const getUsersHandler = async ():Promise<void> =>  {
-    //       try {
-    //         const response = await fetch(
-    //           `http://localhost:3000/api/v1/users/get-all`,
-    //           {
-    //             method: "GET",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //               Authorization: `Bearer ${accessToken}`,
-    //             },
-    //             credentials: "include",
-    //           }
-    //         );
-    //         if (!response.ok) {
-    //             throw new Error()
-    //         } 
-    //         const dataObj = await response.json();
-    //         setBooks(null)
-    //         setUsers(dataObj.data)
-    //       } catch (error) {
-    //         errorHandler("Sorry, something went wrong and we could not get users list from database. Please refresh the page or try again later.");
-    //       }
-    //   };
-    const getUsersHandler = () => {
-        
+    const getUsersHandler = async () => {
+       const fetchedUsers = await fetchUsers('http://localhost:3000/api/v1/users/get-all')
+       if(fetchedUsers) {
+        setUsers(fetchedUsers)
+        setBooks(null)
+       }
     }
-    const getBooksHandler = async ():Promise<void> =>  {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/api/v1/books/get-all`,
-              {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${accessToken}`,
-                },
-                credentials: "include",
-              }
-            );
-            if (!response.ok) {
-                throw new Error()
-            } 
-            const dataObj = await response.json();
+    const getBooksHandler = async () => {
+        const fetchedBooks = await fetchBooks('http://localhost:3000/api/v1/books/get-all')
+        if(fetchedBooks) {
+            setBooks(fetchedBooks)
             setUsers(null)
-            setBooks(dataObj.data)
-          } catch (error) {
-            errorHandler("Sorry, something went wrong and we could not get users list from database. Please refresh the page or try again later.");
-          }
-      };
+        }
+    }
+    
+    useEffect(()=>{
+        if(usersError) {
+            errorHandler('Sorry, something went wrong and we could not fetch users from our database. Please refresh the page or try again later.')
+        } else if (booksError) {
+            errorHandler('Sorry, something went wrong and we could not fetch books from our database. Please refresh the page or try again later.')
+
+        }
+    },[usersError, booksError, errorHandler])
+
 
     return <section className={styles.adminPage}>
         <h2>Admin panel</h2>

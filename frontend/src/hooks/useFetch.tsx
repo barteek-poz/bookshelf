@@ -1,50 +1,63 @@
-import { useState, useEffect, useContext } from "react";
-import { useAuth } from "../context/AuthContext.js";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext"; 
 
-type fetchError = {
-  message: string, 
-  code: number
-}
+type FetchError = {
+  message: string;
+  code: number;
+};
 
-const useFetch = <T,> (url:string, autoFetch: boolean) => {
+const useFetch = <T,>(initialUrl?: string) => {
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<fetchError | null>(null);
+  const [error, setError] = useState<FetchError | null>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
-  const { accessToken } = useAuth();
-  
-    const fetchData = async () => {
-      setIsPending(true);
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (!response.ok) {
-          setError({
-            message: response.statusText,
-            code: response.status,
-          });
-          throw new Error(response.statusText);
-        }
-        const jsonData = await response.json();
-        setIsPending(false);
-        setData(jsonData.data);
-        setError(null);
-      } catch (err) {
-        console.log(err);
-        setIsPending(false);
-      }
-    };
-    useEffect(() => {
-      if (autoFetch && url) {
-        fetchData();
-      }
-    }, [autoFetch, url]);
+  const { accessToken } = useAuth(); 
 
-  return { data, error, isPending };
+  const fetchData = async (customUrl?: string): Promise<T | null> => {
+    const url = customUrl || initialUrl;
+    if (!url) {
+      const err = { message: "No URL provided", code: 400 };
+      setError(err);
+      return null;
+    }
+
+    setIsPending(true);
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        const err = { message, code: response.status };
+        setError(err);
+        return null;
+      }
+
+      const json = await response.json();
+      setData(json.data);
+      setError(null);
+      return json.data as T;
+    } catch (err) {
+      console.error(err);
+      const fallbackError = { message: "Unknown server error", code: 500 };
+      setError(fallbackError);
+      return null;
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialUrl) {
+      fetchData();
+    }
+  }, [initialUrl]);
+
+  return { data, error, isPending, fetchData };
 };
 
 export default useFetch;

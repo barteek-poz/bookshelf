@@ -13,6 +13,12 @@ export const getRecentBooksModel = async ():Promise<BookDataType[]> => {
   return books
 }
 
+export const getNumOfBooksModel = async():Promise<number> => {
+  const [rows] = await pool.query('SELECT COUNT(*) AS total FROM books');
+  const numOfBooks = rows[0].total;
+  return numOfBooks
+}
+
 export const getAllBooksModel = async ():Promise<BookDataType[]> => {
   const [books] = await pool.query(`SELECT * FROM books`);
   return books
@@ -63,7 +69,18 @@ export const canEditBookModel = async(bookId:number, userId:number):Promise<Book
   return book
 }
 
-export const deleteBookFromDB = async (bookId:number):Promise<ResultSetHeader> => {
-  const result = await pool.query('DELETE FROM books WHERE id = ?', [bookId])
-  return result
-}
+export const deleteBookFromDB = async (bookId: number): Promise<ResultSetHeader> => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.query('DELETE FROM user_books WHERE book_id = ?', [bookId]);
+    const [result] = await conn.query<ResultSetHeader>('DELETE FROM books WHERE id = ?', [bookId]);
+    await conn.commit();
+    return result;
+  } catch (error) {
+    await conn.rollback();
+    throw error;
+  } finally {
+    conn.release();
+  }
+};

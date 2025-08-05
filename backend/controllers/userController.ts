@@ -1,6 +1,6 @@
 import { AuthRequest } from './../types/authTypes';
 import { Request, Response } from "express";
-import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel";
+import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getNumOfUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel";
 
 export const getAllUsers = async (req:Request, res:Response) => {
   try {
@@ -16,6 +16,22 @@ export const getAllUsers = async (req:Request, res:Response) => {
     });
   }
 };
+
+export const getNumOfUsers = async(req:Request, res:Response) => {
+  try {
+    const numOfUsers = await getNumOfUsersModel()
+    res.status(200).json({
+        status:'Success', 
+        data:numOfUsers
+    })
+  } catch (err) {
+    res.status(400).json({
+        status:'Fail', 
+        message:err
+    }
+    )
+  }
+}
 
 export const getUserById = async (req:Request, res:Response) => {
   const userId = parseInt(req.params.id);
