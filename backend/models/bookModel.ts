@@ -1,7 +1,6 @@
 import { ResultSetHeader, } from "mysql2";
 import { pool } from "../server.js";
 import { BookDataType } from "../types/bookTypes.js";
-import { UserBooks } from "../types/userTypes.js";
 
 
 export const searchBookByTitleModel = async (bookTitle:string):Promise<BookDataType[]> => {
@@ -25,12 +24,6 @@ export const getAllBooksModel = async ():Promise<BookDataType[]> => {
   return books
 }
 
-export const checkUserBooksModel = async (userId: number, booksArr: number[]):Promise<number[]> => {
-  const booksPlaceholders = booksArr.map(() => "?").join(', ')
-  const [result] = await pool.query<UserBooks[]>(`SELECT * FROM user_books WHERE user_id = ? AND book_id IN (${booksPlaceholders})`,[userId, ...booksArr])
-  const userBooks = result.map(book => book.book_id)
-  return userBooks
-}
 
 export const addBookModel = async (title:string, author:string, publishYear:number, genre:string, coverUrl:string | null, userId:number):Promise<ResultSetHeader> => {
   const [result] = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[title, author, publishYear,genre, coverUrl, userId ])

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { addBookCoverModel, addBookModel, addBookToUserModel, checkUserBooksModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getNumOfBooksModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel } from '../models/bookModel.js';
+import { addBookCoverModel, addBookModel, addBookToUserModel, deleteBookFromDB, getAllBooksModel, getBookCoverModel, getBookDataModel, getNumOfBooksModel, getRecentBooksModel, searchBookByTitleModel, updateBookCoverModel, updateBookModel } from '../models/bookModel.js';
 import supabaseDelete from "../services/supabaseDelete.js";
 import supabaseUploadHandler from "../services/supabaseUpload.js";
 import { AuthRequest } from '../types/authTypes.js';
@@ -52,43 +52,6 @@ export const getRecentBooks = async (req:Request, res:Response) => {
   
 };
 
-export const checkUserBooksByTitle = async (req:Request, res:Response) => {
-  const authReq = req as AuthRequest
-  const { bookTitle } = authReq.body;
-  if (!bookTitle) {
-    return res
-      .status(400)
-      .json({ status: "Fail", message: "Invalid book title" });
-  }
-  try {
-    let booksList;
-    const booksByTitle = await searchBookByTitleModel(bookTitle)
-    if(booksByTitle.length > 0) {
-      const booksIdsArr = booksByTitle.map(book => book.id)
-      const userBooks = await checkUserBooksModel(authReq.user.id, booksIdsArr)
-      const filteredBooks = booksIdsArr.filter(book => {
-        if(!userBooks.includes(book)) {
-          return book
-        }
-      })
-      booksList = booksByTitle.filter(book => {
-        if(filteredBooks.includes(book.id)){
-          return book
-        }
-      })
-    }
-    else {
-      booksList = booksByTitle
-    }
-    res.status(200).json({
-      status: "success",
-      books: booksList,
-    });
-  } catch (error) {
-    console.error("Error searching books:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
 export const searchBookByTitle = async (req:Request, res:Response) => {
   const authReq = req as AuthRequest
   const { bookTitle } = authReq.body;

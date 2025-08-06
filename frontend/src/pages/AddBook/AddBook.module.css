@@ -80,6 +80,10 @@
     color: #ff0000cc;
     padding: 2px;
 }
+.inLibraryMsg {
+  font-size: 1.4rem;
+  color: #ff0000cc;
+}
 
 @media (max-width: 1250px) {
   .bookContent {

@@ -10,4 +10,5 @@ adminRouter.use(isAuth, isAdmin);
 adminRouter.route('/get-summary').get(getSummary);
 
 
+
 export default adminRouter;

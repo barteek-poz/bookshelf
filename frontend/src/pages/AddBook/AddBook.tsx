@@ -1,5 +1,5 @@
-import { Button, Input, InputNumber } from "antd";
-import { useState } from "react";
+import { Button, Input, InputNumber, Tooltip } from "antd";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import defaultBookCover from "../../assets/cover-default.jpg";
@@ -10,22 +10,19 @@ import useAuthUser from "../../hooks/useAuthUser";
 import { BookDataType, BookInputType } from "../../types/bookTypes";
 import styles from "./AddBook.module.css";
 import { useErrorHandler } from "../../hooks/useErrorHandler";
+import useFetch from "../../hooks/useFetch";
 
 const AddBook = () => {
   const [existingBooks, setExistingBooks] = useState<BookDataType[]>([]);
   const [searchedTitle, setSearchedTitle] = useState<BookDataType | null>(null);
   const [cover, setCover] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [inLibrary, setInLibrary] = useState<boolean>(false)
   const { accessToken, user } = useAuthUser();
   const navigate = useNavigate();
   const {errorHandler} = useErrorHandler()
-
-  const {
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<BookInputType>({
+  const {data: userBooks} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
+  const {reset, handleSubmit, control, formState: { errors }} = useForm<BookInputType>({
     defaultValues: {
       title: "",
       author: "",
@@ -34,6 +31,7 @@ const AddBook = () => {
       coverUrl: "",
     },
   });
+
   const addExistingBookHandler = async ():Promise<void> =>  {
     if(!searchedTitle) { 
       errorHandler('Sorry, we could not add this book to your library. Please refresh the page or try again later.')
@@ -140,6 +138,30 @@ const AddBook = () => {
     setCoverPreview(book.coverUrl);
     setExistingBooks([]);
   };
+  const onCancelHandler = () => {
+    reset({
+      title: "",
+      author: "",
+      publishYear: null,
+      genre: null,
+      coverUrl: "",
+  })
+  setSearchedTitle(null)
+  setCoverPreview(null)
+  setCover(null)
+  setInLibrary(false)
+  }
+
+  useEffect(()=>{
+    if(searchedTitle) {
+      const userBooksIds = userBooks?.map(book => book.id)
+      if(userBooksIds?.includes(searchedTitle.id)) {
+        setInLibrary(true)
+      } else {
+        setInLibrary(false)
+      }
+    }
+  },[searchedTitle, userBooks])
   return (
     <section id="addBook" className={styles.addBookSection}>
       <div className={styles.bookContent}>
@@ -233,13 +255,10 @@ const AddBook = () => {
           />
           <GenreSelect control={control} defaultValue={null} />
           <div className={styles.formButtons}>
-            <Button className={styles.formBtn} htmlType="submit">
-              Save
-            </Button>
-            <Link to="/">
-              <Button className={styles.formBtn}>Cancel</Button>
-            </Link>
+            <Button className={styles.formBtn} htmlType="submit" disabled={inLibrary}>Save</Button>
+            <Button className={styles.formBtn} htmlType="button" onClick={onCancelHandler}>Cancel</Button>
           </div>
+          {<p style={{ visibility: inLibrary ? "visible" : "hidden" }} className={styles.inLibraryMsg}>You already have this book in your library</p>}
         </form>
       </div>
     </section>
