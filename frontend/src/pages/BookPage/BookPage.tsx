@@ -54,7 +54,7 @@ const BookPage = () => {
       if (response.ok) {
         navigate("/");
       } else {
-        throw error;
+        throw new Error();
       }
     } catch (error:unknown) {
       errorHandler("Sorry, but someting went wrong and we could not delete this book from your library. Please refresh the page or try again later.")

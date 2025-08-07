@@ -1,6 +1,6 @@
 import { AuthRequest } from './../types/authTypes';
 import { Request, Response } from "express";
-import { addUserBookModel, deleteUserBookModel, getAllUsersModel, getNumOfUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel";
+import { addUserBookModel, deleteUserBookModel, deleteUserModel, getAllUsersModel, getNumOfUsersModel, getUserBooksModel, getUserDataModel } from "../models/userModel";
 
 export const getAllUsers = async (req:Request, res:Response) => {
   try {
@@ -119,17 +119,24 @@ export const updateUser = async (req:Request, res:Response) => {
 };
 
 export const deleteUser = async (req:Request, res:Response) => {
-  // try {
-  //   const userId = req.params.id;
-  //   await User.findByIdAndDelete(userId);
-  //   res.status(200).json({
-  //     status: "Success",
-  //     message: "User has been removed",
-  //   });
-  // } catch (err) {
-  //   res.status(405).json({
-  //     status: "Fail",
-  //     message: err,
-  //   });
-  // }
+  try {
+    const userId = parseInt(req.params.id);
+    const deletedUser = await deleteUserModel(userId)
+    if(!deletedUser) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "User not found or already deleted",
+      });
+    }
+    res.status(200).json({
+      status: "Success",
+      message: `User with ID ${userId} was successfully deleted`,
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      status: "Fail",
+      message: "Server error while deleting user",
+    });
+  }
 };

@@ -16,19 +16,23 @@ import MainLayout from "./pages/MainLayout/MainLayout.js";
 import SearchPage from "./pages/SearchPage/SearchPage.js";
 import Signup from "./pages/Signup/Signup.js";
 import AdminRoute from "./components/AdminRoute/AdminRoute.js";
+import ErrorElement from "./components/ErrorElement/ErrorElement.js";
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: <Login/>,
+    errorElement: <ErrorElement />
   },
   {
     path: "/signup",
     element: <Signup />,
+    errorElement: <ErrorElement />
   },
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorElement />,
 
     children: [
       {

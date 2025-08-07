@@ -1,12 +1,12 @@
 import { Alert, Form, Input } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useAuthUser from "../../hooks/useAuthUser";
-import styles from "./Signup.module.css";
+import { useAuth } from "../../context/AuthContext";
 import { UserLoginType } from "../../types/userTypes";
+import styles from "./Signup.module.css";
 
 const Signup = () => {
-  const { setAccessToken, setIsAuthenticated, setUser } = useAuthUser();
+  const { setAccessToken, setIsAuthenticated, setUser } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   

@@ -1,0 +1,17 @@
+.errorElement {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+}
+
+.errorElement h1 {
+  font-size: 6rem;
+}
+
+.errorElement p {
+    font-size: 2.6rem;
+}

@@ -36,3 +36,19 @@ export const deleteUserBookModel = async(userId:number,bookId:number):Promise<Re
   const result = await pool.query('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
   return result
 }
+
+export const deleteUserModel = async(userId:number):Promise<boolean> => {
+   const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
+      await conn.query('DELETE FROM user_books WHERE user_id = ?', [userId]);
+      const [result] = await conn.query<ResultSetHeader>('DELETE FROM users WHERE id = ?', [userId]);
+      await conn.commit();
+      return result.affectedRows > 0;
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
+}
