@@ -8,7 +8,6 @@ import styles from "./Login.module.css";
 
 const Login = () => {
   const authContext = useContext(AuthContext)
-  const {errorHandler} = useErrorHandler()
   if(!authContext){
    throw new Error()
   }
@@ -63,6 +62,7 @@ const Login = () => {
         <Form.Item>
           <button
             type="submit"
+            name="Login"
             className={styles.loginBtn}>
             Login
           </button>
@@ -70,7 +70,7 @@ const Login = () => {
       </Form>
       <span className={styles.signupInfo}>
         You don't have Bookshelf account yet? Sign up{" "}
-        <Link to="/signup">here</Link>
+        <Link role='link' to="/signup">here</Link>
       </span>
     </div>
   );

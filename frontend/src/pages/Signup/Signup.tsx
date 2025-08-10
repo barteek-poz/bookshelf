@@ -64,7 +64,7 @@ const Signup = () => {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          label="Password confirm"
+          label="PasswordConfirm"
           name="passwordConfirm"
           rules={[{ required: true, message: "Confirm your password" }]}>
           <Input.Password />
@@ -73,8 +73,9 @@ const Signup = () => {
         <Form.Item>
           <button
             type="submit"
+            name="Signup"
             className={styles.signupBtn}>
-            Create account{" "}
+            Create account
           </button>
         </Form.Item>
       </Form>
