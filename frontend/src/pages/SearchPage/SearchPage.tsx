@@ -42,6 +42,7 @@ const SearchPage = () => {
       errorHandler("Sorry, something went wrong and we could not load books. Please refresh the page or try again later.");
     }
   };
+  
   return (
     <section id="searchPage" className={styles.searchPage}>
       <div className={styles.searchBarWrapper}>
