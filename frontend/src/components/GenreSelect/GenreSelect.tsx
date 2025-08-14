@@ -36,6 +36,7 @@ const GenreSelect = ({ defaultValue, control}:GenreSelectType) => {
           render={({ field }) => (
             <Select
               {...field}
+              aria-label="Select genre"
               placeholder="Select genre"
               options={genresCapitalized}
               className="genreSelect"

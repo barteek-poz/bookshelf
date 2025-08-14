@@ -100,7 +100,7 @@ const AddBook = () => {
   };
 
   const searchTitleHandler = async (bookTitle:string):Promise<void> => {
-    if (bookTitle.length >= 3) {
+    if (bookTitle.length >= 2) {
       try {
         const response = await fetch(
           `http://localhost:3000/api/v1/books/search-by-title`,
@@ -122,7 +122,7 @@ const AddBook = () => {
       } catch (error:unknown) {
         errorHandler("Sorry, something went wrong and we could not search the book. Please refresh the page or try again later.");
       }
-    } else if (bookTitle.length < 3) {
+    } else if (bookTitle.length < 2) {
       setExistingBooks([]);
     }
   };
