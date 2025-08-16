@@ -191,9 +191,7 @@ describe("buttons behaviour", () => {
     await userEvent.click(submitBtn);
     await waitFor(() => {
       expect(screen.getByText("Please provide book title")).toBeInTheDocument();
-      expect(
-        screen.getByText("Please provide book author")
-      ).toBeInTheDocument();
+      expect(screen.getByText("Please provide book author")).toBeInTheDocument();
     });
   });
 
@@ -241,18 +239,12 @@ describe("buttons behaviour", () => {
     const submitBtn = screen.getByRole("button", { name: "Save" });
     await userEvent.type(titleInput, "Test title");
     await waitFor(() => {
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("search-by-title"),
-        expect.any(Object)
-      );
+      expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("search-by-title"), expect.any(Object));
     });
     await userEvent.type(authorInput, "Test author");
     await userEvent.click(submitBtn);
     await waitFor(() => {
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("add"),
-        expect.any(Object)
-      );
+      expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("add"), expect.any(Object));
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
   });
@@ -276,9 +268,7 @@ describe("buttons behaviour", () => {
         </AuthContext.Provider>
       </MemoryRouter>
     );
-    const bookCoverPreview = screen.getByAltText(
-      "cover preview"
-    ) as HTMLImageElement;
+    const bookCoverPreview = screen.getByAltText("cover preview") as HTMLImageElement;
     const fileInput = screen.getByLabelText("Select book cover");
     const mockFile = new File(["mock cover img"], "cover.png", {
       type: "image/png",
@@ -289,7 +279,7 @@ describe("buttons behaviour", () => {
     });
   });
 
-  test("clear inputs when cancel", () => {
+  test("clear inputs when cancel", async () => {
     render(
       <MemoryRouter>
         <AuthContext.Provider
@@ -309,13 +299,27 @@ describe("buttons behaviour", () => {
         </AuthContext.Provider>
       </MemoryRouter>
     );
-
-    const bookCoverPreview = screen.getByAltText("cover preview");
+    const bookCoverPreview = screen.getByAltText("cover preview") as HTMLImageElement;
     const fileInput = screen.getByLabelText("Select book cover");
+    const mockFile = new File(["mock cover img"], "cover.png", { type: "image/png" });
     const titleInput = screen.getByPlaceholderText("Book title");
     const authorInput = screen.getByPlaceholderText("Author");
-    const publishInput = screen.getByPlaceholderText("Publish year");
-    const genreInput = screen.getByTestId("genre-select");
     const cancelBtn = screen.getByRole("button", { name: "Cancel" });
+
+    await userEvent.upload(fileInput, mockFile);
+    await userEvent.type(titleInput, "Test title");
+    await userEvent.type(authorInput, "Test author");
+    await waitFor(() => {
+      expect(bookCoverPreview.src).toMatch(/^data:image\/png;base64,/);
+      expect(screen.getByDisplayValue("Test title")).toBeInTheDocument()
+      expect(screen.getByDisplayValue("Test author")).toBeInTheDocument()
+    });
+
+    await userEvent.click(cancelBtn)
+    await waitFor(() => {
+      expect(bookCoverPreview.src).not.toMatch(/^data:image\/png;base64,/);
+       expect(screen.queryByDisplayValue("Test title")).not.toBeInTheDocument()
+      expect(screen.queryByDisplayValue("Test author")).not.toBeInTheDocument()
+    });
   });
 });
