@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Routes, Route } from "react-router-dom";
 import AuthContextProvider, { AuthContext } from "../../context/AuthContext";
 import { ErrorProvider } from "../../context/ErrorContext";
 import Login from "./Login";
@@ -42,9 +42,31 @@ test("renders form elements", async () => {
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
-    expect(screen.getByRole("link", {name:"here"}))
+    expect(screen.getByRole("link", { name: "here" }));
   });
 });
+
+
+test("transfers user to /signup page", async () => {
+  render(
+    <MemoryRouter initialEntries={["/login"]}>
+      <AuthContextProvider>
+        <ErrorProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<div>Signup</div>} />
+          </Routes>
+        </ErrorProvider>
+      </AuthContextProvider>
+    </MemoryRouter>
+  );
+    await waitFor(() => {
+    const signupLink = screen.getByRole("link", { name: "here" })
+    fireEvent.click(signupLink)
+    expect(screen.getByText("Signup")).toBeInTheDocument()
+  });
+});
+
 
 test("navigates to '/' after successfull login", async () => {
   const mockSetAccessToken = jest.fn();
@@ -60,7 +82,8 @@ test("navigates to '/' after successfull login", async () => {
         accessToken: "",
         user: null,
         loading: false,
-      }}>
+      }}
+    >
       <MemoryRouter>
         <ErrorProvider>
           <Login />
@@ -80,7 +103,6 @@ test("navigates to '/' after successfull login", async () => {
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });
-
 
 describe("failed login", () => {
   beforeEach(() => {
@@ -107,7 +129,8 @@ describe("failed login", () => {
           accessToken: "",
           user: null,
           loading: false,
-        }}>
+        }}
+      >
         <MemoryRouter>
           <ErrorProvider>
             <Login />

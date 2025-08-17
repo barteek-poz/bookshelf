@@ -69,7 +69,7 @@ const Login = () => {
         </Form.Item>
       </Form>
       <span className={styles.signupInfo}>
-        You don't have Bookshelf account yet? Sign up{" "}
+        You don't have Bookshelf account yet? Sign up
         <Link role='link' to="/signup">here</Link>
       </span>
     </div>
