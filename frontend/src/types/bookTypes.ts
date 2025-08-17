@@ -7,7 +7,9 @@ export type BookDataType = {
     createdBy?: number, 
     coverUrl: string | null, 
     genre?: string | null, 
-    publishYear?: number | null
+    publishYear?: number | null,
+    inLibrary: boolean,
+    canEdit: boolean
   }
 
  export type SingleBookType = {

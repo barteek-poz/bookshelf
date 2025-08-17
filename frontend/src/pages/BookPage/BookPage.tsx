@@ -1,19 +1,17 @@
 import { Button, Modal } from "antd";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { addExistingBookHandler } from "../../api/books";
 import defaultBookCover from "../../assets/cover-default.jpg";
 import Loader from "../../components/Loader/Loader";
 import upperFirstLetter from "../../helpers/upperFirstLetter";
 import useAuthUser from "../../hooks/useAuthUser";
+import { useErrorHandler } from "../../hooks/useErrorHandler";
 import useFetch from "../../hooks/useFetch";
 import { BookDataType } from "../../types/bookTypes";
 import styles from "./BookPage.module.css";
-import { useErrorHandler } from "../../hooks/useErrorHandler";
 
 const BookPage = () => {
-  const [canUserEdit, setCanUserEdit] = useState<boolean>(false);
-  const [inLibrary, setInLibrary] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [deleteFromDBModal, setDeleteFromDBModal] = useState<boolean>(false);
   const bookId:string | undefined = useParams().id;
@@ -21,7 +19,6 @@ const BookPage = () => {
   const { user, accessToken } = useAuthUser();
   const {errorHandler} = useErrorHandler()
   const {data: bookData,error,isPending} = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
-  const { data: userBooks } = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
 
   const addExistingBook = async ():Promise<void>  => {
     try {
@@ -76,19 +73,6 @@ const BookPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (bookData?.createdBy === user.id) {
-      setCanUserEdit(true);
-    }
-  }, [bookData, user]);
-
-  useEffect(() => {
-    const userBooksArr = userBooks?.map((book) => book.id);
-    if (bookId && userBooksArr?.includes(+bookId)) {
-      setInLibrary(true);
-    }
-  }, [userBooks, bookId]);
-
   return (
     <section id="bookPage" className={styles.bookPage}>
       <div className={styles.bookContent}>
@@ -126,17 +110,17 @@ const BookPage = () => {
       </div>
       {bookData && (
         <div className={styles.btns}>
-          {!inLibrary && (
+          {!bookData.inLibrary && (
             <Button className={styles.editBtn} onClick={addExistingBook}>
               Add book to your library
             </Button>
           )}
-          {canUserEdit && (
+          {bookData.canEdit && (
             <Link to={`/books/${bookData.id}/edit`}>
               <Button className={styles.editBtn}>Edit book</Button>
             </Link>
           )}
-          {inLibrary && (
+          {bookData.inLibrary && (
             <Button
               danger
               type="primary"
