@@ -16,38 +16,27 @@ const EditBook = () => {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const { accessToken } = useAuthUser();
   const navigate = useNavigate();
-  const bookId:string | undefined = useParams().id;
-  const {
-    data: bookData,
-    error,
-    isPending,
-  } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<BookInputType>();
+  const bookId: string | undefined = useParams().id;
+  const { data: bookData, error, isPending } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
+  const {handleSubmit,control,formState: { errors }} = useForm<BookInputType>();
 
-  const updateBookHandler = async (data:BookInputType):Promise<void> => {
+  const updateBookHandler = async (data: BookInputType): Promise<void> => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-    formData.append(key, value !== null ? String(value) : 'null');
-    }); 
+      formData.append(key, value !== null ? String(value) : "null");
+    });
     if (cover) {
       formData.append("bookCover", cover);
     }
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/v1/books/${bookId}/edit`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-          body: formData,
-        }
-      );
+      const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}/edit`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        credentials: "include",
+        body: formData,
+      });
       const data = await response.json();
       if (response.ok) {
         navigate(`/books/${bookId}`);
@@ -59,11 +48,11 @@ const EditBook = () => {
     }
   };
 
-  const coverPreviewHandler = (coverFile:File) => {
+  const coverPreviewHandler = (coverFile: File) => {
     if (coverFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const result = reader.result as string
+        const result = reader.result as string;
         setCoverPreview(result);
       };
       reader.readAsDataURL(coverFile);
@@ -92,24 +81,12 @@ const EditBook = () => {
                 }}
               />
             )}
-            {coverPreview && (
-              <img
-                src={coverPreview}
-                alt="book cover"
-                className={styles.bookCover}
-              />
-            )}
-            <BookCoverInput
-              setCover={setCover}
-              coverPreviewHandler={coverPreviewHandler}
-            />
+            {coverPreview && <img src={coverPreview} alt="book cover" className={styles.bookCover} />}
+            <BookCoverInput setCover={setCover} coverPreviewHandler={coverPreviewHandler} />
           </div>
         )}
         {bookData && (
-          <form
-            className={styles.bookForm}
-            onSubmit={handleSubmit(updateBookHandler)}
-            encType="multipart/form-data">
+          <form className={styles.bookForm} onSubmit={handleSubmit(updateBookHandler)} encType="multipart/form-data">
             <div className={styles.bookInputWrapper}>
               <Controller
                 name="title"
@@ -127,9 +104,7 @@ const EditBook = () => {
                   />
                 )}
               />
-              <p
-                style={{ display: errors?.title ? "block" : "none" }}
-                className={styles.errorMsg}>
+              <p style={{ display: errors?.title ? "block" : "none" }} className={styles.errorMsg}>
                 {" "}
                 {errors?.title?.message}
               </p>
@@ -151,9 +126,7 @@ const EditBook = () => {
                   />
                 )}
               />
-              <p
-                style={{ display: errors?.author ? "block" : "none" }}
-                className={styles.errorMsg}>
+              <p style={{ display: errors?.author ? "block" : "none" }} className={styles.errorMsg}>
                 {" "}
                 {errors?.author?.message}
               </p>

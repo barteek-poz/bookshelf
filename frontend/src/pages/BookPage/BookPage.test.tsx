@@ -1,11 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, useParams, Routes, Route } from "react-router";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 import { ErrorProvider } from "../../context/ErrorContext";
-import BookPage from "./BookPage";
 import useFetch from "../../hooks/useFetch";
-import userEvent from "@testing-library/user-event";
-import EditBook from "../EditBook/EditBook";
+import BookPage from "./BookPage";
 
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({

@@ -70,6 +70,11 @@ export const canEditBookModel = async(bookId:number, userId:number):Promise<Book
   return book
 }
 
+export const inUsersLibraryModel = async(userId:number, bookId:number) => {
+  const result = await pool.query('SELECT * FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+  return result[0]
+}
+
 export const deleteBookFromDB = async (bookId: number): Promise<ResultSetHeader> => {
   const conn = await pool.getConnection();
   try {
