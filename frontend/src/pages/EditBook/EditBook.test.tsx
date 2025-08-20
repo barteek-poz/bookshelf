@@ -158,6 +158,7 @@ describe("buttons behaviour", () => {
     });
 
     await waitFor(() => {
+      expect(screen.getByAltText("book cover")).not.toHaveAttribute("src", "coverUrl");
       expect(screen.getByDisplayValue("New title")).toBeInTheDocument();
       expect(screen.getByDisplayValue("New author")).toBeInTheDocument();
       expect(screen.getByDisplayValue("2020")).toBeInTheDocument();

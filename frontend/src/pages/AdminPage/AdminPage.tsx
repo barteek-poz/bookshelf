@@ -45,11 +45,10 @@ const AdminPage = () => {
         }
     },[usersError, booksError, errorHandler])
 
-    console.log(summary)
     return <section className={styles.adminPage}>
         <h2>Admin panel</h2>
         <p><span className={styles.logo}>Bookshelf</span> summary:</p>
-        <p>Number of books in databse: {summary?.numOfBooks}</p>
+        <p>Number of books in database: {summary?.numOfBooks}</p>
         <p>Number of users: {summary?.numOfUsers}</p>
         <div className={styles.btnsWrapper}>
             <Button className={styles.adminBtns} onClick={getUsersHandler}>Show all users</Button>
