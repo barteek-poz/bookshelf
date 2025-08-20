@@ -73,12 +73,12 @@ test("form render", async () => {
 });
 
 describe("buttons behaviour", () => {
-   beforeEach(() => {
-      (globalThis as any).fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({}),
-      });
+  beforeEach(() => {
+    (globalThis as any).fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
     });
+  });
   test("submit new book data", async () => {
     (useFetch as jest.Mock).mockReturnValue({
       data: {
@@ -93,7 +93,7 @@ describe("buttons behaviour", () => {
       isPending: false,
       error: null,
     });
-   
+
     render(
       <MemoryRouter initialEntries={["/books/1/edit"]}>
         <AuthContext.Provider
@@ -130,19 +130,82 @@ describe("buttons behaviour", () => {
 
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, "New title");
-    await userEvent.clear(authorInput)
+    await userEvent.clear(authorInput);
     await userEvent.type(authorInput, "New author");
-    await userEvent.clear(yearInput)
+    await userEvent.clear(yearInput);
     await userEvent.type(yearInput, "2020");
     await userEvent.upload(coverBtn, mockFile);
-    await userEvent.selectOptions(genreSelect, "fantasy")
+    await userEvent.selectOptions(genreSelect, "fantasy");
+
+    (useFetch as jest.Mock).mockReturnValueOnce({
+      data: {
+        id: 1,
+        author: "New author",
+        title: "New title",
+        createdBy: 1,
+        coverUrl: "new-cover.png",
+        genre: "Fantasy",
+        publishYear: "2020",
+      },
+      isPending: false,
+      error: null,
+    });
+
     await userEvent.click(saveBtn);
+
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith("/books/1");
+    });
+
+    await waitFor(() => {
       expect(screen.getByDisplayValue("New title")).toBeInTheDocument();
       expect(screen.getByDisplayValue("New author")).toBeInTheDocument();
       expect(screen.getByDisplayValue("2020")).toBeInTheDocument();
       expect(screen.getByDisplayValue("Fantasy")).toBeInTheDocument();
     });
+  });
+
+  test("cancel button", async () => {
+    (useFetch as jest.Mock).mockReturnValue({
+      data: {
+        id: 1,
+        author: "Test author",
+        title: "Test title",
+        createdBy: 1,
+        coverUrl: "coverUrl",
+        genre: "Test genre",
+        publishYear: "Test year",
+      },
+      isPending: false,
+      error: null,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/books/1/edit"]}>
+        <AuthContext.Provider
+          value={{
+            user: { id: 1, is_admin: false },
+            setAccessToken: jest.fn(),
+            setIsAuthenticated: jest.fn(),
+            setUser: jest.fn(),
+            isAuthenticated: true,
+            accessToken: "accessToken",
+            loading: false,
+          }}
+        >
+          <ErrorProvider>
+            <Routes>
+              <Route path="/books/:id/edit" element={<EditBook />} />
+              <Route path="/books/:id" element={<BookPage />} />
+            </Routes>
+          </ErrorProvider>
+        </AuthContext.Provider>
+      </MemoryRouter>
+    );
+    const saveBtn = screen.getByRole("button", { name: "Save" });
+    await userEvent.click(saveBtn)
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/books/1")
+    })
   });
 });
