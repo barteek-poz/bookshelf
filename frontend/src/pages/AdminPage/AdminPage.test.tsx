@@ -47,12 +47,14 @@ test("renders db summary", async () => {
 describe("buttons behaviour", () => {
   test("fetch users list", async () => {
     (useFetch as jest.Mock).mockReturnValue({
-      fetchData: [
-        { id: 1, name: "User 1", email: "user_1@email.com" },
-        { id: 2, name: "User 2", email: "user_2@email.com" },
-      ],
-      error: null,
-    });
+    fetchData: jest.fn().mockResolvedValue([
+      { id: 1, name: "User 1", email: "user_1@email.com" },
+      { id: 2, name: "User 2", email: "user_2@email.com" },
+    ]),
+    data: null,
+    error: null,
+    isPending: false,
+  });
     render(
       <MemoryRouter>
         <AuthContext.Provider
@@ -75,7 +77,51 @@ describe("buttons behaviour", () => {
     const showUsersBtn = screen.getByRole("button", { name: "Show all users" });
     await userEvent.click(showUsersBtn);
     await waitFor(()=> {
-        expect(screen.getByText("User 1")).toBeInTheDocument()
+        expect(screen.getByText("user_1@email.com")).toBeInTheDocument()
+        expect(screen.getByText("user_2@email.com")).toBeInTheDocument()
+    })
+  });
+  test("fetch books list", async () => {
+    (useFetch as jest.Mock).mockReturnValue({
+    fetchData: jest.fn().mockResolvedValue([
+      {
+        id: 1,
+        author: "Test author",
+        title: "Test title",
+        createdBy: 1,
+        coverUrl: "coverUrl",
+        genre: "Test genre",
+        publishYear: "Test year",
+      }
+    ]),
+    data: null,
+    error: null,
+    isPending: false,
+  });
+    render(
+      <MemoryRouter>
+        <AuthContext.Provider
+          value={{
+            user: { id: 1, is_admin: true },
+            setAccessToken: jest.fn(),
+            setIsAuthenticated: jest.fn(),
+            setUser: jest.fn(),
+            isAuthenticated: true,
+            accessToken: "accessToken",
+            loading: false,
+          }}
+        >
+          <ErrorProvider>
+            <AdminPage />
+          </ErrorProvider>
+        </AuthContext.Provider>
+      </MemoryRouter>
+    );
+    const showUsersBtn = screen.getByRole("button", { name: "Show all books" });
+    await userEvent.click(showUsersBtn);
+    await waitFor(()=> {
+        expect(screen.getByText("Test title")).toBeInTheDocument()
+        expect(screen.getByText("Test author")).toBeInTheDocument()
     })
   });
 });
