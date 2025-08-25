@@ -22,6 +22,8 @@ const BookRow = ({ books }:BookRowType) => {
               title={book.title}
               author={book.author}
               coverUrl={book.coverUrl}
+              inLibrary={book.inLibrary}
+              canEdit={book.canEdit}
             />
           ))}
 

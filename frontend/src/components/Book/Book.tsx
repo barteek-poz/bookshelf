@@ -9,7 +9,6 @@ const Book = ({id, title, author, coverUrl}:BookDataType) => {
                 <h4>{title}</h4>
                 <p>{author}</p>
             </div>}
-            
         </Link>
     )
 }

@@ -23,7 +23,6 @@ const BookCoverInput = ({setCover, coverPreviewHandler} : BookCoverInputTypes) =
         className={styles.inputFile}
         onChange={(e) => {
           if(e.target.files) {
-            console.log(e.target.files[0])
             bookCoverHandler(e.target.files[0])
           }
         }}
