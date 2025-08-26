@@ -7,35 +7,37 @@ import { useErrorHandler } from "../../hooks/useErrorHandler";
 import { useEffect } from "react";
 
 const RecentBooks = () => {
-  const {data: recentBooks, error,isPending} = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/books/get-recent`);
-  const {errorHandler} = useErrorHandler()
+  const { data: recentBooks, error, isPending } = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/books/get-recent`);
+  const { errorHandler } = useErrorHandler();
 
-  useEffect(()=> {
-    if(error) {
-      errorHandler("Sorry, but something went wrong and we could not load recent books. Please refresh the page or try again later.")
+  useEffect(() => {
+    if (error) {
+      errorHandler("Sorry, but something went wrong and we could not load recent books. Please refresh the page or try again later.");
     }
-  },[error])
-  
+  }, [error]);
+  if(!recentBooks || recentBooks.length === 0) {
+    return null
+  }
   return (
     <div>
       {isPending && <Loader />}
-      {recentBooks && 
+      {recentBooks && (
         <div className={styles.recentBooks}>
-          {recentBooks &&
-            recentBooks.map((book) => {
-              return (
-                <Book
-                  key={book.id}
-                  id={book.id}
-                  title={book.title}
-                  author={book.author}
-                  coverUrl={book.coverUrl}
-                  inLibrary={book.inLibrary}
-                  canEdit={book.canEdit}
-                />
-              );
-            })}
-        </div>}
+          {recentBooks.map((book) => {
+            return (
+              <Book
+                key={book.id}
+                id={book.id}
+                title={book.title}
+                author={book.author}
+                coverUrl={book.coverUrl}
+                inLibrary={book.inLibrary}
+                canEdit={book.canEdit}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

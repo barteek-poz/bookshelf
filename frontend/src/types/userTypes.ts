@@ -13,7 +13,7 @@ export type  UserLoginType = {
 
 export type UsersListType = {
     id: number,
-    name: string, 
+    user_name: string, 
     email: string
 }
 

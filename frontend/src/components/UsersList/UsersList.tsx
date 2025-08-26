@@ -1,5 +1,4 @@
 import { Button, Popconfirm, Table, TableProps } from 'antd'
-import { useNavigate } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 import { useErrorHandler } from '../../hooks/useErrorHandler'
 import { UserListProps, UsersListType } from '../../types/userTypes'
@@ -8,7 +7,6 @@ import { UserListProps, UsersListType } from '../../types/userTypes'
 const UsersList = ({usersData}: UserListProps) => {
     const {accessToken} = useAuth()
     const {errorHandler} = useErrorHandler()
-    const navigate = useNavigate()
     const columns:TableProps<UsersListType>['columns'] = [
         {
             title: 'ID',
