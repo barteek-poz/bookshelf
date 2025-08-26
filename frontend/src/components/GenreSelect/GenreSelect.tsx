@@ -12,12 +12,12 @@ const GenreSelect = ({ defaultValue, control}:GenreSelectType) => {
   const genresCapitalized = genresData?.map((genre) => {
     return { ...genre, label: upperFirstLetter(genre.label) };
   });
-
   useEffect(()=> {
     if(error) {
       errorHandler("Sorry, but something went wrong and we could not load the book page. Please refresh the page or try again later.")
     }
   },[error])
+  
   return (
     <ConfigProvider
       theme={{

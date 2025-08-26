@@ -71,7 +71,7 @@ const Menu = () => {
           />
           Add book
         </Link>
-        <Link to="" onClick={logoutHandler}>
+        <Link to="/login" onClick={logoutHandler}>
           <img src={logoutIcon} alt="logout-icon" className={styles.menuIcon} />
           Logout
         </Link>

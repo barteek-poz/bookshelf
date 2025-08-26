@@ -3,7 +3,7 @@ import {GridLoader} from 'react-spinners'
 const Loader = () => {
     return (
     <div className={styles.loader}>
-    <GridLoader/>
+    <GridLoader data-testid="grid-loader"/>
     <p>Loading...</p>
     </div>)
 }
