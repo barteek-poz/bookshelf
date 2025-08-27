@@ -1,100 +1,116 @@
 .bookPage {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6rem;
-    
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6rem;
 }
 .bookContent {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6rem;
-    max-width: 120rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 120rem;
+  gap: 6rem;
 }
 .bookCoverCont {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 .bookCover {
-    width: 38rem;
-    height: 62rem;
+  width: 38rem;
+  height: 64em;
 }
 .coverBtns {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .uploadBtn {
-    background: #11243a;
-    color: #fff;
-    border: 1px solid transparent;
+  background: #11243a;
+  color: #fff;
+  border: 1px solid transparent;
 }
 .uploadBtn:hover {
-    background: transparent !important;
-    border-color: #11243a !important;
-    color: #11243a !important;
+  background: transparent !important;
+  border-color: #11243a !important;
+  color: #11243a !important;
 }
 .inputFile {
-    opacity: 0;
-    width: 0.1px;
-    height: 0.1px;
-    position: absolute;
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
 }
 .bookData {
-    max-width: 60rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+  max-width: 60rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 .bookData p {
-    font-size: 1.6rem;
+  font-size: 1.6rem;
 }
 .defaultText {
-   color: #808080;
-   font-style: italic;
+  color: #808080;
+  font-style: italic;
 }
 .backBtn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 20px;
-    align-self: flex-start;
-    cursor: pointer;
-    transition: .3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  align-self: flex-start;
+  cursor: pointer;
+  transition: 0.3s;
 }
 .backBtn svg {
-    font-size: 264x;
+  font-size: 264x;
 }
-.backBtn:hover{
-    gap: 4px;
+.backBtn:hover {
+  gap: 4px;
 }
 .btns {
-    display: flex;
-    gap: 1rem;
-    align-self: flex-end;
-    margin-right: 3rem;
+  display: flex;
+  gap: 1rem;
+  align-self: flex-end;
+  margin-right: 3rem;
 }
 .editBtn {
-    background: #11243a;
-    color: #fff;
-    border: 1px solid transparent;
+  background: #11243a;
+  color: #fff;
+  border: 1px solid transparent;
 }
 .editBtn:hover {
-    background: transparent !important;
-    border-color: #11243a !important;
-    color: #11243a !important;
+  background: transparent !important;
+  border-color: #11243a !important;
+  color: #11243a !important;
 }
 .deleteBtn:hover {
-    background: #fff !important;
-    color: #ff0000 !important;
-    border-color: #ff0000 !important;
+  background: #fff !important;
+  color: #ff0000 !important;
+  border-color: #ff0000 !important;
 }
 .errorMsg {
-    text-align: center;
+  text-align: center;
+}
+
+
+@media (max-height: 700px) {
+  .bookPage {
+    gap: 3rem;
+  }
+  .bookContent {
+    padding: 3rem;
+  }
+  .bookCover {
+    width: 32rem;
+    height: 50rem;
+  }
+  .btns {
+    padding-bottom: 3rem;
+  }
 }
 
 @media (max-width: 1250px) {
@@ -113,12 +129,14 @@
   }
   .bookCover {
     width: 32rem;
-    height: 56rem;
+    height: 50rem;
   }
 }
 @media (max-width: 1000px) {
-
-
+  .bookCover {
+    width: 30rem;
+    height: 46rem;
+  }
   .bookCoverCont {
     align-items: center;
   }
@@ -128,18 +146,20 @@
 }
 
 @media (max-width: 900px) {
-    .bookContent {
-        padding-top: 6rem;
-        flex-direction: column;
-    }
-      .bookCover {
-      width: 30rem;
-      height: 42rem;
+  .bookContent {
+    padding-top: 6rem;
+    flex-direction: column;
   }
-    .bookData {
-   text-align: center;
+  .bookCover {
+    width: 28rem;
+    height: 42rem;
+  }
+  .bookData {
+    text-align: center;
   }
   .btns {
+    flex-direction: column;
+    align-items: center;
     align-self: center;
     margin-right: 0rem;
   }

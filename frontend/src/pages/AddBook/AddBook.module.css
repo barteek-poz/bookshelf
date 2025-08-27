@@ -85,6 +85,22 @@
   color: #ff0000cc;
 }
 
+@media (max-height: 700px) {
+  .bookPage {
+    gap: 3rem;
+  }
+  .bookContent {
+    padding: 3rem;
+  }
+  .bookCover {
+    width: 32rem;
+    height: 50rem;
+  }
+  .btns {
+    padding-bottom: 3rem;
+  }
+}
+
 @media (max-width: 1250px) {
   .bookContent {
     gap: 3rem;

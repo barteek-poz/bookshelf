@@ -129,7 +129,7 @@ export const getBookById = async (req: Request, res: Response) => {
     }
     const isBookInLibrary = await inUsersLibraryModel(userId, bookId)
     const inLibrary = isBookInLibrary.length > 0 ? true : false
-    const canEdit = book.createdBy === userId ? true : false
+    const canEdit = book.createdBy === userId || authReq.user.is_admin
     res.status(200).json({ status: "Success", data: {...book, inLibrary, canEdit} });
   } catch (error) {
     console.error("Error fetching book:", error);
