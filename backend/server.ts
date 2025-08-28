@@ -5,10 +5,10 @@ import http from 'http'
 import mysql from 'mysql2'
 import type { Pool } from "mysql2/promise"
 
-const options = { 
-    key: fs.readFileSync('./cert/localhost-key.pem'),
-    cert: fs.readFileSync('./cert/localhost.pem')
-}
+// const options = { 
+//     key: fs.readFileSync('./cert/localhost-key.pem'),
+//     cert: fs.readFileSync('./cert/localhost.pem')
+// }
 
 dotenv.config({path:'.env'})
 
@@ -19,10 +19,11 @@ export const pool:Pool = mysql.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     ssl: {
-        ca:fs.readFileSync('./cert/ca.pem'),
         rejectUnauthorized: true
     }
 }).promise()
+
+
 
 if(!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
     throw new Error('Missing database credentials in enviromental variables')

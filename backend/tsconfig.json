@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "commonjs",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "moduleResolution": "node"
   },
-  "include": ["**/*.ts", "dist/models/authModel.js"],
+  "include": ["**/*.ts"],
   "exclude": ["dist"]
 }
