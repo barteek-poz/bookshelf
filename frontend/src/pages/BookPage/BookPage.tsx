@@ -115,12 +115,12 @@ const BookPage = () => {
               Add book to your library
             </Button>
           )}
-          {bookData.canEdit && (
+          {bookData.canEdit ? (
             <Link to={`/books/${bookData.id}/edit`}>
               <Button className={styles.editBtn}>Edit book</Button>
             </Link>
-          )}
-          {bookData.inLibrary && (
+          ): null}
+          {bookData.inLibrary ? (
             <Button
               danger
               type="primary"
@@ -130,7 +130,7 @@ const BookPage = () => {
               className={styles.deleteBtn}>
               Remove book from library
             </Button>
-          )}
+          ): null}
           {user.is_admin ? (
             <Button
               danger

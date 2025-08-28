@@ -64,7 +64,7 @@ const Signup = () => {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          label="PasswordConfirm"
+          label="Password Confirm"
           name="passwordConfirm"
           rules={[{ required: true, message: "Confirm your password" }]}>
           <Input.Password />

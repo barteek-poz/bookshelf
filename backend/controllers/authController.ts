@@ -44,13 +44,13 @@ export const signup = async (req:Request, res:Response) => {
 		const userFinalData = await getUserByIdModel(newUserId);
 		res.cookie('refreshToken', refreshToken, {
 			httpOnly: true,
-			secure: false,
+			secure: true,
 			sameSite: 'strict',
 			maxAge: 7 * 24 * 60 * 60 * 1000,
 		});
 		res.cookie('accessToken', accessToken, {
 			httpOnly: true,
-			secure: false,
+			secure: true,
 			sameSite: 'strict',
 			path: '/',
 			maxAge: 15 * 60 * 1000,
@@ -91,7 +91,7 @@ try {
 	await updateUserTokensModel(refreshToken, user.id)
 	res.cookie('refreshToken', refreshToken, {
 		httpOnly: true,
-		secure: false,
+		secure: true,
 		sameSite: 'strict',
 		maxAge: 7 * 24 * 60 * 60 * 1000,
 	});
