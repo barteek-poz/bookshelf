@@ -1,4 +1,4 @@
-import { RowDataPacket } from "mysql2";
+import type { RowDataPacket } from "mysql2";
 import { pool } from "../server";
 import { AdminSummary } from "../types/adminTypes";
 
