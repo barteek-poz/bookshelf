@@ -1,4 +1,4 @@
-import { ResultSetHeader, RowDataPacket } from "../node_modules/mysql2/index.js";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { pool } from "../server.js";
 import { UserBackendDataType } from "../types/userTypes.js";
 
