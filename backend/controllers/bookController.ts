@@ -63,9 +63,11 @@ export const getRecentBooks = async (req: Request, res: Response) => {
   }
 };
 
-export const searchBookByTitle = async (req: Request, res: Response) => {
-  const authReq = req as AuthRequest<{ bookTitle: string }>;
-  const { bookTitle } = authReq.body;
+export const searchBookByTitle = async (
+  req: AuthRequest<{ bookTitle: string }>,
+  res: Response
+) => {
+  const { bookTitle } = req.body;
 
   if (!bookTitle) {
     return res.status(400).json({ status: "Fail", message: "Invalid book title" });
