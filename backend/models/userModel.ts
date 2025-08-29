@@ -1,26 +1,26 @@
-import { ResultSetHeader } from "../node_modules/mysql2/index.js";
+import { ResultSetHeader, RowDataPacket } from "../node_modules/mysql2/index.js";
 import { pool } from "../server.js";
 import { BookDataType } from "../types/bookTypes.js";
 import { UserBackendDataType } from "../types/userTypes.js";
 
 
 export const getAllUsersModel = async ():Promise<UserBackendDataType[]> => {
-  const [users] = await pool.query('SELECT * FROM users')
+  const [users] = await pool.query<UserBackendDataType[] & RowDataPacket[]>('SELECT * FROM users')
   return users
 }
 export const getNumOfUsersModel = async():Promise<number> => {
-  const [rows] = await pool.query('SELECT COUNT(*) AS total FROM users');
+  const [rows] = await pool.query<number & RowDataPacket[]>('SELECT COUNT(*) AS total FROM users');
   const numOfUsers = rows[0].total;
   return numOfUsers
 }
 export const getUserDataModel = async(userId:number):Promise<UserBackendDataType>=> {
-  const [result] = await pool.query(`SELECT * FROM users WHERE id = ?`,[userId]);
+  const [result] = await pool.query<UserBackendDataType[] & RowDataPacket[]>(`SELECT * FROM users WHERE id = ?`,[userId]);
   const user = result[0]
   return user
 }
 
 export const getUserBooksModel = async(userId:number):Promise<BookDataType[]>=> {
-  const [result] = await pool.query(
+  const [result] = await pool.query<BookDataType[] & RowDataPacket[]>(
     `SELECT books.* FROM books 
     JOIN user_books ON books.id = user_books.book_id 
     WHERE user_books.user_id = ?;`, [userId]);  
@@ -28,12 +28,12 @@ export const getUserBooksModel = async(userId:number):Promise<BookDataType[]>=> 
 }
 
 export const addUserBookModel = async(userId:number,bookId:number):Promise<ResultSetHeader> => {
-  const result = await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,bookId])
+  const [result] = await pool.query<ResultSetHeader>('INSERT INTO user_books VALUES(?,?)',[userId,bookId])
   return result
 }
 
 export const deleteUserBookModel = async(userId:number,bookId:number):Promise<ResultSetHeader> => {
-  const result = await pool.query('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+  const [result] = await pool.query<ResultSetHeader>('DELETE FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
   return result
 }
 

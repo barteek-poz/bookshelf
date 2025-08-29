@@ -1,44 +1,44 @@
-import { ResultSetHeader, } from "mysql2";
+import { ResultSetHeader, RowDataPacket, } from "mysql2";
 import { pool } from "../server.js";
 import { BookDataType } from "../types/bookTypes.js";
 
 
 export const searchBookByTitleModel = async (bookTitle:string):Promise<BookDataType[]> => {
-  const [booksByTitle] = await pool.query('SELECT * FROM books WHERE title LIKE ?', [`%${bookTitle}%`])
+  const [booksByTitle] = await pool.query<BookDataType[] & RowDataPacket[]>('SELECT * FROM books WHERE title LIKE ?', [`%${bookTitle}%`])
   return booksByTitle
 }
 
 export const getRecentBooksModel = async ():Promise<BookDataType[]> => {
-  const [books] = await pool.query(`SELECT * FROM books ORDER BY id DESC LIMIT 5`);
+  const [books] = await pool.query<BookDataType[] & RowDataPacket[]>(`SELECT * FROM books ORDER BY id DESC LIMIT 5`);
   return books
 }
 
 export const getNumOfBooksModel = async():Promise<number> => {
-  const [rows] = await pool.query('SELECT COUNT(*) AS total FROM books');
+  const [rows] = await pool.query<number & RowDataPacket[]>('SELECT COUNT(*) AS total FROM books');
   const numOfBooks = rows[0].total;
   return numOfBooks
 }
 
 export const getAllBooksModel = async ():Promise<BookDataType[]> => {
-  const [books] = await pool.query(`SELECT * FROM books`);
+  const [books] = await pool.query<BookDataType[] & RowDataPacket[3]>(`SELECT * FROM books`);
   return books
 }
 
 
 export const addBookModel = async (title:string, author:string, publishYear:number, genre:string, coverUrl:string | null, userId:number):Promise<ResultSetHeader> => {
-  const [result] = await pool.query('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[title, author, publishYear,genre, coverUrl, userId ])
+  const [result] = await pool.query<ResultSetHeader>('INSERT INTO books(title,author,publishYear, genre, coverUrl, createdBy) VALUES(?, ?, ?, ?, ?, ?)',[title, author, publishYear,genre, coverUrl, userId ])
   return result
 }
 
 export const addBookToUserModel = async(userId:number, newBookId:number):Promise<ResultSetHeader>=> {
-  const [result] = await pool.query('INSERT INTO user_books VALUES(?,?)',[userId,newBookId ])
+  const [result] = await pool.query<ResultSetHeader>('INSERT INTO user_books VALUES(?,?)',[userId,newBookId ])
   return result
 }
 
 
 
 export const getBookDataModel = async (newBookId:number):Promise<BookDataType> => {
-  const [result] = await pool.query('SELECT * FROM books WHERE id=?', [newBookId])
+  const [result] = await pool.query<BookDataType[] & RowDataPacket[]>('SELECT * FROM books WHERE id=?', [newBookId])
   const bookData = result[0]
   return bookData
 }
@@ -55,7 +55,7 @@ export const addBookCoverModel = async(coverUrl:string, newBookId:number) => {
 }
 
 export const getBookCoverModel = async(bookId:number) => {
-  const [book] = await pool.query('SELECT coverUrl FROM books WHERE id=?', [bookId])
+  const [book] = await pool.query<number & ResultSetHeader[]>('SELECT coverUrl FROM books WHERE id=?', [bookId])
   return book
 }
 
@@ -65,7 +65,7 @@ export const updateBookCoverModel = async(coverUrl:string, bookId:number) => {
 }
 
 export const canEditBookModel = async(bookId:number, userId:number):Promise<BookDataType> => {
-  const [result] = await pool.query('SELECT * FROM books WHERE id = ? AND createdBy = ?', [bookId, userId])
+  const [result] = await pool.query<BookDataType[] & RowDataPacket[]>('SELECT * FROM books WHERE id = ? AND createdBy = ?', [bookId, userId])
   const book = result[0]
   return book
 }
