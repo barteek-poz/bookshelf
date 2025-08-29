@@ -1,9 +1,8 @@
-import app from "./app"
 import dotenv from 'dotenv'
-import fs from 'fs'
 import http from 'http'
 import mysql from 'mysql2'
 import type { Pool } from "mysql2/promise"
+import app from "./app"
 
 // const options = { 
 //     key: fs.readFileSync('./cert/localhost-key.pem'),
