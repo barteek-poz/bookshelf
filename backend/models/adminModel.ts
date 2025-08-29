@@ -1,4 +1,4 @@
-import mysql, { RowDataPacket } from "mysql2/promise";
+import { RowDataPacket } from "mysql2";
 import { pool } from "../server";
 import { AdminSummary } from "../types/adminTypes";
 
