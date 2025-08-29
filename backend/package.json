@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "tsx watch server.ts",
     "build": "tsc && cd ../frontend && npm install && npm run build && cp -r dist ../backend/public",
