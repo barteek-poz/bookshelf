@@ -138,27 +138,28 @@ export const getBookById = async (req: Request, res: Response) => {
 };
 
 export const updateBook = async (req: Request, res: Response) => {
+  const authReq = req as AuthRequest;
   try {
-    let { id: bookId } = req.params;
+    let { id: bookId } = authReq.params;
     const bookIdNum = parseInt(bookId);
     if (!Number.isInteger(Number(bookId))) {
       return res.status(400).json({ status: "Fail", message: "Invalid book ID" });
     }
-    const { title, author, genre, publishYear } = req.body;
+    const { title, author, genre, publishYear } = authReq.body;
     let newBookData = { title, author, genre, publishYear };
     newBookData.publishYear = newBookData.publishYear === "null" ? null : parseInt(newBookData.publishYear, 10);
     newBookData.genre = newBookData.genre === "null" ? null : newBookData.genre;
 
     const updatedBook = await updateBookModel(newBookData.title, newBookData.author, newBookData.publishYear, newBookData.genre, bookIdNum);
 
-    if (req.file) {
+    if (authReq.file) {
       const book = await getBookCoverModel(bookIdNum);
       let oldCover = null;
       if (book[0].coverUrl !== null) {
         oldCover = book[0].coverUrl.split("/").pop();
         await supabaseDelete(bookId, oldCover);
       }
-      const coverUrl = await supabaseUploadHandler(bookId, req, res);
+      const coverUrl = await supabaseUploadHandler(bookId, authReq, res);
       await updateBookCoverModel(coverUrl.publicUrl, bookIdNum);
     }
     res.status(200).json({

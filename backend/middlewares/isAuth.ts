@@ -17,7 +17,7 @@ export const isAuth = async (req:Request, res:Response, next:NextFunction) => {
 			.status(401)
 			.json({ message: 'You are not logged in. Please log in to get access' });
 	}
-	const verifiedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as JwtPayload;
+	const verifiedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string)
 	const currentUser = await getUserDataModel(verifiedToken.id);
 	if (!currentUser) {
 		return res
