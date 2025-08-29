@@ -19,6 +19,7 @@ export const pool:Pool = mysql.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     ssl: {
+        // ca:fs.readFileSync('./cert/ca.pem'),
         rejectUnauthorized: true
     }
 }).promise()

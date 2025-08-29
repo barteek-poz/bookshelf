@@ -44,23 +44,23 @@ export const getBookDataModel = async (newBookId:number):Promise<BookDataType> =
 }
 
 
-export const updateBookModel = async(title:string, author:string, publishYear:number, genre:string,bookId:number) => {
-  const [updatedBook] = await pool.query('UPDATE books SET title=?, author=?, publishYear=?, genre=? WHERE id=?',[title, author, publishYear, genre,bookId])
+export const updateBookModel = async(title:string, author:string, publishYear:number, genre:string,bookId:number):Promise<ResultSetHeader> => {
+  const [updatedBook] = await pool.query<ResultSetHeader>('UPDATE books SET title=?, author=?, publishYear=?, genre=? WHERE id=?',[title, author, publishYear, genre,bookId])
   return updatedBook
 }
 
-export const addBookCoverModel = async(coverUrl:string, newBookId:number) => {
-  const [result] = await pool.query('UPDATE books SET coverUrl = ? WHERE id=?',[coverUrl, newBookId])
+export const addBookCoverModel = async(coverUrl:string, newBookId:number):Promise<ResultSetHeader> => {
+  const [result] = await pool.query<ResultSetHeader>('UPDATE books SET coverUrl = ? WHERE id=?',[coverUrl, newBookId])
   return result
 }
 
-export const getBookCoverModel = async(bookId:number) => {
-  const [book] = await pool.query<number & ResultSetHeader[]>('SELECT coverUrl FROM books WHERE id=?', [bookId])
+export const getBookCoverModel = async(bookId:number):Promise<RowDataPacket[]> => {
+  const [book] = await pool.query<RowDataPacket[]>('SELECT coverUrl FROM books WHERE id=?', [bookId])
   return book
 }
 
-export const updateBookCoverModel = async(coverUrl:string, bookId:number) => {
-  const result = await pool.query('UPDATE books SET coverUrl=? WHERE id=?',[coverUrl,bookId])
+export const updateBookCoverModel = async(coverUrl:string, bookId:number):Promise<ResultSetHeader> => {
+  const [result] = await pool.query<ResultSetHeader>('UPDATE books SET coverUrl=? WHERE id=?',[coverUrl,bookId])
   return result
 }
 
@@ -70,8 +70,8 @@ export const canEditBookModel = async(bookId:number, userId:number):Promise<Book
   return book
 }
 
-export const inUsersLibraryModel = async(userId:number, bookId:number) => {
-  const result = await pool.query('SELECT * FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
+export const inUsersLibraryModel = async(userId:number, bookId:number):Promise<BookDataType[]> => {
+  const result = await pool.query<BookDataType[] & RowDataPacket[]>('SELECT * FROM user_books WHERE user_id = ? AND book_id = ?', [userId, bookId])
   return result[0]
 }
 
