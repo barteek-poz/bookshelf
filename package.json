@@ -6,8 +6,10 @@
     "frontend"
   ],
   "scripts": {
-    "install": "npm install --workspaces",
+    "clean": "rm -rf node_modules package-lock.json && rm -rf backend/node_modules backend/package-lock.json && rm -rf frontend/node_modules frontend/package-lock.json",
+    "install-all": "npm install --workspaces",
     "build": "npm run build --workspace frontend && npm run build --workspace backend",
-    "start": "npm run start --workspace backend"
+    "start": "npm run start --workspace backend",
+    "dev": "npm run dev --workspace backend"
   }
 }
