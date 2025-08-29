@@ -6,9 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "build:backend": "tsc",
-    "build:frontend": "cd ../frontend && npm install && npm run build && cp -r dist ../backend/public",
-    "build": "npm run build:backend && npm run build:frontend",
+    "build": "tsc && cp -r ../frontend/dist ./public",
     "start": "node dist/server.js"
   },
   "author": "",

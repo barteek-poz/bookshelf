@@ -1,5 +1,12 @@
 {
-  "dependencies": {
-    "mysql2": "^3.14.3"
+  "name": "bookshelf",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "start": "npm start -w backend"
   }
 }
