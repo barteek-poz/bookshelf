@@ -12,6 +12,7 @@ import app from "./app";
 dotenv.config({ path: ".env" });
 
 const db_ca = process.env.DB_CA?.replace(/\\n/g, "\n");
+console.log(db_ca)
 
 export const pool: Pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "localhost",
