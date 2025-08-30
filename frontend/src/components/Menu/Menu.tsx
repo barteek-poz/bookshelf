@@ -19,7 +19,7 @@ const Menu = () => {
 
   const logoutHandler = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/auth/logout`, {
+      const response = await fetch(`https://bookshelf-nou0.onrender.com/api/v1/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

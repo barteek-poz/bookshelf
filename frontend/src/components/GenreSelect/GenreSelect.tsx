@@ -7,7 +7,7 @@ import { useErrorHandler } from "../../hooks/useErrorHandler";
 import { useEffect } from "react";
 
 const GenreSelect = ({ defaultValue, control}:GenreSelectType) => {
-  const { data: genresData, error } = useFetch<BookGenreType[]>("http://localhost:3000/api/v1/genres");
+  const { data: genresData, error } = useFetch<BookGenreType[]>("https://bookshelf-nou0.onrender.com/api/v1/genres");
   const {errorHandler} = useErrorHandler()
   const genresCapitalized = genresData?.map((genre) => {
     return { ...genre, label: upperFirstLetter(genre.label) };

@@ -17,7 +17,7 @@ const Login = () => {
 
   const onLogin = async (values:UserLoginType):Promise<void> => {
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
+      const response = await fetch("https://bookshelf-nou0.onrender.com/api/v1/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {

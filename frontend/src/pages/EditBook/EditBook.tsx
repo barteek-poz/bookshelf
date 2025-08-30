@@ -17,7 +17,7 @@ const EditBook = () => {
   const { accessToken } = useAuthUser();
   const navigate = useNavigate();
   const bookId: string | undefined = useParams().id;
-  const { data: bookData, error, isPending } = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
+  const { data: bookData, error, isPending } = useFetch<BookDataType>(`https://bookshelf-nou0.onrender.com/api/v1/books/${bookId}`);
   const {handleSubmit,control,formState: { errors }} = useForm<BookInputType>();
 
   const updateBookHandler = async (data: BookInputType): Promise<void> => {
@@ -29,7 +29,7 @@ const EditBook = () => {
       formData.append("bookCover", cover);
     }
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/books/${bookId}/edit`, {
+      const response = await fetch(`https://bookshelf-nou0.onrender.com/api/v1/books/${bookId}/edit`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

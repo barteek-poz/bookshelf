@@ -15,17 +15,17 @@ const AdminPage = () => {
     const {errorHandler} = useErrorHandler()
     const {fetchData:fetchUsers, error:usersError} = useFetch<UsersListType[]>()
     const {fetchData:fetchBooks, error:booksError} = useFetch<BookDataType[]>()
-    const {data:summary, error:summaryError} = useFetch<AdminSummary>('http://localhost:3000/api/v1/admin/get-summary')
+    const {data:summary, error:summaryError} = useFetch<AdminSummary>('https://bookshelf-nou0.onrender.com/api/v1/admin/get-summary')
 
     const getUsersHandler = async () => {
-       const fetchedUsers = await fetchUsers('http://localhost:3000/api/v1/users/get-all')
+       const fetchedUsers = await fetchUsers('https://bookshelf-nou0.onrender.com/api/v1/users/get-all')
        if(fetchedUsers) {
         setUsers(fetchedUsers)
         setBooks(null)
        }
     }
     const getBooksHandler = async () => {
-        const fetchedBooks = await fetchBooks('http://localhost:3000/api/v1/books/get-all')
+        const fetchedBooks = await fetchBooks('https://bookshelf-nou0.onrender.com/api/v1/books/get-all')
         if(fetchedBooks) {
             setBooks(fetchedBooks)
             setUsers(null)

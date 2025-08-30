@@ -7,7 +7,7 @@ import { useErrorHandler } from "../../hooks/useErrorHandler";
 import { useEffect } from "react";
 
 const RecentBooks = () => {
-  const { data: recentBooks, error, isPending } = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/books/get-recent`);
+  const { data: recentBooks, error, isPending } = useFetch<BookDataType[]>(`https://bookshelf-nou0.onrender.com/api/v1/books/get-recent`);
   const { errorHandler } = useErrorHandler();
 
   useEffect(() => {

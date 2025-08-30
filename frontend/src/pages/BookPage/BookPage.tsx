@@ -18,7 +18,7 @@ const BookPage = () => {
   const navigate = useNavigate();
   const { user, accessToken } = useAuthUser();
   const {errorHandler} = useErrorHandler()
-  const {data: bookData,error,isPending} = useFetch<BookDataType>(`http://localhost:3000/api/v1/books/${bookId}`);
+  const {data: bookData,error,isPending} = useFetch<BookDataType>(`https://bookshelf-nou0.onrender.com/api/v1/books/${bookId}`);
 
   const addExistingBook = async ():Promise<void>  => {
     try {
@@ -33,7 +33,7 @@ const BookPage = () => {
   const deleteBookHandler = async ():Promise<void> => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/users/${user.id}/books/${bookId}`,
+        `https://bookshelf-nou0.onrender.com/api/v1/users/${user.id}/books/${bookId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -54,7 +54,7 @@ const BookPage = () => {
   const deleteFromDBHandler = async ():Promise<void> => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/books/${bookId}`,
+        `https://bookshelf-nou0.onrender.com/api/v1/books/${bookId}`,
         {
           method: "DELETE",
           credentials: "include",

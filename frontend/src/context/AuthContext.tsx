@@ -34,7 +34,7 @@ const AuthProvider = ({ children }: AuthContextProviderProps) => {
   const refreshAccessToken = async () => {
     setLoading(true)
     try {
-      const response = await fetch("http://localhost:3000/api/v1/auth/refresh-token", {
+      const response = await fetch("https://bookshelf-nou0.onrender.com/api/v1/auth/refresh-token", {
         method: "POST",
         credentials: "include", 
       });
