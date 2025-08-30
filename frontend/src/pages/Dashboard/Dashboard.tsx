@@ -10,7 +10,7 @@ import styles from "./Dashboard.module.css";
 const Dashboard = () => {
   const { user } = useAuthUser();
   const { errorHandler } = useErrorHandler();
-  const { data: books, error, isPending } = useFetch<BookDataType[]>(`http://localhost:3000/api/v1/users/${user.id}/books`);
+  const { data: books, error, isPending } = useFetch<BookDataType[]>(`https://bookshelf-nou0.onrender.com/api/v1/users/${user.id}/books`);
   useEffect(() => {
     if (error) {
       errorHandler("Sorry, but something went wrong and we could not load your books. Please refresh the page or try to reconnect later.");

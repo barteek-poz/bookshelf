@@ -15,7 +15,7 @@ const Signup = () => {
       if (values.password !== values.passwordConfirm) {
         throw new Error("Passwords do not match");
       }
-      const response = await fetch("http://localhost:3000/api/v1/auth/signup", {
+      const response = await fetch("https://bookshelf-nou0.onrender.com/api/v1/auth/signup", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
