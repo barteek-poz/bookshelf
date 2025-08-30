@@ -8,7 +8,7 @@ import authRouter from './routes/authRoutes'
 import adminRouter from './routes/adminRoutes'
 
 const corsOptions:CorsOptions = {
-    origin: 'http://localhost:5173',  
+    origin: 'https://bookshelf-nou0.onrender.com',  
     credentials: true,  
     allowedHeaders: ['Content-Type', 'Authorization'], 
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
