@@ -11,6 +11,8 @@ import app from "./app";
 
 dotenv.config({ path: ".env" });
 
+const db_ca = process.env.DB_CA?.replace(/\\n/g, "\n");
+
 export const pool: Pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "localhost",
   port: process.env.MYSQL_PORT ? parseInt(process.env.MYSQL_PORT) : 8000,
@@ -18,7 +20,7 @@ export const pool: Pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
   ssl: {
-    // ca:fs.readFileSync('./cert/ca.pem'),
+    ca:db_ca,
     rejectUnauthorized: true,
   },
 });
