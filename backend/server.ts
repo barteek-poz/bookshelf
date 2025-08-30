@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
-import http from "http";
-import mysql from "mysql2/promise";
+import fs from "fs";
 import type { Pool } from "mysql2/promise";
+import mysql from "mysql2/promise";
 import app from "./app";
 
 // const options = {
@@ -11,8 +11,7 @@ import app from "./app";
 
 dotenv.config({ path: ".env" });
 
-const db_ca = process.env.DB_CA?.replace(/\\n/g, "\n");
-console.log(db_ca)
+const caCert = fs.readFileSync("/etc/secrets/ca.pem", "utf8");
 
 export const pool: Pool = mysql.createPool({
   host: process.env.MYSQL_HOST || "localhost",
@@ -21,7 +20,7 @@ export const pool: Pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
   ssl: {
-    ca:db_ca,
+    ca:caCert,
     rejectUnauthorized: true,
   },
 });
