@@ -19,12 +19,6 @@ const corsOptions: CorsOptions = {
 
 const app: Application = express();
 
-app.use(express.static(path.join(__dirname, "public")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
@@ -35,5 +29,11 @@ app.use("/api/v1/genres", genresRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 export default app;

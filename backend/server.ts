@@ -29,5 +29,4 @@ if (!process.env.DATABASE || !process.env.DATABASE_PASSWORD) {
 const DB = process.env.DATABASE.replace("<db_password>", process.env.DATABASE_PASSWORD);
 
 const port = process.env.PORT;
-const server = http.createServer(app);
 app.listen(port, () => console.log(`Server running on port ${port}`));

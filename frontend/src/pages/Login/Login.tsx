@@ -7,17 +7,17 @@ import { UserLoginType } from "../../types/userTypes";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const authContext = useContext(AuthContext);
-  if (!authContext) {
-    throw new Error();
+  const authContext = useContext(AuthContext)
+  if(!authContext){
+   throw new Error()
   }
   const { setAccessToken, setIsAuthenticated, setUser } = authContext;
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const onLogin = async (values: UserLoginType): Promise<void> => {
+  const onLogin = async (values:UserLoginType):Promise<void> => {
     try {
-      const response = await fetch("https://bookshelf-nou0.onrender.com/api/v1/auth/login", {
+      const response = await fetch("http://localhost:3000/api/v1/auth/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -45,25 +45,32 @@ const Login = () => {
       <h1 className={styles.loginHeader}>Bookshelf</h1>
       {error && <Alert message={error} type="error" showIcon closable />}
       <Form layout="vertical" onFinish={onLogin} autoComplete="off">
-        <Form.Item label="Email" name="email" rules={[{ required: true, message: "Provide your email" }]}>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: "Provide your email" }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item label="Password" name="password" rules={[{ required: true, message: "Provide your password" }]}>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: "Provide your password" }]}>
           <Input.Password />
         </Form.Item>
 
         <Form.Item>
-          <button type="submit" name="Login" className={styles.loginBtn}>
+          <button
+            type="submit"
+            name="Login"
+            className={styles.loginBtn}>
             Login
           </button>
         </Form.Item>
       </Form>
       <span className={styles.signupInfo}>
         You don't have Bookshelf account yet? Sign up&nbsp;
-        <Link role="link" to="/signup">
-          here
-        </Link>
+        <Link role='link' to="/signup">here</Link>
       </span>
     </div>
   );
